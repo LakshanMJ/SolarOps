@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router-dom'
 import App from './App'
 import AlertsPage from '@/features/alerts/AlertsPage'
 import DashboardPage from '@/features/dashboard/DashboardPage'
+import Sites from '@/features/sites/Sites'
 
 export const router = createBrowserRouter([
   {
@@ -10,6 +11,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <DashboardPage /> }, // root dashboard
       { path: 'alerts', element: <AlertsPage /> }, // relative path
+      { path: 'sites', element: <Sites /> }, // relative path
     ],
   },
 ])

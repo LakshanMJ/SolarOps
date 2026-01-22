@@ -18,6 +18,7 @@ export default function Header() {
         width: '100%',
         height: 56,
         px: 3,
+        boxSizing: 'border-box', // ✅ THIS
         borderBottom: '1px solid',
         borderColor: 'divider',
         bgcolor: 'background.paper',
