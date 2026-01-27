@@ -3,6 +3,7 @@ import App from './App'
 import AlertsPage from '@/features/alerts/AlertsPage'
 import DashboardPage from '@/features/dashboard/DashboardPage'
 import Sites from '@/features/sites/Sites'
+import Inverters from '@/features/inverters/Inverters'
 
 export const router = createBrowserRouter([
   {
@@ -12,6 +13,7 @@ export const router = createBrowserRouter([
       { index: true, element: <DashboardPage /> }, // root dashboard
       { path: 'alerts', element: <AlertsPage /> }, // relative path
       { path: 'sites', element: <Sites /> }, // relative path
+      { path: 'inverters', element: <Inverters /> }, // relative path
     ],
   },
 ])
