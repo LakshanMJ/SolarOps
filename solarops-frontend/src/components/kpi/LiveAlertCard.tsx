@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Box, Typography, List, ListItem, ListItemText, ListItemIcon, Chip } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { Box, Typography, List, ListItem, ListItemText, ListItemIcon } from '@mui/material';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 
 interface Alert {
@@ -10,19 +10,16 @@ interface Alert {
     inverterId: string;
 }
 
-// Map severity to color
 const severityColor = {
-    critical: 'red',
-    warning: 'orange',
-    info: 'green',
+    critical: 'var(--danger)',
+    warning: 'var(--warning)',
+    info: 'var(--info)',
 };
 
 export default function LiveAlertsFeed() {
     const [alerts, setAlerts] = useState<Alert[]>([]);
 
-    // Simulate WebSocket updates
     useEffect(() => {
-        // Example: Replace with the WebSocket connection
         const wsSimulator = setInterval(() => {
             const newAlert: Alert = {
                 id: Math.random().toString(36).substr(2, 9),
@@ -39,45 +36,56 @@ export default function LiveAlertsFeed() {
 
     return (
         <>
-            <Typography variant="h6" >
+            <Typography
+                variant="subtitle1"
+                mb={1}
+                sx={{ color: 'var(--text-primary)', fontWeight: 600 }}
+            >
                 Live Alerts
             </Typography>
+
             <Box
                 sx={{
                     width: 320,
-                    backgroundColor: '#f5f5f5',
-                    borderRadius: 1,
-                    padding: 2,
+                    backgroundColor: '#334155',
+                    borderRadius: 2,
+                    p: 2,
                     overflowY: 'auto',
-                    maxHeight: '400px',
-                    boxShadow: 1,
+                    maxHeight: 400,
+                    boxShadow: 'var(--shadow-sm)',
+                    border: '1px solid var(--border-default)',
                 }}
             >
                 <List disablePadding>
                     {alerts.map(alert => (
-                        <ListItem key={alert.id} sx={{ paddingY: 1 }}>
-                            <ListItemIcon sx={{ minWidth: 32 }}>
-                                <FiberManualRecordIcon sx={{ color: severityColor[alert.severity], fontSize: 14 }} />
+                        <ListItem key={alert.id} sx={{ py: 1 }}>
+                            <ListItemIcon sx={{ minWidth: 28 }}>
+                                <FiberManualRecordIcon
+                                    sx={{ color: severityColor[alert.severity], fontSize: 12 }}
+                                />
                             </ListItemIcon>
+
                             <ListItemText
                                 primary={
-                                    <Typography variant="body2" sx={{ fontWeight: 500 }} gutterBottom color="text.primary">
+                                    <Typography
+                                        variant="body2"
+                                        sx={{ color: 'var(--text-primary)', fontWeight: 500 }}
+                                    >
                                         {alert.message}
                                     </Typography>
                                 }
                                 secondary={
-                                    <>
-                                        <Typography variant="caption" sx={{ color: '#555' }}>
-                                            {alert.timestamp.split('T')[1].split('.')[0]} | {alert.inverterId}
-                                        </Typography>
-                                    </>
+                                    <Typography variant="caption" sx={{ color: 'var(--text-muted)' }}>
+                                        {alert.timestamp.split('T')[1].split('.')[0]} | {alert.inverterId}
+                                    </Typography>
                                 }
                             />
                         </ListItem>
                     ))}
                 </List>
+
                 {alerts.length === 0 && (
-                    <Typography variant="body2" color="text.secondary" align="center">
+                    <Typography variant="body2" sx={{ color: 'var(--text-muted)' }} align="center">
                         No active alerts
                     </Typography>
                 )}

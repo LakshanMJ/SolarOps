@@ -1,5 +1,6 @@
-import { Box, Stack, Card, Typography } from '@mui/material'
+import { Box, Stack, Typography } from '@mui/material'
 import KpiCard from '@/components/kpi/KpiCard'
+import ThemedCard from '@/components/ThemedCard';
 import {
   XAxis,
   YAxis,
@@ -25,29 +26,32 @@ const data = [
 export default function DashboardPage() {
   return (
     <Stack spacing={3}>
-      {/* KPI */}
       <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="10vh"
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: {
+            xs: '1fr',
+            sm: 'repeat(2, 1fr)',
+            md: 'repeat(3, 1fr)',
+            lg: 'repeat(5, 1fr)',
+          },
+          gap: 2,
+          mb: 3,
+        }}
       >
-        <Box display="flex" gap={2}>
-          <KpiCard label="Total Energy Today" value="12.4 MWh" />
-          <KpiCard label="Revenue Today" value="12.4 MWh" />
-          <KpiCard label="Active Alerts" value="12.4 MWh" />
-          <KpiCard label="System Health" value="12.4 MWh" />
-          <KpiCard label="Avg Performance Ratio" value="12.4 MWh" />
-        </Box>
+        <KpiCard label="Total Energy Today" value="12.4 MWh" status="good" />
+        <KpiCard label="Revenue Today" value="LKR 245,000" status="good" />
+        <KpiCard label="Active Alerts" value="3" status="warn" />
+        <KpiCard label="System Health" value="98.2%" status="good" />
+        <KpiCard label="Avg Performance Ratio" value="86%" status="bad" />
       </Box>
 
-      {/* Chart Card */}
-      <Card
+      <ThemedCard
         sx={{
           p: 2,
         }}
       >
-        <Typography variant="subtitle1" mb={2}>
+        <Typography variant="subtitle1" mb={2} sx={{ color: 'var(--text-primary)', fontWeight: 600 }}>
           Weekly Energy Output
         </Typography>
 
@@ -73,23 +77,22 @@ export default function DashboardPage() {
               <Area
                 type="monotone"
                 dataKey="value"
-                stroke="#8884d8"
-                fill="#8884d8"
+                stroke="var(--accent-primary)"
+                fill="rgba(245, 158, 11, 0.25)"
               />
 
             </AreaChart>
           </ResponsiveContainer>
         </Box>
-      </Card>
+      </ThemedCard>
       <Box
         sx={{
           display: 'flex',
           gap: 2,
           flexWrap: 'wrap',
-          p: 2,
+          p: 0,
         }}
       >
-
         <Box
           sx={{
             flex: '1 1 300px',
@@ -101,8 +104,8 @@ export default function DashboardPage() {
 
         <Box
           sx={{
-            flex: '2 1 600px',
-            minWidth: 600,
+            flex: '5 1 600px',
+            minWidth: 800,
           }}
         >
           <InverterHealth />

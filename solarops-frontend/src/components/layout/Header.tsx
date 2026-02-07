@@ -18,10 +18,10 @@ export default function Header() {
         width: '100%',
         height: 56,
         px: 3,
-        boxSizing: 'border-box', // ✅ THIS
+        boxSizing: 'border-box',
         borderBottom: '1px solid',
         borderColor: 'divider',
-        bgcolor: 'background.paper',
+        bgcolor: '#0B1220',
       }}
     >
       <Stack
@@ -30,12 +30,31 @@ export default function Header() {
         justifyContent="space-between"
         height="100%"
       >
-        {/* Left: Title */}
-        <Typography variant="h6" fontWeight={600}>
-          SolarOps
-        </Typography>
 
-        {/* Center: Range selector */}
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1.5,
+          }}
+        >
+
+          <Box
+            component="img"
+            src="/solarops_logo.png"
+            alt="SolarOps Logo"
+            sx={{
+              width: 32,
+              height: 32,
+              objectFit: 'contain',
+            }}
+          />
+
+          <Typography variant="h6" fontWeight={600}>
+            SolarOps
+          </Typography>
+        </Box>
+
         <Select
           size="small"
           value={range}
@@ -46,7 +65,6 @@ export default function Header() {
           <MenuItem value="30d">Last 30 Days</MenuItem>
         </Select>
 
-        {/* Right: System status */}
         <Stack direction="row" alignItems="center" spacing={1}>
           <Chip
             size="small"

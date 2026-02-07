@@ -1,20 +1,16 @@
-import React, { useState } from 'react';
-import {
-    Box,
-    Chip,
-    Typography,
-    Drawer,
-    Divider,
-    Button,
-} from '@mui/material';
-import { DataGrid, type GridColDef, type GridRenderCellParams } from '@mui/x-data-grid';
+import { useState } from 'react';
+import { Box, Typography, } from '@mui/material';
+import { type GridColDef, type GridRenderCellParams } from '@mui/x-data-grid';
+import InverterDrawer from './InverterDrawer';
+import SolarChip from '@/utils/SolarStatusChip';
+import SolarDataGrid from '@/utils/SolarDataGrid';
 
 const inverterData = [
     {
         id: 1,
         inverterId: 'INV-101',
         site: 'Site A',
-        status: 'healthy',
+        status: 'Online',
         currentOutput: 120,
         temp: 45,
         pr: 88,
@@ -24,7 +20,7 @@ const inverterData = [
         id: 2,
         inverterId: 'INV-102',
         site: 'Site B',
-        status: 'warning',
+        status: 'Degraded',
         currentOutput: 95,
         temp: 50,
         pr: 82,
@@ -34,46 +30,75 @@ const inverterData = [
         id: 3,
         inverterId: 'INV-103',
         site: 'Site C',
-        status: 'critical',
+        status: 'Critical',
         currentOutput: 40,
         temp: 70,
         pr: 60,
-        details: 'Inverter offline or faulty',
+        details: 'Inverter faulty',
+    },
+    {
+        id: 4,
+        inverterId: 'INV-108',
+        site: 'Site X',
+        status: 'Offline',
+        currentOutput: 70,
+        temp: 90,
+        pr: 25,
+        details: 'Inverter offline',
     },
 ];
 
-const statusColor = {
-    healthy: 'success',
-    warning: 'warning',
-    critical: 'error',
-};
-
 export default function InverterHealthTable() {
     const [selectedInverter, setSelectedInverter] = useState<any>(null);
+    const [selectedRowIds, setSelectedRowIds] = useState<number[]>([]);
 
     const columns: GridColDef[] = [
-        { field: 'inverterId', headerName: 'Inverter ID', width: 120 },
-        { field: 'site', headerName: 'Site', width: 120 },
+        { field: 'inverterId', headerName: 'Inverter ID', flex: 1.2 },
+        { field: 'site', headerName: 'Site', align: 'center', headerAlign: 'center', flex: 1.2 },
         {
             field: 'status',
             headerName: 'Status',
-            width: 100,
+            align: 'center',
+            headerAlign: 'center',
+            flex: 0.9,
             renderCell: (params: GridRenderCellParams) => (
-                <Chip
-                    label={params.value}
-                    color={statusColor[params.value as keyof typeof statusColor]}
-                    size="small"
-                />
+                <SolarChip status={params?.value} />
             ),
         },
-        { field: 'currentOutput', headerName: 'Current Output (kW)', width: 150, type: 'number' },
-        { field: 'temp', headerName: 'Temp (°C)', width: 100, type: 'number' },
-        { field: 'pr', headerName: 'PR (%)', width: 100, type: 'number', sortable: true },
+        {
+            field: 'currentOutput',
+            headerName: 'Current Output (kW)',
+            type: 'number',
+            align: 'center',
+            headerAlign: 'center',
+            flex: 1.4,
+        },
+        { field: 'temp', headerName: 'Temp (°C)', type: 'number', align: 'center', headerAlign: 'center', flex: 0.8 },
+        { field: 'pr', headerName: 'PR (%)', type: 'number', sortable: true, align: 'center', headerAlign: 'center', flex: 0.8 },
         {
             field: 'actions',
             headerName: 'Actions',
-            width: 100,
-            renderCell: () => <Button size="small" variant="outlined">View</Button>,
+            flex: 0.9,
+            renderCell: (params) => (
+                <Box
+                    sx={{
+                        width: '100%',
+                        height: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                    }}
+                    onClick={() => {
+                        setSelectedInverter(params.row);
+                        setSelectedRowIds([params.id as number]);
+                    }}
+                >
+                    <Typography variant="body2" color="primary">
+                        View
+                    </Typography>
+                </Box>
+            ),
             sortable: false,
             filterable: false,
         },
@@ -81,59 +106,30 @@ export default function InverterHealthTable() {
 
     return (
         <Box sx={{ height: 400, width: '100%' }}>
-            <Typography variant="h6" gutterBottom>
+            <Typography
+                variant="subtitle1"
+                mb={1}
+                sx={{ color: 'var(--text-primary)', fontWeight: 600 }}
+                gutterBottom
+            >
                 Inverter Health
             </Typography>
 
-            <DataGrid
+            <SolarDataGrid
                 rows={inverterData}
                 columns={columns}
                 pageSize={5}
                 rowsPerPageOptions={[5]}
                 disableSelectionOnClick
-                onRowClick={(params) => setSelectedInverter(params.row)}
+                disableColumnSorting
+                selectionModel={selectedRowIds}
+                onSelectionModelChange={(newSelection) => setSelectedRowIds(newSelection)}
             />
 
-            {/* Slide-over Panel */}
-            <Drawer
-                anchor="right"
+            <InverterDrawer
                 open={!!selectedInverter}
                 onClose={() => setSelectedInverter(null)}
-            >
-                <Box sx={{ width: 300, p: 2 }}>
-                    {selectedInverter && (
-                        <>
-                            <Typography variant="h6" mb={1}>
-                                {selectedInverter.inverterId} Details
-                            </Typography>
-                            <Divider sx={{ mb: 2 }} />
-                            <Typography variant="body2">
-                                <strong>Site:</strong> {selectedInverter.site}
-                            </Typography>
-                            <Typography variant="body2">
-                                <strong>Status:</strong>{' '}
-                                <Chip
-                                    label={selectedInverter.status}
-                                    color={statusColor[selectedInverter.status as keyof typeof statusColor]}
-                                    size="small"
-                                />
-                            </Typography>
-                            <Typography variant="body2">
-                                <strong>Current Output:</strong> {selectedInverter.currentOutput} kW
-                            </Typography>
-                            <Typography variant="body2">
-                                <strong>Temperature:</strong> {selectedInverter.temp} °C
-                            </Typography>
-                            <Typography variant="body2">
-                                <strong>PR:</strong> {selectedInverter.pr} %
-                            </Typography>
-                            <Typography variant="body2" mt={1}>
-                                <strong>Details:</strong> {selectedInverter.details}
-                            </Typography>
-                        </>
-                    )}
-                </Box>
-            </Drawer>
+                inverter={selectedInverter} />
         </Box>
     );
 }

@@ -1,8 +1,9 @@
 import { Box, Typography, Button } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const SideBar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const menuItems = [
     { label: 'Dashboard', path: '/' },
@@ -23,7 +24,7 @@ const SideBar = () => {
       sx={{
         width: 260,
         height: '100%',
-        backgroundColor: '#0f172a',
+        backgroundColor: '#1E293B',
         color: '#e5e7eb',
         display: 'flex',
         flexDirection: 'column',
@@ -31,7 +32,6 @@ const SideBar = () => {
         borderRight: '1px solid #1e293b',
       }}
     >
-      {/* Navigation */}
       <Box
         component="nav"
         sx={{
@@ -43,29 +43,50 @@ const SideBar = () => {
           gap: 0.5,
         }}
       >
-        {menuItems.map((item) => (
-          <Button
-            key={item.label}
-            variant="text"
-            onClick={() => navigate(item.path)}
-            sx={{
-              justifyContent: 'flex-start',
-              color: '#e5e7eb',
-              textTransform: 'none',
-              px: 2,
-              py: 1,
-              borderRadius: 1,
-              '&:hover': {
-                backgroundColor: '#1e293b',
-              },
-            }}
-          >
-            {item.label}
-          </Button>
-        ))}
+        {menuItems.map((item) => {
+          const isSelected = location.pathname === item.path;
+
+          return (
+            <Button
+              key={item.label}
+              variant="text"
+              onClick={() => navigate(item.path)}
+              sx={{
+                justifyContent: 'flex-start',
+                textTransform: 'none',
+                px: 2,
+                py: 1,
+                borderRadius: 1.5,
+
+                color: isSelected ? '#f59e0b' : '#e5e7eb',
+
+                border: isSelected
+                  ? '1px solid #f59e0b'
+                  : '1px solid transparent',
+
+                backgroundColor: isSelected
+                  ? 'rgba(245, 158, 11, 0.08)'
+                  : 'transparent',
+
+                '&:hover': {
+                  backgroundColor: isSelected
+                    ? 'rgba(245, 158, 11, 0.12)'
+                    : '#1e293b',
+                  border: isSelected
+                    ? '1px solid #f59e0b'
+                    : '1px solid transparent',
+                },
+
+                transition: 'all 0.15s ease',
+              }}
+            >
+              {item.label}
+            </Button>
+
+          );
+        })}
       </Box>
 
-      {/* User */}
       <Box
         component="footer"
         sx={{
