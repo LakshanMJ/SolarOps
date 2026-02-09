@@ -1,60 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-generator client {
-  provider = "prisma-client-js"
-}
-
 model Site {
-  id               String     @id @default(uuid())
-  name             String
-  latitude         Float
-  longitude        Float
-  region           String
-  peakCapacityMw   Float
-  createdAt        DateTime   @default(now())
-
-  inverters        Inverter[]
+  id             String     @id @default(uuid())
+  name           String
+  latitude       Float
+  longitude      Float
+  region         String
+  peakCapacityMw Float
+  createdAt      DateTime   @default(now())
+  inverters      Inverter[]
 }
 
 model Inverter {
-  id           String    @id @default(uuid())
-  siteId       String
-  modelType    String
-  capacityKw   Float
-  status       InverterStatus
-  installedAt  DateTime
-
-  site         Site      @relation(fields: [siteId], references: [id])
-  telemetry    Telemetry[]
-  alerts       Alert[]
+  id          String         @id @default(uuid())
+  siteId      String
+  modelType   String
+  capacityKw  Float
+  status      InverterStatus
+  installedAt DateTime
+  alerts      Alert[]
+  site        Site           @relation(fields: [siteId], references: [id])
+  telemetry   Telemetry[]
 }
 
 model Telemetry {
-  id           BigInt    @id @default(autoincrement())
-  inverterId   String
-  timestamp    DateTime
-  acOutputKw   Float
-  tempC        Float
-  irradiance   Float
+  id         BigInt   @id @default(autoincrement())
+  inverterId String
+  timestamp  DateTime
+  acOutputKw Float
+  tempC      Float
+  irradiance Float
+  inverter   Inverter @relation(fields: [inverterId], references: [id])
 
-  inverter     Inverter @relation(fields: [inverterId], references: [id])
-
-  @@index([inverterId, timestamp])
+  @@unique([inverterId, timestamp])
   @@index([timestamp])
 }
 
 model Alert {
-  id           String    @id @default(uuid())
-  inverterId   String
-  severity     AlertSeverity
-  message      String
-  createdAt    DateTime @default(now())
-  resolved     Boolean  @default(false)
-
-  inverter     Inverter @relation(fields: [inverterId], references: [id])
+  id         String        @id @default(uuid())
+  inverterId String
+  severity   AlertSeverity
+  message    String
+  createdAt  DateTime      @default(now())
+  resolved   Boolean       @default(false)
+  inverter   Inverter      @relation(fields: [inverterId], references: [id])
 }
 
 enum InverterStatus {

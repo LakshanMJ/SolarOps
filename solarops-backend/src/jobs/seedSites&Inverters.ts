@@ -1,10 +1,12 @@
+// script to create sites and inverters with sample data for testing and development purposes
+
 import { PrismaClient,InverterStatus } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
   console.log("Seeding Sites...");
 
-  // 1️⃣ Seed Sites
+  // Seed Sites
   const sites = await prisma.site.createMany({
     data: [
       {
@@ -35,7 +37,7 @@ async function main() {
 
   console.log("Seeding Inverters...");
 
-  // 2️⃣ Seed Inverters per Site
+  // Seed Inverters per Site
   const allSites = await prisma.site.findMany();
 
   for (const site of allSites) {
