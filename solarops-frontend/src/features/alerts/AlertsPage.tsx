@@ -1,6 +1,6 @@
-import React from 'react';
 import { Box, Typography, Chip } from '@mui/material';
-import { DataGrid, type GridColDef } from '@mui/x-data-grid';
+import {type GridColDef } from '@mui/x-data-grid';
+import SolarDataGrid from '@/utils/SolarDataGrid';
 
 // Sample alerts
 const alertsData = [
@@ -57,6 +57,8 @@ export default function AlertsPage() {
       field: 'severity',
       headerName: 'Severity',
       width: 120,
+      align: 'left', 
+      headerAlign: 'left',
       renderCell: (params) => (
         <Chip
           label={params.value}
@@ -65,15 +67,17 @@ export default function AlertsPage() {
         />
       ),
     },
-    { field: 'message', headerName: 'Message', width: 200, flex: 1 },
-    { field: 'inverter', headerName: 'Inverter', width: 120 },
-    { field: 'site', headerName: 'Site', width: 120 },
-    { field: 'createdAt', headerName: 'Created At', width: 150 },
+    { field: 'message', headerName: 'Message', width: 200, align: 'left', headerAlign: 'left', flex: 1 },
+    { field: 'inverter', headerName: 'Inverter', width: 120, align: 'left', headerAlign: 'left' },
+    { field: 'site', headerName: 'Site', width: 120, align: 'left', headerAlign: 'left' },
+    { field: 'createdAt', headerName: 'Created At', width: 150, align: 'left', headerAlign: 'left' },
     // { field: 'resolvedAt', headerName: 'Resolved At', width: 150, valueGetter: (params) => params?.row?.resolvedAt ?? '-' },
     {
       field: 'status',
       headerName: 'Status',
       width: 120,
+      align: 'left',
+      headerAlign: 'left',
       renderCell: (params) => (
         <Chip
           label={params.value}
@@ -82,46 +86,27 @@ export default function AlertsPage() {
         />
       ),
     },
-    { field: 'maintenanceAction', headerName: 'Maintenance Actions', width: 180, flex: 1 },
+    { field: 'maintenanceAction', headerName: 'Maintenance Actions', width: 180, headerAlign: 'left', flex: 1 },
   ];
 
   return (
-    <Box sx={{ height: 600, width: '100%', p: 2, backgroundColor: '#121212', color: '#fff' }}>
+    <Box sx={{ height: 600, width: '100%',  color: '#fff' }}>
       <Typography variant="h5" gutterBottom sx={{ color: '#fff' }}>
         Alerts Audit & Accountability
       </Typography>
 
-      <DataGrid
-        rows={alertsData}
-        columns={columns}
-        pageSizeOptions={[5, 10, 20]}
-        initialState={{
-          pagination: { paginationModel: { pageSize: 5, page: 0 } },
-        }}
-        autoHeight
-        getRowHeight={() => 50}
-        sx={{
-          backgroundColor: '#1e1e1e',
-          color: '#fff',
-          border: 'none',
-          '.MuiDataGrid-cell': {
-            borderBottom: '1px solid #2c2c2c',
-          },
-          '.MuiDataGrid-columnHeaders': {
-            backgroundColor: '#1b1b1b',
-            borderBottom: '1px solid #2c2c2c',
-            color: '#fff',
-          },
-          '.MuiDataGrid-footerContainer': {
-            backgroundColor: '#1b1b1b',
-            borderTop: '1px solid #2c2c2c',
-            color: '#fff',
-          },
-          '.MuiDataGrid-row:hover': {
-            backgroundColor: '#2a2a2a',
-          },
-        }}
-      />
+      <Box sx={{ height: 400, width: '100%', mt: 2 }}>
+        <SolarDataGrid
+          rows={alertsData}
+          columns={columns}
+          pageSizeOptions={[5, 10]}
+          rowsPerPageOptions={[5]}
+          disableSelectionOnClick
+          disableColumnSorting
+          initialState={{ pagination: { paginationModel: { pageSize: 5, page: 0 } } }}
+          autoHeight
+        />
+      </Box>
     </Box>
   );
 }

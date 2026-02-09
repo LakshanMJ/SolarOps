@@ -156,7 +156,7 @@ const InvertersPage = () => {
       <Stack direction="row" justifyContent="space-between" mb={2}>
         <Box>
           <Typography variant="h6">Inverters</Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2">
             Operational inverter assets across all sites
           </Typography>
         </Box>
