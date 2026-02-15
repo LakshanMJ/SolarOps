@@ -11,13 +11,21 @@ export const getAlerts = async (req: Request, res: Response) => {
 };
 
 export const updateAlertStatus = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { status } = req.body;
+  let { id } = req.params;
 
-  const alert = await prisma.alert.update({
-    where: { id },
-    data: { status: status as AlertStatus },
-  });
+  // Make sure id is a string
+  if (Array.isArray(id)) id = id[0];
 
-  res.json(alert);
+  const { status } = req.body as { status: AlertStatus };
+
+  try {
+    const alert = await prisma.alert.update({
+      where: { id },
+      data: { status },
+    });
+
+    res.json(alert);
+  } catch (error) {
+    res.status(400).json({ error: 'Alert not found or invalid request' });
+  }
 };

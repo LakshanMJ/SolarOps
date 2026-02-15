@@ -1,5 +1,6 @@
-import type { AlertSeverity } from '@prisma/client'  
-import { prisma } from '../db/prisma.js'
+import { prisma } from '../db/prisma.js';
+import { emitNewAlert } from '../websocket.js';
+import { AlertSeverity, AlertStatus } from '@prisma/client';
 
 export async function createAlertIfNotExists(
   inverterId: string,
@@ -10,18 +11,23 @@ export async function createAlertIfNotExists(
     where: {
       inverterId,
       message,
-      status: "Open"
-    }
-  })
+      status: AlertStatus.Open, // use enum, not string
+    },
+  });
 
-  if (existing) return null
+  if (existing) return null;
 
-  return prisma.alert.create({
+  const alert = await prisma.alert.create({
     data: {
       inverterId,
       message,
       severity,
-      status: "Open"
-    }
-  })
+      status: AlertStatus.Open, // enum here too
+    },
+  });
+
+  // Push alert to frontend in real-time
+  emitNewAlert(alert);
+
+  return alert;
 }

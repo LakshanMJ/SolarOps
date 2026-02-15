@@ -24,20 +24,33 @@ const statusSeverity: Record<InverterStatus, number> = {
 export async function evaluateTelemetry(telemetry: TelemetryInput) {
   const { inverterId, tempC, acOutputKw, status, timestamp } = telemetry
 
-  // -------------------------
-  // RULE 1: Temperature > 75°C
-  // -------------------------
+  // RULE 1: Temperature > 75°C → Warning
   if (tempC > 75) {
     await createAlertIfNotExists(
       inverterId,
       'Temperature exceeded 75°C',
       'Warning'
-    )
+    );
+  } else {
+    // Auto-resolve previously open temp alert
+    const existingTempAlert = await prisma.alert.findFirst({
+      where: {
+        inverterId,
+        message: 'Temperature exceeded 75°C',
+        status: 'Open', // or AlertStatus.Open if using enum
+      },
+    });
+
+    if (existingTempAlert) {
+      await prisma.alert.update({
+        where: { id: existingTempAlert.id },
+        data: { status: 'Resolved' }, // or AlertStatus.Resolved
+      });
+    }
   }
 
-  // -------------------------
   // RULE 2: Status worsening
-  // -------------------------
+
   if (status) {
     const previous = await prisma.telemetry.findFirst({
       where: {
@@ -46,16 +59,32 @@ export async function evaluateTelemetry(telemetry: TelemetryInput) {
       },
       orderBy: { timestamp: 'desc' },
     })
+    if (status && previous && previous.status) {
+      const prevLevel = statusSeverity[previous.status];
+      const currLevel = statusSeverity[status];
 
-    if (previous && previous.status) {
-      const prevLevel = statusSeverity[previous.status]
-      const currLevel = statusSeverity[status]
       if (currLevel > prevLevel) {
         await createAlertIfNotExists(
           inverterId,
           `Inverter status worsened from ${previous.status} to ${status}`,
           'Critical'
-        )
+        );
+      } else if (currLevel < prevLevel) {
+        // Status improved → resolve existing alert
+        const existingStatusAlert = await prisma.alert.findFirst({
+          where: {
+            inverterId,
+            message: { contains: 'Inverter status worsened' },
+            status: 'Open',
+          },
+        });
+
+        if (existingStatusAlert) {
+          await prisma.alert.update({
+            where: { id: existingStatusAlert.id },
+            data: { status: 'Resolved' },
+          });
+        }
       }
     }
   }
@@ -76,7 +105,22 @@ export async function evaluateTelemetry(telemetry: TelemetryInput) {
         inverterId,
         'AC output dropped more than 40% in 10 minutes',
         'Critical'
-      )
+      );
+    } else {
+      const existingDropAlert = await prisma.alert.findFirst({
+        where: {
+          inverterId,
+          message: 'AC output dropped more than 40% in 10 minutes',
+          status: 'Open',
+        },
+      });
+
+      if (existingDropAlert) {
+        await prisma.alert.update({
+          where: { id: existingDropAlert.id },
+          data: { status: 'Resolved' },
+        });
+      }
     }
   }
 }
