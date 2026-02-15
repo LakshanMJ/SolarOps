@@ -129,7 +129,8 @@ export default function InverterHealthTable() {
             <InverterDrawer
                 open={!!selectedInverter}
                 onClose={() => setSelectedInverter(null)}
-                inverter={selectedInverter} />
+                inverter={selectedInverter}
+            />
         </Box>
     );
 }
