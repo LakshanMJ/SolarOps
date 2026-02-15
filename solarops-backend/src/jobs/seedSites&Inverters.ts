@@ -48,7 +48,7 @@ async function main() {
         siteId: site.id,
         modelType: `INV-${i}`,
         capacityKw: Math.floor(Math.random() * 1000) + 500, // 500-1500 kW
-        status: InverterStatus.Active,  // <-- use the enum
+        status: InverterStatus.Online,  // <-- use the enum
         installedAt: new Date(`2023-01-${i + 10}`),
       });
     }

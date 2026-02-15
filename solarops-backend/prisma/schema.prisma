@@ -37,6 +37,7 @@ model Telemetry {
   acOutputKw Float
   tempC      Float
   irradiance Float
+  status     InverterStatus?
   inverter   Inverter @relation(fields: [inverterId], references: [id])
 
   @@unique([inverterId, timestamp])
@@ -53,13 +54,15 @@ model Alert {
   inverter   Inverter      @relation(fields: [inverterId], references: [id])
 }
 
-enum InverterStatus {
-  Active
-  Fault
-  Off
-}
-
 enum AlertSeverity {
   Warning
   Critical
 }
+
+enum InverterStatus {
+  Online
+  Degraded
+  Critical
+  Offline
+}
+

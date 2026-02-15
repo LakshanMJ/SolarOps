@@ -1,71 +1,85 @@
-import { PrismaClient } from '@prisma/client';
-import cron from 'node-cron';
+// src/jobs/telemetryWorker.ts
+import { PrismaClient, InverterStatus } from '@prisma/client'
+import cron from 'node-cron'
+import { evaluateTelemetry, TelemetryInput } from '../services/ruleEngine.service.js'
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient()
 
 function randomBetween(min: number, max: number) {
-    return Math.random() * (max - min) + min;
+  return Math.random() * (max - min) + min
 }
 
 function simulateAcOutput(capacityKw: number, irradiance: number) {
-    const noise = randomBetween(-0.05, 0.05); // ±5%
-    return Math.max(0, capacityKw * (irradiance / 1000) * (1 + noise));
+  const noise = randomBetween(-0.05, 0.05) // ±5%
+  return Math.max(0, capacityKw * (irradiance / 1000) * (1 + noise))
 }
 
 async function ingestOnce() {
-    console.log("⚡ Live telemetry tick:", new Date().toISOString());
+  console.log('⚡ Live telemetry tick:', new Date().toISOString())
 
-    const inverters = await prisma.inverter.findMany();
-    if (inverters.length === 0) {
-        console.log("⚠️ No inverters found, skipping telemetry tick");
-        return;
+  const inverters = await prisma.inverter.findMany()
+  if (inverters.length === 0) {
+    console.log('⚠️ No inverters found, skipping telemetry tick')
+    return
+  }
+
+  // Align to 10-minute bucket
+  const now = new Date()
+  now.setSeconds(0, 0)
+  now.setMilliseconds(0)
+  now.setMinutes(Math.floor(now.getMinutes() / 10) * 10)
+
+  const rows: TelemetryInput[] = inverters.map((inverter) => {
+    const hour = now.getHours()
+
+    let irradiance = 0
+    let acOutput = 0
+    let tempC = randomBetween(24, 32)
+    let status: InverterStatus = inverter.status || InverterStatus.Online
+
+    if (hour >= 6 && hour <= 18) {
+      irradiance = randomBetween(400, 1000)
+      acOutput = simulateAcOutput(inverter.capacityKw, irradiance)
+      tempC += (irradiance / 1000) * 6
     }
 
-    // Align to 10-minute bucket
-    const now = new Date();
-    now.setSeconds(0, 0);
-    now.setMilliseconds(0);
-    now.setMinutes(Math.floor(now.getMinutes() / 10) * 10);
+    // Optionally simulate status changes randomly for testing
+    // Example: degrade to DEGRADED randomly
+    // if (Math.random() < 0.01) status = InverterStatus.DEGRADED
 
-    const rows = inverters.map((inverter) => {
-        const hour = now.getHours();
+    return {
+      inverterId: inverter.id,
+      timestamp: now,
+      acOutputKw: Number(acOutput.toFixed(2)),
+      tempC: Number(tempC.toFixed(1)),
+      irradiance: Number(irradiance.toFixed(1)),
+      status,
+    }
+  })
 
-        let irradiance = 0;
-        let acOutput = 0;
-        let tempC = randomBetween(24, 32);
+  // Insert all telemetry
+  await prisma.telemetry.createMany({
+    data: rows,
+    skipDuplicates: true,
+  })
 
-        if (hour >= 6 && hour <= 18) {
-            irradiance = randomBetween(400, 1000);
-            acOutput = simulateAcOutput(inverter.capacityKw, irradiance);
-            tempC += (irradiance / 1000) * 6;
-        }
+  console.log(`✅ Inserted live telemetry for ${rows.length} inverters`)
 
-        return {
-            inverterId: inverter.id,
-            timestamp: now,
-            acOutputKw: Number(acOutput.toFixed(2)),
-            tempC: Number(tempC.toFixed(1)),
-            irradiance: Number(irradiance.toFixed(1)),
-        };
-    });
-
-    await prisma.telemetry.createMany({
-        data: rows,
-        skipDuplicates: true,
-    });
-
-    console.log(`✅ Inserted live telemetry for ${rows.length} inverters`);
+  // --- ALERT EVALUATION ---
+  for (const telemetry of rows) {
+    await evaluateTelemetry(telemetry)
+  }
 }
 
-//Export using default for Node16 ESM friendly import
+// Node16 ESM friendly export
 export default function startTelemetryWorker() {
-    console.log("🚀 Starting telemetry worker (every 10 minutes)");
+  console.log('🚀 Starting telemetry worker (every 10 minutes)')
 
-    // Run once immediately
-    ingestOnce().catch(console.error);
+  // Run once immediately
+  ingestOnce().catch(console.error)
 
-    // Schedule every 10 minutes
-    cron.schedule('*/10 * * * *', () => {
-        ingestOnce().catch(console.error);
-    });
+  // Schedule every 10 minutes
+  cron.schedule('*/10 * * * *', () => {
+    ingestOnce().catch(console.error)
+  })
 }

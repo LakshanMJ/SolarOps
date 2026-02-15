@@ -1,8 +1,8 @@
 -- CreateEnum
-CREATE TYPE "InverterStatus" AS ENUM ('Active', 'Fault', 'Off');
+CREATE TYPE "AlertSeverity" AS ENUM ('Warning', 'Critical');
 
 -- CreateEnum
-CREATE TYPE "AlertSeverity" AS ENUM ('Warning', 'Critical');
+CREATE TYPE "InverterStatus" AS ENUM ('Online', 'Degraded', 'Critical', 'Offline');
 
 -- CreateTable
 CREATE TABLE "Site" (
@@ -37,6 +37,7 @@ CREATE TABLE "Telemetry" (
     "acOutputKw" DOUBLE PRECISION NOT NULL,
     "tempC" DOUBLE PRECISION NOT NULL,
     "irradiance" DOUBLE PRECISION NOT NULL,
+    "status" "InverterStatus",
 
     CONSTRAINT "Telemetry_pkey" PRIMARY KEY ("id")
 );
@@ -54,10 +55,10 @@ CREATE TABLE "Alert" (
 );
 
 -- CreateIndex
-CREATE INDEX "Telemetry_inverterId_timestamp_idx" ON "Telemetry"("inverterId", "timestamp");
+CREATE INDEX "Telemetry_timestamp_idx" ON "Telemetry"("timestamp");
 
 -- CreateIndex
-CREATE INDEX "Telemetry_timestamp_idx" ON "Telemetry"("timestamp");
+CREATE UNIQUE INDEX "Telemetry_inverterId_timestamp_key" ON "Telemetry"("inverterId", "timestamp");
 
 -- AddForeignKey
 ALTER TABLE "Inverter" ADD CONSTRAINT "Inverter_siteId_fkey" FOREIGN KEY ("siteId") REFERENCES "Site"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
