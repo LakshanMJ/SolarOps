@@ -1,4 +1,4 @@
-import type { AlertSeverity } from '@prisma/client'
+import type { AlertSeverity } from '@prisma/client'  
 import { prisma } from '../db/prisma.js'
 
 export async function createAlertIfNotExists(
@@ -10,7 +10,7 @@ export async function createAlertIfNotExists(
     where: {
       inverterId,
       message,
-      resolved: false
+      status: "Open"
     }
   })
 
@@ -20,7 +20,8 @@ export async function createAlertIfNotExists(
     data: {
       inverterId,
       message,
-      severity
+      severity,
+      status: "Open"
     }
   })
 }

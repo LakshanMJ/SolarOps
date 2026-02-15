@@ -47,16 +47,22 @@ model Telemetry {
 model Alert {
   id         String        @id @default(uuid())
   inverterId String
-  severity   AlertSeverity
   message    String
+  severity   AlertSeverity
+  status     AlertStatus   @default(Open)
   createdAt  DateTime      @default(now())
-  resolved   Boolean       @default(false)
   inverter   Inverter      @relation(fields: [inverterId], references: [id])
 }
 
 enum AlertSeverity {
   Warning
   Critical
+}
+
+enum AlertStatus {
+  Open
+  Acknowledged
+  Resolved
 }
 
 enum InverterStatus {
