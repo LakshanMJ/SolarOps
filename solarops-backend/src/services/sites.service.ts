@@ -1,6 +1,6 @@
 import { prisma } from '../db/prisma.js'
 
-type Alert = { id: string; resolved: boolean }
+type Alert = { id: string; status: string }
 
 export async function getSitesService() {
   // Fetch all sites with inverters, telemetry, and alerts
@@ -10,6 +10,7 @@ export async function getSitesService() {
       name: true,
       latitude: true,
       longitude: true,
+      region: true,
       peakCapacityMw: true,
       inverters: {
         select: {
@@ -19,7 +20,7 @@ export async function getSitesService() {
             select: { acOutputKw: true }
           },
           alerts: {
-            select: { id: true, resolved: true }
+            select: { id: true, status: true }
           }
         }
       }
@@ -28,12 +29,12 @@ export async function getSitesService() {
 
   // Map into frontend-friendly structure
   const siteData = sites.map(site => {
-    const activeInverters = site.inverters.filter(inv => inv.status === 'Active').length
+    const activeInverters = site.inverters.filter(inv => inv.status === 'Online').length
 
     // Count all unresolved alerts from all inverters in this site
     const alertsCount = site.inverters
       .flatMap(inv => inv.alerts)
-      .filter(alert => !alert.resolved).length
+      .filter(alert => alert.status !== 'Resolved').length
 
     // Calculate avg PR per site
     let avgPR = 0
@@ -41,7 +42,7 @@ export async function getSitesService() {
       const inverterPRs = site.inverters.map(inv => {
         if (!inv.telemetry || inv.telemetry.length === 0) return 0
         const sumOutput = inv.telemetry.reduce((sum, t) => sum + t.acOutputKw, 0)
-        return (sumOutput / inv.telemetry.length) * (inv.status === 'Active' ? 1 : 0)
+        return (sumOutput / inv.telemetry.length) * (inv.status === 'Online' ? 1 : 0)
       })
       avgPR = inverterPRs.reduce((a, b) => a + b, 0) / inverterPRs.length
     }

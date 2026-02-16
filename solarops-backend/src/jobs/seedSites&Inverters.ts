@@ -1,6 +1,6 @@
 // script to create sites and inverters with sample data for testing and development purposes
 
-import { PrismaClient,InverterStatus } from '@prisma/client';
+import { PrismaClient, InverterStatus } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
@@ -37,7 +37,7 @@ async function main() {
 
   console.log("Seeding Inverters...");
 
-  // Seed Inverters per Site
+  // Fetch all sites
   const allSites = await prisma.site.findMany();
 
   for (const site of allSites) {
@@ -46,9 +46,9 @@ async function main() {
     for (let i = 1; i <= 5; i++) {
       invertersData.push({
         siteId: site.id,
-        modelType: `INV-${i}`,
+        name: `INV-${i} ${site.name}`,         // Added name field
         capacityKw: Math.floor(Math.random() * 1000) + 500, // 500-1500 kW
-        status: InverterStatus.Online,  // <-- use the enum
+        status: InverterStatus.Online,         // Use the enum
         installedAt: new Date(`2023-01-${i + 10}`),
       });
     }
