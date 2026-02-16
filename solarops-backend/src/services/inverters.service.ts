@@ -7,13 +7,16 @@ export async function getInvertersService() {
   const inverters = await prisma.inverter.findMany({
     select: {
       id: true,
-      status: true,
+      siteId: true,
+      name: true,
       capacityKw: true,
+      status: true,
+      installedAt: true,
+      alerts: { select: { id: true, status: true } },
       site: { select: { name: true } },
       telemetry: {
         select: { acOutputKw: true, tempC: true, timestamp: true }
       },
-      alerts: { select: { id: true, resolved: true } }
     }
   })
 
@@ -29,16 +32,23 @@ export async function getInvertersService() {
       pr = (latestTelemetry.acOutputKw / inv.capacityKw) * 100
     }
 
-    const unresolvedAlerts = (inv.alerts as Alert[]).filter(alert => !alert.resolved).length
+    type Alert = { id: string; status: 'Open' | 'Acknowledged' | 'Resolved' }
+
+    const unresolvedAlerts = (inv.alerts as Alert[])
+      .filter(alert => alert.status !== 'Resolved').length
 
     return {
       id: inv.id,
-      site: inv.site.name,
+      siteId: inv.siteId,
+      name: inv.name,
+      capacityKw: inv.capacityKw,
       status: inv.status,
+      installedAt: inv.installedAt,
+      alerts: unresolvedAlerts,
+      site: inv.site.name,
       outputKw: latestTelemetry?.acOutputKw ?? 0,
       tempC: latestTelemetry?.tempC ?? 0,
       pr: +pr.toFixed(1),
-      alerts: unresolvedAlerts,
       lastUpdate: latestTelemetry?.timestamp ?? null
     }
   })

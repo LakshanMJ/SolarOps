@@ -21,7 +21,7 @@ model Site {
 model Inverter {
   id          String         @id @default(uuid())
   siteId      String
-  modelType   String
+  name        String
   capacityKw  Float
   status      InverterStatus
   installedAt DateTime
