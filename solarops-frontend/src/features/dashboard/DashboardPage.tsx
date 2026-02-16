@@ -12,6 +12,9 @@ import {
 } from 'recharts'
 import LiveAlertCard from '@/components/kpi/LiveAlertCard'
 import InverterHealth from '@/components/kpi/InverterHealth'
+import { useEffect, useState } from 'react';
+import { fetchData } from '@/utils/fetch';
+import { BACKEND_URLS } from '@/backendUrls';
 
 const data = [
   { name: 'Mon', value: 10 },
@@ -23,7 +26,22 @@ const data = [
   { name: 'Sun', value: 45 },
 ]
 
-export default function DashboardPage() {
+const DashboardPage = () => {
+  const [dashboardData, setDashboardData] = useState<any>(null)
+  console.log(dashboardData,'dashboardData')
+  async function fetchDashboardData() {
+    try {
+      const dashboardData = await fetchData(BACKEND_URLS.DASHBOARD)
+      setDashboardData(dashboardData)
+    } catch (err) {
+      console.error('Failed to load dashboard data:', err)
+    }
+  }
+
+  useEffect(() => {
+    fetchDashboardData()
+  }, [])
+
   return (
     <Stack spacing={3}>
       <Box
@@ -39,11 +57,11 @@ export default function DashboardPage() {
           mb: 3,
         }}
       >
-        <KpiCard label="Total Energy Today" value="12.4 MWh" status="good" />
-        <KpiCard label="Revenue Today" value="LKR 245,000" status="good" />
-        <KpiCard label="Active Alerts" value="3" status="warn" />
-        <KpiCard label="System Health" value="98.2%" status="good" />
-        <KpiCard label="Avg Performance Ratio" value="86%" status="bad" />
+        <KpiCard label="Total Energy Today" value={`${dashboardData?.totalEnergyTodayMWh || 0} MWh`} status="good" />
+        <KpiCard label="Revenue Today" value={`USD ${dashboardData?.revenueTodayUsd?.toLocaleString() || '--'}`} status="good" />
+        <KpiCard label="Active Alerts" value={dashboardData?.activeAlerts || 3} status="warn" />
+        <KpiCard label="System Health" value={dashboardData?.systemHealthPercent || "--"} status="good" />
+        <KpiCard label="Avg Performance Ratio" value={dashboardData?.avgPerformanceRatio || "--"} status="bad" />
       </Box>
 
       <ThemedCard
@@ -114,3 +132,5 @@ export default function DashboardPage() {
     </Stack>
   )
 }
+
+export default DashboardPage;
