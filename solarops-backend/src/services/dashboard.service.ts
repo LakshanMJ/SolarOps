@@ -29,14 +29,14 @@ export async function getDashboardKpisService() {
   // ------------------------
   // 3️⃣ Active alerts
   const activeAlerts = await prisma.alert.count({
-    where: { resolved: false }
+    where: { status: 'Open' }
   })
 
   // ------------------------
   // 4️⃣ System health
   const totalInverters = await prisma.inverter.count()
   const activeInverters = await prisma.inverter.count({
-    where: { status: 'Active' }
+    where: { status: 'Online' }
   })
   const systemHealthPercent = totalInverters === 0 ? 0 : (activeInverters / totalInverters) * 100
 
