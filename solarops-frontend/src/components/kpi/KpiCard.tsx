@@ -1,12 +1,12 @@
 import { Box, Typography } from '@mui/material';
 
-const KpiCard = ({ label, value, status }: { label: string; value: string; status?: 'good' | 'warn' | 'bad' }) => {
+const KpiCard = ({ label, value, status }: { label: string; value: string; status?: 'good' | 'warning' | 'critical' }) => {
   const statusColor =
     status === 'good'
       ? '#22c55e'
-      : status === 'warn'
+      : status === 'warning'
         ? '#facc15'
-        : status === 'bad'
+        : status === 'critical'
           ? '#ef4444'
           : '#38bdf8';
 
@@ -47,7 +47,7 @@ const KpiCard = ({ label, value, status }: { label: string; value: string; statu
       </Typography>
 
       <Typography variant="caption" sx={{ color: statusColor }}>
-        {status === 'good' ? 'Normal' : status === 'warn' ? 'Attention' : status === 'bad' ? 'Critical' : 'Live'}
+        {status === 'good' ? 'Normal' : status === 'warning' ? 'Attention' : status === 'critical' ? 'Critical' : ''}
       </Typography>
     </Box>
   );

@@ -27,20 +27,27 @@ const data = [
 ]
 
 const DashboardPage = () => {
+
   const [dashboardData, setDashboardData] = useState<any>(null)
-  console.log(dashboardData,'dashboardData')
-  async function fetchDashboardData() {
-    try {
-      const dashboardData = await fetchData(BACKEND_URLS.DASHBOARD)
-      setDashboardData(dashboardData)
-    } catch (err) {
-      console.error('Failed to load dashboard data:', err)
-    }
-  }
+  console.log(dashboardData, 'dashboardData')
 
   useEffect(() => {
+    async function fetchDashboardData() {
+      try {
+        const dashboardData = await fetchData(BACKEND_URLS.DASHBOARD)
+        setDashboardData(dashboardData)
+      } catch (err) {
+        console.error('Failed to load dashboard data:', err)
+      }
+    }
     fetchDashboardData()
+    // then poll every 15 seconds
+    const interval = setInterval(fetchDashboardData, 15000)
+
+    return () => clearInterval(interval) // cleanup on unmount
   }, [])
+
+  if (!dashboardData) return <div>Loading...</div>
 
   return (
     <Stack spacing={3}>
@@ -57,11 +64,11 @@ const DashboardPage = () => {
           mb: 3,
         }}
       >
-        <KpiCard label="Total Energy Today" value={`${dashboardData?.totalEnergyTodayMWh || 0} MWh`} status="good" />
-        <KpiCard label="Revenue Today" value={`USD ${dashboardData?.revenueTodayUsd?.toLocaleString() || '--'}`} status="good" />
-        <KpiCard label="Active Alerts" value={dashboardData?.activeAlerts || 3} status="warn" />
-        <KpiCard label="System Health" value={dashboardData?.systemHealthPercent || "--"} status="good" />
-        <KpiCard label="Avg Performance Ratio" value={dashboardData?.avgPerformanceRatio || "--"} status="bad" />
+        <KpiCard label="Total Energy Today" value={`${dashboardData?.totalEnergyTodayMWh || 0} MWh`} status={dashboardData?.totalEnergyStatus} />
+        <KpiCard label="Revenue Today" value={`USD ${dashboardData?.revenueTodayUsd?.toLocaleString() || '--'}`} status={dashboardData?.revenueStatus} />
+        <KpiCard label="Active Alerts" value={dashboardData?.activeAlerts || 3} status={dashboardData?.activeAlertsStatus} />
+        <KpiCard label="System Health" value={`${dashboardData?.systemHealthPercent || "--"}%`} status={dashboardData?.systemHealthStatus} />
+        <KpiCard label="Avg Performance Ratio" value={dashboardData?.avgPerformanceRatio || "--"} status={dashboardData?.prStatus} />
       </Box>
 
       <ThemedCard
@@ -76,7 +83,7 @@ const DashboardPage = () => {
         <Box sx={{ width: '100%', height: 300 }}>
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
-              data={data}
+              data={dashboardData?.weeklyEnergy || []}
               margin={{
                 top: 20,
                 right: 0,

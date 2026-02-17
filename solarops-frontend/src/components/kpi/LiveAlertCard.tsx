@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Box, Typography, List, ListItem, ListItemText, ListItemIcon } from '@mui/material';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
+import { fetchData } from '@/utils/fetch';
+import { BACKEND_URLS } from '@/backendUrls';
 
 interface Alert {
     id: string;
@@ -18,21 +20,38 @@ const severityColor = {
 
 export default function LiveAlertsFeed() {
     const [alerts, setAlerts] = useState<Alert[]>([]);
+    console.log(alerts, 'alerts')
+
+    // useEffect(() => {
+    //     const wsSimulator = setInterval(() => {
+    //         const newAlert: Alert = {
+    //             id: Math.random().toString(36).substr(2, 9),
+    //             severity: ['critical', 'warning', 'info'][Math.floor(Math.random() * 3)] as Alert['severity'],
+    //             message: `Inverter issue detected`,
+    //             timestamp: new Date().toISOString(),
+    //             inverterId: `INV-${Math.floor(Math.random() * 100)}`,
+    //         };
+    //         setAlerts(prev => [newAlert, ...prev].slice(0, 10));
+    //     }, 5000);
+
+    //     return () => clearInterval(wsSimulator);
+    // }, []);
 
     useEffect(() => {
-        const wsSimulator = setInterval(() => {
-            const newAlert: Alert = {
-                id: Math.random().toString(36).substr(2, 9),
-                severity: ['critical', 'warning', 'info'][Math.floor(Math.random() * 3)] as Alert['severity'],
-                message: `Inverter issue detected`,
-                timestamp: new Date().toISOString(),
-                inverterId: `INV-${Math.floor(Math.random() * 100)}`,
-            };
-            setAlerts(prev => [newAlert, ...prev].slice(0, 10));
-        }, 5000);
+        async function fetchAlerts() {
+            try {
+                const alertData = await fetchData(BACKEND_URLS.ALERTS)
+                setAlerts(alertData)
+            } catch (err) {
+                console.error('Failed to load alert data:', err)
+            }
+        }
+        fetchAlerts()
+        // then poll every 15 seconds
+        const interval = setInterval(fetchAlerts, 15000)
 
-        return () => clearInterval(wsSimulator);
-    }, []);
+        return () => clearInterval(interval) // cleanup on unmount
+    }, [])
 
     return (
         <>
@@ -76,7 +95,7 @@ export default function LiveAlertsFeed() {
                                 }
                                 secondary={
                                     <Typography variant="caption" sx={{ color: 'var(--text-muted)' }}>
-                                        {alert.timestamp.split('T')[1].split('.')[0]} | {alert.inverterId}
+                                        {/* {alert.timestamp.split('T')[1].split('.')[0]} | {alert.inverterId} */}
                                     </Typography>
                                 }
                             />
