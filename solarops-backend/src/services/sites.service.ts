@@ -50,6 +50,7 @@ export async function getSitesService() {
     return {
       id: site.id,
       name: site.name,
+      location: site.region,
       lat: site.latitude,
       lng: site.longitude,
       capacity: site.peakCapacityMw,

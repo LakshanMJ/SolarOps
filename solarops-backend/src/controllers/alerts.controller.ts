@@ -6,9 +6,23 @@ const prisma = new PrismaClient();
 export const getAlerts = async (req: Request, res: Response) => {
   const alerts = await prisma.alert.findMany({
     orderBy: { createdAt: 'desc' },
+    include: {
+      inverter: {
+        select: {
+          name: true,
+          site: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+    },
   });
+
   res.json(alerts);
 };
+
 
 export const updateAlertStatus = async (req: Request, res: Response) => {
   let { id } = req.params;
