@@ -1,10 +1,12 @@
 import SolarDataGrid from "@/utils/SolarDataGrid";
 import { Box, Chip, Typography } from "@mui/material";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { ColumnDef } from '@tanstack/react-table'
 import { type GridColDef, type GridRenderCellParams } from '@mui/x-data-grid';
 import SolarChip from "@/utils/SolarStatusChip";
 import InverterDrawer from "@/components/kpi/InverterDrawer";
+import { fetchData } from "@/utils/fetch";
+import { BACKEND_URLS } from "@/backendUrls";
 
 const inverterData = [
   {
@@ -72,69 +74,49 @@ const Inverters = () => {
 
   const [selectedInverter, setSelectedInverter] = useState<any>(null);
   const [selectedRowIds, setSelectedRowIds] = useState<number[]>([]);
-  
-  // const columns2 = useMemo<ColumnDef<Inverter>[]>(() => [
-  //   { field: 'inverterId', headerName: 'Inverter ID', flex: 1.2 },
-  //   { header: 'Site', accessorKey: 'site' },
-  //   {
-  //     header: 'Status',
-  //     accessorKey: 'status',
-  //     cell: info => {
-  //       const v = info.getValue<string>()
-  //       const color =
-  //         v === 'HEALTHY' ? 'success' : v === 'WARNING' ? 'warning' : 'error'
-  //       return <Chip size="small" color={color} label={v} />
-  //     },
-  //   },
-  //   { header: 'Output (kW)', accessorKey: 'outputKw', cell: info => info.getValue<number>().toFixed(0) },
-  //   { header: 'Temp (°C)', accessorKey: 'temperature', cell: info => info.getValue<number>().toFixed(1) },
-  //   { header: 'PR (%)', accessorKey: 'pr', cell: info => `${info.getValue<number>().toFixed(1)}%` },
-  //   {
-  //     header: 'Alerts',
-  //     accessorKey: 'activeAlerts',
-  //     cell: info => (
-  //       <Typography color={info.getValue<number>() > 0 ? 'error' : 'text.secondary'}>
-  //         {info.getValue<number>()}
-  //       </Typography>
-  //     ),
-  //   },
-  //   {
-  //     header: 'Last Update',
-  //     accessorKey: 'lastUpdate',
-  //     cell: info => <Typography color="text.secondary">{info.getValue<string>()}</Typography>,
-  //   },
-  // ], [])
+  const [inverterData, setInverterData] = useState<Inverter[]>([]);
+  console.log(inverterData, 'inverterData')
 
-  const columns = useMemo<GridColDef<Inverter>[]>(() => [
-    { field: 'inverterId', headerName: 'Inverter ID', flex: 1.2 },
-    { field: 'site', headerName: 'Site', align: 'center', headerAlign: 'center', flex: 1.2 },
+  const columns = useMemo<GridColDef[]>(() => [
+    { field: 'name', headerName: 'Inverter ID', flex: 1 },
+
+    { field: 'capacityKw', headerName: 'Capacity (kW)', align: 'center', headerAlign: 'center', flex: 1 },
+
+    { field: 'site', headerName: 'Site', align: 'center', headerAlign: 'center', flex: 1.3 },
+
     {
       field: 'status',
       headerName: 'Status',
       align: 'center',
       headerAlign: 'center',
-      flex: 0.9,
+      flex: 0.8,
       renderCell: (params: GridRenderCellParams) => (
         <SolarChip status={params?.value} />
       ),
     },
+
     {
-      field: 'currentOutput',
+      field: 'outputKw',
       headerName: 'Current Output (kW)',
       type: 'number',
       align: 'center',
       headerAlign: 'center',
-      flex: 1.4,
+      flex: 0.9,
     },
-    { field: 'temp', headerName: 'Temp (°C)', type: 'number', align: 'center', headerAlign: 'center', flex: 0.8 },
-    { field: 'pr', headerName: 'PR (%)', type: 'number', sortable: true, align: 'center', headerAlign: 'center', flex: 0.8 },
+
+    { field: 'tempC', headerName: 'Temp (°C)', type: 'number', align: 'center', headerAlign: 'center', flex: 0.9 },
+
+    { field: 'pr', headerName: 'PR (%)', type: 'number', sortable: true, align: 'center', headerAlign: 'center', flex: 0.9 },
+
     { field: 'alerts', headerName: 'Alerts', align: 'center', headerAlign: 'center', flex: 0.8 },
-    { field: 'lastUpdate', headerName: 'Last Update', align: 'center', headerAlign: 'center', flex: 1.2 },
+
+    { field: 'lastUpdate', headerName: 'Last Update', align: 'center', headerAlign: 'center', flex: 1.3 },
+
     {
       field: 'actions',
       headerName: 'Actions',
       headerAlign: 'center',
-      flex: 0.9,
+      flex: 0.7,
       renderCell: (params) => (
         <Box
           sx={{
@@ -158,7 +140,20 @@ const Inverters = () => {
       sortable: false,
       filterable: false,
     }
-  ], [])
+  ], []);
+
+  useEffect(() => {
+    async function fetchInverters() {
+      try {
+        const inverterData = await fetchData(BACKEND_URLS.INVERTERS);
+        setInverterData(inverterData);
+      } catch (err) {
+        console.error('Failed to load inverter data:', err);
+      }
+    }
+
+    fetchInverters();
+  }, []);
 
   return (
 

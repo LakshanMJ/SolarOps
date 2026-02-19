@@ -8,8 +8,11 @@ interface Alert {
     id: string;
     severity: 'critical' | 'warning' | 'info';
     message: string;
-    timestamp: string;
+    createdAt: string;
     inverterId: string;
+    inverter: {
+        name: string;
+    }
 }
 
 const severityColor = {
@@ -41,17 +44,25 @@ export default function LiveAlertsFeed() {
         async function fetchAlerts() {
             try {
                 const alertData = await fetchData(BACKEND_URLS.ALERTS)
-                setAlerts(alertData)
+
+                // Map severity to lowercase
+                const mappedAlerts = alertData.map((a: any) => ({
+                    ...a,
+                    severity: a.severity.toLowerCase(), // Warning -> warning, Critical -> critical 
+                }))
+
+                setAlerts(mappedAlerts)
             } catch (err) {
                 console.error('Failed to load alert data:', err)
             }
         }
+
         fetchAlerts()
-        // then poll every 15 seconds
         const interval = setInterval(fetchAlerts, 15000)
 
         return () => clearInterval(interval) // cleanup on unmount
     }, [])
+
 
     return (
         <>
@@ -95,7 +106,7 @@ export default function LiveAlertsFeed() {
                                 }
                                 secondary={
                                     <Typography variant="caption" sx={{ color: 'var(--text-muted)' }}>
-                                        {/* {alert.timestamp.split('T')[1].split('.')[0]} | {alert.inverterId} */}
+                                        {alert.createdAt.split('T')[1].split('.')[0]} | {alert?.inverter?.name}
                                     </Typography>
                                 }
                             />
