@@ -55,3 +55,16 @@ export async function getInvertersService() {
 
   return inverterData
 }
+
+export async function createInverterService(payload: {
+  name: string
+  siteId: string
+  manufacturerId?: string
+  capacityKw: number
+  status: 'Online' | 'Degraded' | 'Critical' | 'Offline'
+  installedAt: Date
+}) {
+  return prisma.inverter.create({
+    data: payload
+  })
+}

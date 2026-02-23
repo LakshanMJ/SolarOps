@@ -6,6 +6,7 @@ import siteRoutes from './routes/sites.routes.js'
 import invertersRoutes from './routes/inverters.routes.js'
 import startTelemetryWorker from './jobs/telemetryWorker.js';
 import alertsRoutes from './routes/alerts.routes.js'
+import manufacturersRoutes from './routes/manufacturers.routes.js'
 
 startTelemetryWorker();
 
@@ -21,5 +22,6 @@ app.use('/api/dashboard', dashboardRoutes)
 app.use('/api/sites', siteRoutes)
 app.use('/api/inverters', invertersRoutes)
 app.use('/api/alerts', alertsRoutes);
+app.use('/api/manufacturers', manufacturersRoutes);
 
 export default app
