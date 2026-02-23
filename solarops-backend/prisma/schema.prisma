@@ -72,3 +72,9 @@ enum InverterStatus {
   Offline
 }
 
+enum SiteHealth {
+  Good
+  Warning
+  Critical
+  Unknown
+}

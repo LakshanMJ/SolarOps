@@ -2,6 +2,24 @@ import { prisma } from '../db/prisma.js'
 
 type Alert = { id: string; status: string }
 
+function calculateSiteHealth(inverters: { status: string }[]) {
+  if (!inverters.length) return 'Unknown'
+
+  const weights: Record<string, number> = {
+    Online: 1,
+    Degraded: 0.6,
+    Critical: 0.3,
+    Offline: 0,
+  }
+
+  const totalScore = inverters.reduce((sum, inv) => sum + (weights[inv.status] ?? 0), 0)
+  const score = totalScore / inverters.length
+
+  if (score >= 0.85) return 'Good'
+  if (score >= 0.6) return 'Warning'
+  return 'Critical'
+}
+
 export async function getSitesService() {
   // Fetch all sites with inverters, telemetry, and alerts
   const sites = await prisma.site.findMany({
@@ -47,6 +65,9 @@ export async function getSitesService() {
       avgPR = inverterPRs.reduce((a, b) => a + b, 0) / inverterPRs.length
     }
 
+    // Compute health
+    const health = calculateSiteHealth(site.inverters)
+
     return {
       id: site.id,
       name: site.name,
@@ -56,7 +77,8 @@ export async function getSitesService() {
       capacity: site.peakCapacityMw,
       activeInverters,
       alerts: alertsCount,
-      avgPR: +avgPR.toFixed(1)
+      avgPR: +avgPR.toFixed(1),
+      health
     }
   })
 
