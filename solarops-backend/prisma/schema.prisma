@@ -7,6 +7,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model InverterManufacturer {
+  id           String    @id @default(uuid())
+  name         String
+  country      String?
+  website      String?
+  contactEmail String?
+  contactPhone String?
+  notes        String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  inverters    Inverter[]  // Relation: One manufacturer can have many inverters
+}
+
 model Site {
   id             String     @id @default(uuid())
   name           String
@@ -19,15 +32,18 @@ model Site {
 }
 
 model Inverter {
-  id          String         @id @default(uuid())
-  siteId      String
-  name        String
-  capacityKw  Float
-  status      InverterStatus
-  installedAt DateTime
-  alerts      Alert[]
-  site        Site           @relation(fields: [siteId], references: [id])
-  telemetry   Telemetry[]
+  id             String              @id @default(uuid())
+  siteId         String
+  manufacturerId String?
+  name           String
+  capacityKw     Float
+  status         InverterStatus
+  installedAt    DateTime
+  alerts         Alert[]
+  telemetry      Telemetry[]
+  
+  site           Site                @relation(fields: [siteId], references: [id])
+  manufacturer   InverterManufacturer? @relation(fields: [manufacturerId], references: [id])
 }
 
 model Telemetry {
