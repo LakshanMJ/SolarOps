@@ -4,4 +4,5 @@ export const BACKEND_URLS = {
   INVERTERS: 'http://localhost:4000/api/inverters',
   SITES: 'http://localhost:4000/api/sites',
   ALERTS: 'http://localhost:4000/api/alerts',
+  MANUFACTURERS: 'http://localhost:4000/api/manufacturers',
 }

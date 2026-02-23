@@ -9,9 +9,10 @@ import 'leaflet/dist/leaflet.css';
 // ];
 
 const healthSvg: Record<string, string> = {
-  healthy: '/pin.svg',
-  warning: '/pin.svg',
-  critical: '/pin.svg',
+  Good: '/site_map_green_pin_good.svg',
+  Warning: '/site_map_yellow_pin_warning.svg',
+  Critical: '/site_map_red_pin_critical.svg',
+  Unknown: '/site_map_gray_pin_unknown.svg',
 };
 
 const createSvgIcon = (url: string) =>
@@ -23,7 +24,7 @@ const createSvgIcon = (url: string) =>
   });
 
 export default function SitesMap({sites}:any) {
-  console.log(JSON.stringify(sites), 'sites in map')
+  // console.log(JSON.stringify(sites), 'sites in map')
   return (
     <MapContainer
       center={[6.9271, 79.8612]}
@@ -39,7 +40,7 @@ export default function SitesMap({sites}:any) {
         <Marker
           key={site.id}
           position={[site.lat, site.lng]}
-          icon={createSvgIcon(healthSvg[site.health??'good'])}
+          icon={createSvgIcon(healthSvg[site.health])}
         >
           <Popup>
             <strong>{site.name}</strong>

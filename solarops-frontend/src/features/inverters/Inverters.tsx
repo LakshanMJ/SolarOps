@@ -1,63 +1,11 @@
 import SolarDataGrid from "@/utils/SolarDataGrid";
-import { Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, TextField, Typography } from "@mui/material";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, TextField, Typography } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
-import type { ColumnDef } from '@tanstack/react-table'
 import { type GridColDef, type GridRenderCellParams } from '@mui/x-data-grid';
 import SolarChip from "@/utils/SolarStatusChip";
 import InverterDrawer from "@/components/kpi/InverterDrawer";
 import { fetchData } from "@/utils/fetch";
 import { BACKEND_URLS } from "@/backendUrls";
-
-const inverterData = [
-  {
-    id: 1,
-    inverterId: 'INV-101',
-    site: 'Site A',
-    status: 'Online',
-    currentOutput: 120,
-    temp: 45,
-    pr: 88,
-    alerts: 0,
-    lastUpdate: '2026-01-22 08:12',
-    details: 'Inverter operating normally',
-  },
-  {
-    id: 2,
-    inverterId: 'INV-102',
-    site: 'Site B',
-    status: 'Degraded',
-    currentOutput: 95,
-    temp: 50,
-    pr: 82,
-    alerts: 2,
-    lastUpdate: '2026-01-21 14:35',
-    details: 'Slight underperformance',
-  },
-  {
-    id: 3,
-    inverterId: 'INV-103',
-    site: 'Site C',
-    status: 'Critical',
-    currentOutput: 40,
-    temp: 70,
-    pr: 60,
-    alerts: 5,
-    lastUpdate: '2026-01-20 12:20',
-    details: 'Inverter faulty',
-  },
-  {
-    id: 4,
-    inverterId: 'INV-108',
-    site: 'Site X',
-    status: 'Offline',
-    currentOutput: 70,
-    temp: 90,
-    pr: 25,
-    alerts: 3,
-    lastUpdate: '2026-01-19 10:00',
-    details: 'Inverter offline',
-  },
-]
 
 export type Inverter = {
   id: string
@@ -76,13 +24,18 @@ const Inverters = () => {
   const [selectedRowIds, setSelectedRowIds] = useState<number[]>([]);
   const [inverterData, setInverterData] = useState<Inverter[]>([]);
   const [openAddInverterModal, setOpenAddInverterModal] = useState(false);
+  const [sites, setSites] = useState<any[]>([]);
+  const [manufacturers, setManufacturers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false)
+  console.log(manufacturers, 'manufacturers')
   const [form, setForm] = useState({
     name: "",
-    model: "",
+    manufacturer: "",
+    serial_number: "",
     capacity: "",
-    siteId: ""
+    site_id: ""
   });
-  console.log(inverterData, 'inverterData')
+  console.log(form, 'form')
 
   const columns = useMemo<GridColDef[]>(() => [
     { field: 'name', headerName: 'Inverter ID', flex: 1 },
@@ -149,6 +102,62 @@ const Inverters = () => {
     }
   ], []);
 
+  const fetchManufacturer = async () => {
+    try {
+      const manufacturerData = await fetchData(BACKEND_URLS.MANUFACTURERS);
+      setManufacturers(manufacturerData);
+    } catch (err) {
+      console.error("Failed to load manufacturer data:", err);
+    }
+  };
+
+  const fetchSites = async () => {
+    try {
+      const siteData = await fetchData(BACKEND_URLS.SITES);
+      setSites(siteData);
+    } catch (err) {
+      console.error("Failed to load site data:", err);
+    }
+  };
+
+  const saveInverter = async () => {
+    setLoading(true)
+
+    try {
+      // Replace these values with your form state
+      // const payload = {
+      //   name: "INV-01",
+      //   siteId: site_id,
+      //   manufacturerId: manufacturerId, // optional
+      //   capacityKw: 50,
+      //   status: "ACTIVE", // must match your enum exactly
+      //   installedAt: new Date().toISOString()
+      // }
+
+      const res = await fetch(BACKEND_URLS.INVERTERS, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(form)
+      })
+
+      if (!res.ok) {
+        throw new Error('Failed to save inverter')
+      }
+
+      const data = await res.json()
+      console.log('Inverter saved:', data)
+      alert('Inverter saved successfully!') // browser alert okay here
+
+    } catch (error: unknown) {
+      console.error(error)
+      alert('Error saving inverter: ' + (error as any).message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   useEffect(() => {
     async function fetchInverters() {
       try {
@@ -160,6 +169,8 @@ const Inverters = () => {
     }
 
     fetchInverters();
+    fetchSites();
+    fetchManufacturer();
   }, []);
 
   return (
@@ -199,7 +210,6 @@ const Inverters = () => {
         onClose={() => setSelectedInverter(null)}
         inverter={selectedInverter}
       />
-
       <Dialog
         open={openAddInverterModal}
         onClose={() => setOpenAddInverterModal(false)}
@@ -217,15 +227,46 @@ const Inverters = () => {
               mt: 1
             }}
           >
-            <TextField label="Inverter Name" fullWidth />
-            <TextField label="Model Type" fullWidth />
-            <TextField label="Capacity (kW)" type="number" fullWidth />
+            <TextField
+              label="Inverter Name"
+              fullWidth
+              onChange={(e) =>
+                setForm({ ...form, name: e.target.value })
+              } />
+            <TextField
+              select
+              label="Manufacturer"
+              value={form.manufacturer}
+              onChange={(e) =>
+                setForm({ ...form, manufacturer: e.target.value })
+              }
+              fullWidth
+            >
+              {manufacturers.map((manufacturer) => (
+                <MenuItem key={manufacturer.id} value={manufacturer.id}>
+                  {manufacturer.name}
+                </MenuItem>
+              ))}
+            </TextField>
+            <TextField
+              label="Serial Number"
+              fullWidth
+              onChange={(e) =>
+                setForm({ ...form, serial_number: e.target.value })
+              } />
+            <TextField
+              label="Capacity (kW)"
+              type="number"
+              fullWidth
+              onChange={(e) =>
+                setForm({ ...form, capacity: e.target.value })
+              } />
             <TextField
               select
               label="Site"
-              value={form.siteId}
+              value={form.site_id}
               onChange={(e) =>
-                setForm({ ...form, siteId: e.target.value })
+                setForm({ ...form, site_id: e.target.value })
               }
               fullWidth
             >
@@ -242,7 +283,9 @@ const Inverters = () => {
           <Button onClick={() => setOpenAddInverterModal(false)}>
             Cancel
           </Button>
-          <Button variant="contained">
+          <Button
+            variant="contained"
+            onClick={() => saveInverter()}>
             Save Inverter
           </Button>
         </DialogActions>
