@@ -17,9 +17,9 @@ app.use(cors())
 app.use(express.json())
 
 
-app.use('/dashboard', dashboardRoutes)
-app.use('/sites', siteRoutes)
-app.use('/inverters', invertersRoutes)
-app.use('/alerts', alertsRoutes);
+app.use('/api/dashboard', dashboardRoutes)
+app.use('/api/sites', siteRoutes)
+app.use('/api/inverters', invertersRoutes)
+app.use('/api/alerts', alertsRoutes);
 
 export default app

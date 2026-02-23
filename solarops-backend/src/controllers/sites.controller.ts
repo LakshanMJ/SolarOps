@@ -1,6 +1,7 @@
+import { prisma } from '../db/prisma.js'
 import { getSitesService } from '../services/sites.service.js'
 
-export async function getSites(req:any, res:any) {
+export async function getSites(req: any, res: any) {
   try {
     const sites = await getSitesService()
     res.json(sites)
@@ -9,3 +10,31 @@ export async function getSites(req:any, res:any) {
     res.status(500).json({ error: 'Failed to fetch sites' })
   }
 }
+
+// NEW createSite
+export const createSite = async (req, res) => {
+  console.log("Received body:", req.body);
+  try {
+    const { name, latitude, longitude, region, peakCapacityMw } = req.body;
+
+    // Basic validation
+    if (!name || latitude == null || longitude == null || !region || !peakCapacityMw) {
+      return res.status(400).json({ error: 'All fields are required' });
+    }
+
+    const newSite = await prisma.site.create({
+      data: {
+        name,
+        latitude: parseFloat(latitude),
+        longitude: parseFloat(longitude),
+        region,
+        peakCapacityMw: parseFloat(peakCapacityMw),
+      },
+    });
+
+    res.status(201).json(newSite);
+  } catch (error) {
+    console.error('Error creating site:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
