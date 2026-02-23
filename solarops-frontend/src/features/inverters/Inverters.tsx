@@ -1,5 +1,5 @@
 import SolarDataGrid from "@/utils/SolarDataGrid";
-import { Box, Chip, Typography } from "@mui/material";
+import { Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, TextField, Typography } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import type { ColumnDef } from '@tanstack/react-table'
 import { type GridColDef, type GridRenderCellParams } from '@mui/x-data-grid';
@@ -75,6 +75,13 @@ const Inverters = () => {
   const [selectedInverter, setSelectedInverter] = useState<any>(null);
   const [selectedRowIds, setSelectedRowIds] = useState<number[]>([]);
   const [inverterData, setInverterData] = useState<Inverter[]>([]);
+  const [openAddInverterModal, setOpenAddInverterModal] = useState(false);
+  const [form, setForm] = useState({
+    name: "",
+    model: "",
+    capacity: "",
+    siteId: ""
+  });
   console.log(inverterData, 'inverterData')
 
   const columns = useMemo<GridColDef[]>(() => [
@@ -162,6 +169,17 @@ const Inverters = () => {
         Inverters
       </Typography>
 
+      <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+        <Button
+          variant="contained"
+          color="primary"
+          sx={{ mt: 2 }}
+          onClick={() => setOpenAddInverterModal(true)}
+        >
+          Add Inverter
+        </Button>
+      </Box>
+
       <Box sx={{ height: 400, width: '100%', mt: 2 }}>
         <SolarDataGrid
           rows={inverterData}
@@ -181,6 +199,54 @@ const Inverters = () => {
         onClose={() => setSelectedInverter(null)}
         inverter={selectedInverter}
       />
+
+      <Dialog
+        open={openAddInverterModal}
+        onClose={() => setOpenAddInverterModal(false)}
+        fullWidth
+        maxWidth="sm"
+      >
+        <DialogTitle>Add New Inverter</DialogTitle>
+        <DialogContent>
+          <Box
+            component="form"
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+              mt: 1
+            }}
+          >
+            <TextField label="Inverter Name" fullWidth />
+            <TextField label="Model Type" fullWidth />
+            <TextField label="Capacity (kW)" type="number" fullWidth />
+            <TextField
+              select
+              label="Site"
+              value={form.siteId}
+              onChange={(e) =>
+                setForm({ ...form, siteId: e.target.value })
+              }
+              fullWidth
+            >
+              {sites.map((site) => (
+                <MenuItem key={site.id} value={site.id}>
+                  {site.name}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Box>
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={() => setOpenAddInverterModal(false)}>
+            Cancel
+          </Button>
+          <Button variant="contained">
+            Save Inverter
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

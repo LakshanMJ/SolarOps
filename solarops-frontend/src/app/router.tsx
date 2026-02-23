@@ -14,6 +14,7 @@ export const router = createBrowserRouter([
       { path: 'alerts', element: <AlertsPage /> }, // relative path
       { path: 'sites', element: <Sites /> }, // relative path
       { path: 'inverters', element: <Inverters /> }, // relative path
+      // { path: 'admin', element: <AdminPage /> },
     ],
   },
 ])

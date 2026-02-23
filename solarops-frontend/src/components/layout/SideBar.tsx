@@ -16,6 +16,7 @@ const SideBar = () => {
     { label: 'Control Room', path: '/control-room' },
     { label: 'Maintenance', path: '/maintenance' },
     { label: 'Reports', path: '/reports' },
+    { label: 'Admin', path: '/admin' },
   ];
 
   return (

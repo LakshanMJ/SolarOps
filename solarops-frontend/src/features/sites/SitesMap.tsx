@@ -2,11 +2,11 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
-const sites = [
-  { id: 1, name: 'Site A', lat: 6.9271, lng: 79.8612, health: 'healthy', activeInverters: 12 },
-  { id: 2, name: 'Site B', lat: 6.9147, lng: 79.9722, health: 'warning', activeInverters: 8 },
-  { id: 3, name: 'Site C', lat: 6.9000, lng: 79.8500, health: 'critical', activeInverters: 3 },
-];
+// const sites = [
+//   { id: 1, name: 'Site A', lat: 6.9271, lng: 79.8612, health: 'healthy', activeInverters: 12 },
+//   { id: 2, name: 'Site B', lat: 6.9147, lng: 79.9722, health: 'warning', activeInverters: 8 },
+//   { id: 3, name: 'Site C', lat: 6.9000, lng: 79.8500, health: 'critical', activeInverters: 3 },
+// ];
 
 const healthSvg: Record<string, string> = {
   healthy: '/pin.svg',
@@ -22,7 +22,8 @@ const createSvgIcon = (url: string) =>
     popupAnchor: [0, -40],
   });
 
-export default function SitesMap() {
+export default function SitesMap({sites}:any) {
+  console.log(JSON.stringify(sites), 'sites in map')
   return (
     <MapContainer
       center={[6.9271, 79.8612]}
@@ -38,7 +39,7 @@ export default function SitesMap() {
         <Marker
           key={site.id}
           position={[site.lat, site.lng]}
-          icon={createSvgIcon(healthSvg[site.health])}
+          icon={createSvgIcon(healthSvg[site.health??'good'])}
         >
           <Popup>
             <strong>{site.name}</strong>
