@@ -35,10 +35,12 @@ model Inverter {
   id             String              @id @default(uuid())
   siteId         String
   manufacturerId String?
+  serialNumber   String?
   name           String
   capacityKw     Float
+  image          String?
   status         InverterStatus
-  installedAt    DateTime
+  installedAt    DateTime @default(now())
   alerts         Alert[]
   telemetry      Telemetry[]
   

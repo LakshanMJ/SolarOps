@@ -60,10 +60,14 @@ export async function createInverterService(payload: {
   name: string
   siteId: string
   manufacturerId?: string
+  serialNumber?: string
   capacityKw: number
+  image?: string | null
   status: 'Online' | 'Degraded' | 'Critical' | 'Offline'
   installedAt: Date
 }) {
+
+  console.log(payload,'fucking payload')
   return prisma.inverter.create({
     data: payload
   })

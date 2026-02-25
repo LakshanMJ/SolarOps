@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Inverter" ALTER COLUMN "installedAt" SET DEFAULT CURRENT_TIMESTAMP;
