@@ -115,6 +115,7 @@ const Sites = () => {
             else alert("Something went wrong");
         }
     };
+
     useEffect(() => {
         fetchSites();
     }, []);
