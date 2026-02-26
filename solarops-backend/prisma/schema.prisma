@@ -28,6 +28,7 @@ model Site {
   region         String
   peakCapacityMw Float
   createdAt      DateTime   @default(now())
+  deletedAt      DateTime? 
   inverters      Inverter[]
 }
 

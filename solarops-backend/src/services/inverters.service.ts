@@ -59,7 +59,7 @@ export async function getInvertersService() {
   return inverterData;
 }
 
-export async function createOrUpdateInverterService(payload: {
+export async function createOrUpdateInverterService(payload: {   // CHANGE THIS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   id?: string // Added ID to the payload to check for existence
   name: string
   siteId: string

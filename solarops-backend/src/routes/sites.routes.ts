@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { getSites, createSite } from '../controllers/sites.controller.js'
+import { getSites, createSite, deleteSite } from '../controllers/sites.controller.js'
 
 const router = Router()
 
@@ -8,5 +8,8 @@ router.get('/', getSites);
 
 // Create a new site
 router.post('/', createSite);   
+
+// Delete a new site
+router.delete("/:id", deleteSite);
 
 export default router

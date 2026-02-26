@@ -1,5 +1,7 @@
+import type { NextFunction } from 'express'
 import { prisma } from '../db/prisma.js'
-import { getSitesService } from '../services/sites.service.js'
+import { deleteSiteService, getSitesService } from '../services/sites.service.js'
+import { Request, Response } from "express";
 
 export async function getSites(req: any, res: any) {
   try {
@@ -36,5 +38,19 @@ export const createSite = async (req, res) => {
   } catch (error) {
     console.error('Error creating site:', error);
     res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+export const deleteSite = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    const result = await deleteSiteService(id);
+
+    res.status(200).json(result);
+  } catch (error: any) {
+    res.status(404).json({
+      message: error.message || "Failed to delete site",
+    });
   }
 };

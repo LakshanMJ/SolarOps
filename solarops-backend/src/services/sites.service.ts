@@ -23,6 +23,9 @@ function calculateSiteHealth(inverters: { status: string }[]) {
 export async function getSitesService() {
   // Fetch all sites with inverters, telemetry, and alerts
   const sites = await prisma.site.findMany({
+    where: {
+      deletedAt: null, // ✅ hide soft-deleted records
+    },
     select: {
       id: true,
       name: true,
@@ -83,4 +86,25 @@ export async function getSitesService() {
   })
 
   return siteData
+}
+
+export async function deleteSiteService(siteId: string) {
+  // check existence first
+  const site = await prisma.site.findUnique({
+    where: { id: siteId },
+  });
+
+  if (!site) {
+    throw new Error("Site not found");
+  }
+
+  // ✅ SOFT DELETE (instead of hard delete)
+  await prisma.site.update({
+    where: { id: siteId },
+    data: {
+      deletedAt: new Date(),
+    },
+  });
+
+  return { message: "Site deleted successfully" };
 }
