@@ -1,4 +1,4 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, TextField, Typography } from "@mui/material";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, MenuItem, TextField, Typography } from "@mui/material";
 import SitesMap from "./SitesMap";
 import { type GridColDef } from "@mui/x-data-grid";
 import SolarDataGrid from "@/utils/SolarDataGrid";
@@ -6,12 +6,20 @@ import { useEffect, useState } from "react";
 import { fetchData } from "@/utils/fetch";
 import { BACKEND_URLS } from "@/backendUrls";
 import { MapContainer, Marker, TileLayer, useMapEvents } from "react-leaflet";
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteModal from "@/utils/deleteModal";
 
 const Sites = () => {
 
     const [sites, setSites] = useState<Site[]>([]);
     const [openAddSiteModal, setOpenAddSiteModal] = useState(false);
     const [openMap, setOpenMap] = useState(false);
+    const [siteDeleteModal, setSiteDeleteModal] = useState({
+        show: false,
+        id: null as string | null,
+    });
+    const [activeSiteId, setActiveSiteId] = useState<string | null>(null);
     const [form, setForm] = useState<{
         name: string;
         region: string;
@@ -35,6 +43,33 @@ const Sites = () => {
         { field: 'activeInverters', headerName: 'Active Inverters', type: 'number', flex: 1, minWidth: 140, align: 'center', headerAlign: 'center' },
         { field: 'alerts', headerName: 'Alerts Count', type: 'number', flex: 1, minWidth: 120, align: 'center', headerAlign: 'center' },
         { field: 'avgPR', headerName: 'Avg PR (%)', type: 'number', sortable: true, flex: 1, minWidth: 120, align: 'center', headerAlign: 'center' },
+        {
+            field: 'actions',
+            headerName: 'Actions',
+            sortable: false,
+            filterable: false,
+            flex: 1,
+            minWidth: 140,
+            align: 'center',
+            headerAlign: 'center',
+            renderCell: (params) => (
+                <Box>
+                    <IconButton
+                        onClick={() => setActiveSiteId(params.row.id)}
+                        size="small"
+                    >
+                        <EditIcon />
+                    </IconButton>
+
+                    <IconButton
+                        onClick={() => setSiteDeleteModal({ show: true, id: params.row.id })}
+                        size="small"
+                    >
+                        <DeleteIcon />
+                    </IconButton>
+                </Box>
+            ),
+        },
     ];
 
     const MapClickHandler = ({ setForm, form }) => {
@@ -116,6 +151,21 @@ const Sites = () => {
         }
     };
 
+    const handleDeleteSites = async () => {
+        if (!siteDeleteModal.id) return;
+
+        try {
+            await fetchData(
+                `${BACKEND_URLS.SITES}/${siteDeleteModal.id}`,
+                { method: "DELETE" }
+            );
+
+            await fetchSites(); // refresh list
+        } catch (err) {
+            console.error("Delete failed:", err);
+        }
+    };
+
     useEffect(() => {
         fetchSites();
     }, []);
@@ -130,7 +180,7 @@ const Sites = () => {
                     variant="contained"
                     color="primary"
                     sx={{ mb: 2 }}
-                    onClick={() => setOpenAddSiteModal(true)}
+                    onClick={() => setActiveSiteId('new')}
                 >
                     Add Site
                 </Button>
@@ -254,6 +304,17 @@ const Sites = () => {
                     </Button>
                 </DialogActions>
             </Dialog>
+
+            <DeleteModal
+                open={siteDeleteModal.show}
+                onClose={() =>
+                    setSiteDeleteModal({
+                        ...siteDeleteModal,
+                        show: false,
+                    })
+                }
+                onConfirm={handleDeleteSites}
+            />
         </>
     );
 }

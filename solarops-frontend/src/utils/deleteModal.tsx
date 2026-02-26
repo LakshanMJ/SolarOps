@@ -1,68 +1,60 @@
 import {
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogContentText,
-    DialogActions,
-    Button
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button,
 } from "@mui/material";
-import { fetchData } from "./fetch";
-import { BACKEND_URLS } from "@/backendUrls";
 
-const deleteModal = ({ deleteModalShow, setDeleteModalShow, id, fetchInverters }: any) => {
+type DeleteModalProps = {
+  open: boolean;
+  onClose: () => void;
+  onConfirm: () => Promise<void> | void;
+  title?: string;
+  message?: string;
+};
 
-    const handleDelete = async () => {
-        try {
-            await fetchData(`${BACKEND_URLS.INVERTERS}/${id}`, {
-                method: "DELETE",
-            });
-            await fetchInverters();
-            await setDeleteModalShow(false);
-        } catch (err) {
-            console.error("Failed to delete inverter:", err);
-        }
-    };
+const DeleteModal = ({
+  open,
+  onClose,
+  onConfirm,
+  title = "Delete Confirmation",
+  message = "Are you sure you want to delete this item? This action cannot be undone.",
+}: DeleteModalProps) => {
 
-    return (
-        <>
-            {deleteModalShow && (
-                <Dialog
-                    open={deleteModalShow}
-                    onClose={() => setDeleteModalShow(false)}
-                    maxWidth="xs"
-                    fullWidth
-                >
-                    <DialogTitle sx={{ fontWeight: 600 }}>
-                        Delete Confirmation
-                    </DialogTitle>
+  const handleDelete = async () => {
+    await onConfirm();
+    onClose();
+  };
 
-                    <DialogContent>
-                        <DialogContentText>
-                            Are you sure you want to delete this item?
-                            This action cannot be undone.
-                        </DialogContentText>
-                    </DialogContent>
+  return (
+    <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
+      <DialogTitle sx={{ fontWeight: 600 }}>
+        {title}
+      </DialogTitle>
 
-                    <DialogActions sx={{ padding: "16px 24px" }}>
-                        <Button
-                            variant="outlined"
-                            onClick={() => setDeleteModalShow(false)}
-                        >
-                            Cancel
-                        </Button>
+      <DialogContent>
+        <DialogContentText>
+          {message}
+        </DialogContentText>
+      </DialogContent>
 
-                        <Button
-                            variant="contained"
-                            color="error"
-                            onClick={handleDelete}
-                        >
-                            Delete
-                        </Button>
-                    </DialogActions>
-                </Dialog>
-            )}
-        </>
-    )
-}
+      <DialogActions sx={{ padding: "16px 24px" }}>
+        <Button variant="outlined" onClick={onClose}>
+          Cancel
+        </Button>
 
-export default deleteModal;
+        <Button
+          variant="contained"
+          color="error"
+          onClick={handleDelete}
+        >
+          Delete
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
+
+export default DeleteModal;

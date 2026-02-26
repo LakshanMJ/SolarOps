@@ -31,10 +31,10 @@ const Inverters = () => {
   // const [openAddInverterModal, setOpenAddInverterModal] = useState(false);
   // const [loading, setLoading] = useState(false)
   const [activeInverterId, setActiveInverterId] = useState<string | null>(null);
-  const [inverterDeleteModal, setInverterDeleteModal] = useState<{
-    show: boolean;
-    id: string | null;
-  }>({ show: false, id: null });
+  const [inverterDeleteModal, setInverterDeleteModal] = useState({
+    show: false,
+    id: null as string | null,
+  });
 
 
   const columns = useMemo<GridColDef[]>(() => [
@@ -107,9 +107,12 @@ const Inverters = () => {
 
           <IconButton
             size="small"
-            onClick={() => {
-              setInverterDeleteModal({ show: true, id: params.row.id });
-            }}
+            onClick={() =>
+              setInverterDeleteModal({
+                show: true,
+                id: params.row.id,
+              })
+            }
           >
             <DeleteIcon sx={{ color: 'white' }} fontSize="small" />
           </IconButton>
@@ -126,6 +129,21 @@ const Inverters = () => {
       setInverterData(inverterData);
     } catch (err) {
       console.error('Failed to load inverter data:', err);
+    }
+  };
+
+  const handleDeleteInverter = async () => {
+    if (!inverterDeleteModal.id) return;
+
+    try {
+      await fetchData(
+        `${BACKEND_URLS.INVERTERS}/${inverterDeleteModal.id}`,
+        { method: "DELETE" }
+      );
+
+      await fetchInverters(); // refresh list
+    } catch (err) {
+      console.error("Delete failed:", err);
     }
   };
 
@@ -179,14 +197,16 @@ const Inverters = () => {
         />
       )}
 
-      {inverterDeleteModal.show && (
-        <DeleteModal
-          deleteModalShow={inverterDeleteModal.show}
-          setDeleteModalShow={(show) => setInverterDeleteModal({ ...inverterDeleteModal, show })}
-          id={inverterDeleteModal.id}
-          fetchInverters={fetchInverters}
-        />
-      )}
+      <DeleteModal
+        open={inverterDeleteModal.show}
+        onClose={() =>
+          setInverterDeleteModal({
+            ...inverterDeleteModal,
+            show: false,
+          })
+        }
+        onConfirm={handleDeleteInverter}
+      />
     </Box>
   );
 }
