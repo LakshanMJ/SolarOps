@@ -41,6 +41,7 @@ model Inverter {
   image          String?
   status         InverterStatus
   installedAt    DateTime @default(now())
+  deletedAt      DateTime?
   alerts         Alert[]
   telemetry      Telemetry[]
   

@@ -7,6 +7,13 @@ import invertersRoutes from './routes/inverters.routes.js'
 import startTelemetryWorker from './jobs/telemetryWorker.js';
 import alertsRoutes from './routes/alerts.routes.js'
 import manufacturersRoutes from './routes/manufacturers.routes.js'
+import path from 'path'
+import uploadRoutes from './routes/upload.js';
+import { fileURLToPath } from 'url'
+
+// __dirname replacement for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 startTelemetryWorker();
 
@@ -17,6 +24,9 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
+// Serve files in the uploads folder
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use("/api/upload-image", uploadRoutes);
 
 app.use('/api/dashboard', dashboardRoutes)
 app.use('/api/sites', siteRoutes)
