@@ -10,6 +10,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CreateUpdateInverter from "./CreateUpdateInverter";
+import DeleteModal from "@/utils/deleteModal";
 
 export type Inverter = {
   id: string
@@ -30,6 +31,10 @@ const Inverters = () => {
   // const [openAddInverterModal, setOpenAddInverterModal] = useState(false);
   // const [loading, setLoading] = useState(false)
   const [activeInverterId, setActiveInverterId] = useState<string | null>(null);
+  const [inverterDeleteModal, setInverterDeleteModal] = useState<{
+    show: boolean;
+    id: string | null;
+  }>({ show: false, id: null });
 
 
   const columns = useMemo<GridColDef[]>(() => [
@@ -103,7 +108,7 @@ const Inverters = () => {
           <IconButton
             size="small"
             onClick={() => {
-              setSelectedInverter(params.row);
+              setInverterDeleteModal({ show: true, id: params.row.id });
             }}
           >
             <DeleteIcon sx={{ color: 'white' }} fontSize="small" />
@@ -170,6 +175,15 @@ const Inverters = () => {
           open={activeInverterId !== null}
           inverterId={activeInverterId}
           onClose={() => setActiveInverterId(null)}
+          fetchInverters={fetchInverters}
+        />
+      )}
+
+      {inverterDeleteModal.show && (
+        <DeleteModal
+          deleteModalShow={inverterDeleteModal.show}
+          setDeleteModalShow={(show) => setInverterDeleteModal({ ...inverterDeleteModal, show })}
+          id={inverterDeleteModal.id}
           fetchInverters={fetchInverters}
         />
       )}

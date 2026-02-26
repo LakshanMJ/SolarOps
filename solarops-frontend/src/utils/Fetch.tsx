@@ -1,23 +1,30 @@
-
-export async function fetchData(url: string) {
+export async function fetchData(
+  url: string,
+  options: RequestInit = {}
+) {
   try {
     const res = await fetch(url, {
-      method: 'GET', // or 'POST', etc.
-      headers: { 'Content-Type': 'application/json' },
-    })
+      method: options.method || "GET",
+      headers: {
+        "Content-Type": "application/json",
+        ...(options.headers || {}),
+      },
+      body: options.body
+        ? JSON.stringify(options.body)
+        : undefined,
+    });
 
-    // Check for HTTP errors
     if (!res.ok) {
-      const text = await res.text()
-      throw new Error(`HTTP ${res.status}: ${text}`)
+      const text = await res.text();
+      throw new Error(`HTTP ${res.status}: ${text}`);
     }
 
-    // Try to parse JSON
-    const data = await res.json()
-    return data
+    // ✅ SAFE for DELETE (empty response)
+    const text = await res.text();
+    return text ? JSON.parse(text) : null;
+
   } catch (err: any) {
-    console.error('Fetch error:', err.message)
-    // You can throw or return a default object
-    throw err
+    console.error("Fetch error:", err.message);
+    throw err;
   }
 }
