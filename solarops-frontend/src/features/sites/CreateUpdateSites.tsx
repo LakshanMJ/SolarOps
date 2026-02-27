@@ -1,6 +1,5 @@
 import { BACKEND_URLS } from "@/backendUrls";
 import { fetchData } from "@/utils/fetch";
-import ImageUploadDropzone from "@/utils/ImageUploadDropzone";
 import {
   Box,
   Button,
@@ -12,38 +11,49 @@ import {
   TextField,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-
-interface Form {
-  name: string;
-  manufacturerId: string;
-  serialNumber: string;
-  capacityKw: number | null;
-  siteId: string;
-  status: "Offline"; 
-  image: File | string | null; 
-}
+import { MapContainer, Marker, TileLayer, useMapEvents } from "react-leaflet";
 
 const CreateUpdateSites = ({ open, siteId, onClose, fetchSites }: any) => {
   const isEditMode = siteId !== "new";
-  const [manufacturers, setManufacturers] = useState<any[]>([]);
-  const [sites, setSites] = useState<any[]>([]);
-  const [form, setForm] = useState<Form>({
+  // const [manufacturers, setManufacturers] = useState<any[]>([]);
+  // const [sites, setSites] = useState<any[]>([]);
+  const [openMap, setOpenMap] = useState(false);
+  const [form, setForm] = useState<{
+    name: string;
+    region: string;
+    peakCapacityMw: string;
+    latitude: number | null;
+    longitude: number | null;
+  }>({
     name: "",
-    manufacturerId: "",
-    serialNumber: "",
-    capacityKw: null,
-    siteId: "",
-    status: "Offline",
-    image: null,
+    region: "",
+    peakCapacityMw: "",
+    latitude: null,
+    longitude: null,
   });
 
+  console.log(form,'form data')
   // fetch options
-  useEffect(() => {
-    fetchData(BACKEND_URLS.MANUFACTURERS).then(setManufacturers).catch(console.error);
-    fetchData(BACKEND_URLS.SITES).then(setSites).catch(console.error);
-  }, []);
+  // useEffect(() => {
+  //   fetchData(BACKEND_URLS.MANUFACTURERS).then(setManufacturers).catch(console.error);
+  //   fetchData(BACKEND_URLS.SITES).then(setSites).catch(console.error);
+  // }, []);
 
-  // fetch inverter for edit
+  const MapClickHandler = ({ setForm, form }) => {
+    useMapEvents({
+      click(e) {
+        setForm({
+          ...form,
+          latitude: e.latlng.lat,
+          longitude: e.latlng.lng,
+        });
+      },
+    });
+
+    return null;
+  }
+
+  // fetch site for edit
   useEffect(() => {
     if (!isEditMode) return;
 
@@ -51,56 +61,32 @@ const CreateUpdateSites = ({ open, siteId, onClose, fetchSites }: any) => {
       .then((data) => {
         setForm({
           name: data.name ?? "",
-          manufacturerId: data.manufacturerId ?? "",
-          serialNumber: data.serialNumber ?? "",
-          capacityKw: data.capacityKw ?? null,
-          siteId: data.siteId ?? "",
-          status: data.status ?? "Offline",
-          image: data.image ?? null,
+          region: data.region ?? "",
+          peakCapacityMw: data.peakCapacityMw?.toString() ?? "",
+          latitude: data.latitude ?? null,
+          longitude: data.longitude ?? null,
         });
       })
       .catch(console.error);
   }, [siteId]);
 
-  // save inverter
-  const saveInverter = async () => {
+  // save site
+  const saveSite = async () => {
     try {
-      let imageFilename: string | null = null;
-
-      // Upload file if new
-      if (form.image instanceof File) {
-        const formData = new FormData();
-        formData.append("image", form.image);
-
-        const uploadRes = await fetch(BACKEND_URLS.UPLOAD_IMAGE, {
-          method: "POST",
-          body: formData,
-        });
-
-        if (!uploadRes.ok) throw new Error("Image upload failed");
-
-        const uploadData = await uploadRes.json();
-        imageFilename = uploadData.filename;
-      }
-
       // Prepare payload
       const payload = {
         name: form.name,
-        siteId: form.siteId,
-        manufacturerId: form.manufacturerId || undefined,
-        serialNumber: form.serialNumber || undefined,
-        capacityKw: form.capacityKw ?? 0,
-        image:
-          imageFilename || (typeof form.image === "string" ? form.image : null),
-        status: form.status,
-        installedAt: new Date(),
+        region: form.region,
+        peakCapacityMw: parseFloat(form.peakCapacityMw) || 0,
+        latitude: form.latitude || undefined,
+        longitude: form.longitude || undefined,
       };
 
       // POST or PUT
       const res = await fetch(
         isEditMode
-          ? `${BACKEND_URLS.INVERTERS}/${inverterId}`
-          : BACKEND_URLS.INVERTERS,
+          ? `${BACKEND_URLS.SITES}/${siteId}`
+          : BACKEND_URLS.SITES,
         {
           method: isEditMode ? "PUT" : "POST",
           headers: { "Content-Type": "application/json" },
@@ -108,80 +94,113 @@ const CreateUpdateSites = ({ open, siteId, onClose, fetchSites }: any) => {
         }
       );
 
-      if (!res.ok) throw new Error("Failed to save inverter");
+      if (!res.ok) throw new Error("Failed to save site");
+
       await res.json();
 
-      alert("Inverter saved successfully!");
+      alert("Site saved successfully!");
       onClose(false);
-      fetchInverters();
+      fetchSites();
     } catch (err: any) {
       console.error(err);
-      alert("Error saving inverter: " + err.message);
+      alert("Error saving site: " + err.message);
     }
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle>{isEditMode ? "Edit Inverter" : "Add New Inverter"}</DialogTitle>
-      <DialogContent>
-        <Box component="form" sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
-          <TextField
-            label="Inverter Name"
-            value={form.name}
-            fullWidth
-            onChange={(e) => setForm({ ...form, name: e.target.value })}
-          />
-          <TextField
-            select
-            label="Manufacturer"
-            value={form.manufacturerId}
-            onChange={(e) => setForm({ ...form, manufacturerId: e.target.value })}
-            fullWidth
+    <>
+      <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+        <DialogTitle>{isEditMode ? "Edit Site" : "Add New Site"}</DialogTitle>
+        <DialogContent>
+          <Box component="form" sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
+            <TextField
+              label="Site Name"
+              fullWidth
+              value={form.name}
+              onChange={(e) =>
+                setForm({ ...form, name: e.target.value })
+              }
+            />
+            <TextField
+              label="Location"
+              fullWidth
+              value={
+                form.latitude && form.longitude
+                  ? `${form.latitude.toFixed(4)}, ${form.longitude.toFixed(4)}`
+                  : ""
+              }
+              placeholder="Pick location from map"
+              InputProps={{
+                readOnly: true,
+              }}
+              onClick={() => setOpenMap(true)}
+            />
+            <TextField
+              select
+              label="Region"
+              fullWidth
+              value={form.region}
+              onChange={(e) => setForm({ ...form, region: e.target.value })}
+            >
+              {["Western", "Central", "Southern", "Northern", "Eastern", "Uva", "Sabaragamuwa"].map(
+                (region) => (
+                  <MenuItem key={region} value={region}>
+                    {region}
+                  </MenuItem>
+                )
+              )}
+            </TextField>
+            <TextField
+              label="Peak Capacity (MW)"
+              type="number"
+              fullWidth
+              value={form.peakCapacityMw}
+              onChange={(e) =>
+                setForm({ ...form, peakCapacityMw: e.target.value })
+              }
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => onClose(false)}>Cancel</Button>
+          <Button variant="contained" onClick={saveSite}>
+            Save Site
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={openMap}
+        onClose={() => setOpenMap(false)}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle>Select Site Location</DialogTitle>
+        <DialogContent sx={{ height: 400 }}>
+          <MapContainer
+            center={[6.9271, 79.8612]}
+            zoom={12}
+            style={{ height: "100%", width: "100%" }}
           >
-            {manufacturers.map((m) => (
-              <MenuItem key={m.id} value={m.id}>
-                {m.name}
-              </MenuItem>
-            ))}
-          </TextField>
-          <TextField
-            label="Serial Number"
-            value={form.serialNumber}
-            fullWidth
-            onChange={(e) => setForm({ ...form, serialNumber: e.target.value })}
-          />
-          <TextField
-            label="Capacity (kW)"
-            type="number"
-            value={form.capacityKw}
-            fullWidth
-            onChange={(e) =>
-              setForm({ ...form, capacityKw: parseFloat(e.target.value) || 0 })
-            }
-          />
-          <TextField
-            select
-            label="Site"
-            value={form.siteId}
-            onChange={(e) => setForm({ ...form, siteId: e.target.value })}
-            fullWidth
-          >
-            {sites.map((s) => (
-              <MenuItem key={s.id} value={s.id}>
-                {s.name}
-              </MenuItem>
-            ))}
-          </TextField>
-          <ImageUploadDropzone value={form.image} onChange={(file) => setForm({ ...form, image: file })} />
-        </Box>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={() => onClose(false)}>Cancel</Button>
-        <Button variant="contained" onClick={saveInverter}>
-          Save Inverter
-        </Button>
-      </DialogActions>
-    </Dialog>
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+
+            <MapClickHandler form={form} setForm={setForm} />
+
+            {form.latitude && form.longitude && (
+              <Marker position={[form.latitude, form.longitude]} />
+            )}
+          </MapContainer>
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={() => setOpenMap(false)}>
+            Done
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 };
 
