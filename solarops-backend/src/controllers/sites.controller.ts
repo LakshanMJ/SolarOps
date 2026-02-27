@@ -3,16 +3,6 @@ import { prisma } from '../db/prisma.js'
 import { deleteSiteService, getSitesService } from '../services/sites.service.js'
 import { Request, Response } from "express";
 
-export async function getSites(req: any, res: any) {
-  try {
-    const sites = await getSitesService()
-    res.json(sites)
-  } catch (error) {
-    console.error(error)
-    res.status(500).json({ error: 'Failed to fetch sites' })
-  }
-}
-
 // NEW createSite
 export const createSite = async (req, res) => {
   console.log("Received body:", req.body);
@@ -40,6 +30,33 @@ export const createSite = async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
+
+export async function getSites(req: any, res: any) {
+  try {
+    const sites = await getSitesService()
+    res.json(sites)
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ error: 'Failed to fetch sites' })
+  }
+}
+
+export async function getSiteById(req: any, res: any) {
+  try {
+    const { id } = req.params;
+    const site = await prisma.site.findUnique({
+      where: { id },
+    });
+    if (!site) {
+      return res.status(404).json({ error: 'Site not found' });
+    }
+    res.json(site);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to fetch site' });
+  }
+}
 
 export const deleteSite = async (req: Request, res: Response) => {
   try {
