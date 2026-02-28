@@ -10,6 +10,7 @@ import manufacturersRoutes from './routes/manufacturers.routes.js'
 import path from 'path'
 import uploadRoutes from './routes/upload.js';
 import { fileURLToPath } from 'url'
+import authRoutes from './routes/auth.routes.js'
 
 // __dirname replacement for ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -24,6 +25,7 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
+app.use("/auth", authRoutes);
 // Serve files in the uploads folder
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use("/api/upload-image", uploadRoutes);

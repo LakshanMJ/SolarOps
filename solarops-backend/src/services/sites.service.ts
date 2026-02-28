@@ -98,13 +98,26 @@ export async function deleteSiteService(siteId: string) {
     throw new Error("Site not found");
   }
 
-  // ✅ SOFT DELETE (instead of hard delete)
-  await prisma.site.update({
-    where: { id: siteId },
-    data: {
-      deletedAt: new Date(),
-    },
-  });
+  const now = new Date();
+
+  // use transaction so both updates succeed or fail together
+  await prisma.$transaction([
+    // ✅ soft delete site
+    prisma.site.update({
+      where: { id: siteId },
+      data: {
+        deletedAt: now,
+      },
+    }),
+
+    // ✅ soft delete ALL inverters under this site
+    prisma.inverter.updateMany({
+      where: { siteId: siteId },
+      data: {
+        deletedAt: now,
+      },
+    }),
+  ]);
 
   return { message: "Site deleted successfully" };
 }
