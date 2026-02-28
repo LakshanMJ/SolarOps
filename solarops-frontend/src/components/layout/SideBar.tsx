@@ -10,13 +10,13 @@ const SideBar = () => {
     { label: 'Sites', path: '/sites' },
     { label: 'Inverters', path: '/inverters' },
     { label: 'Alerts', path: '/alerts' },
-    { label: 'Telemetry', path: '/telemetry' },
-    { label: 'Analytics', path: '/analytics' },
-    { label: 'Map View', path: '/map-view' },
-    { label: 'Control Room', path: '/control-room' },
-    { label: 'Maintenance', path: '/maintenance' },
+    // { label: 'Telemetry', path: '/telemetry' },
+    // { label: 'Analytics', path: '/analytics' },
+    // { label: 'Map View', path: '/map-view' },
+    // { label: 'Control Room', path: '/control-room' },
+    // { label: 'Maintenance', path: '/maintenance' },
     { label: 'Reports', path: '/reports' },
-    { label: 'Admin', path: '/admin' },
+    // { label: 'Admin', path: '/admin' },
   ];
 
   return (

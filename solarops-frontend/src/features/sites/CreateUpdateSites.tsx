@@ -124,6 +124,7 @@ const CreateUpdateSites = ({ open, siteId, onClose, fetchSites }: any) => {
             <TextField
               label="Location"
               fullWidth
+              disabled={isEditMode}
               value={
                 form.latitude && form.longitude
                   ? `${form.latitude.toFixed(4)}, ${form.longitude.toFixed(4)}`
@@ -139,6 +140,7 @@ const CreateUpdateSites = ({ open, siteId, onClose, fetchSites }: any) => {
               select
               label="Region"
               fullWidth
+              disabled={isEditMode}
               value={form.region}
               onChange={(e) => setForm({ ...form, region: e.target.value })}
             >
