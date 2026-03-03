@@ -4,18 +4,26 @@ import AlertsPage from '@/features/alerts/AlertsPage'
 import DashboardPage from '@/features/dashboard/DashboardPage'
 import Sites from '@/features/sites/Sites'
 import Inverters from '@/features/inverters/Inverters'
+import PrivateRoute from './PrivateRoute'
+import Login from '@/features/login/Login'
 
 export const router = createBrowserRouter([
   {
-    path: '/',            // parent layout path
-    element: <App />,      // App with header
+    path: '/login',
+    element: <Login />,
+  },
+  {
+    path: '/',
+    element: (
+      <PrivateRoute>
+        <App />
+      </PrivateRoute>
+    ),
     children: [
-      { index: true, element: <DashboardPage /> }, // root dashboard
-      { path: 'alerts', element: <AlertsPage /> }, // relative path
-      { path: 'sites', element: <Sites /> }, // relative path
-      { path: 'inverters', element: <Inverters /> }, // relative path
-      // { path: 'admin', element: <AdminPage /> },
+      { index: true, element: <DashboardPage /> },
+      { path: 'alerts', element: <AlertsPage /> },
+      { path: 'sites', element: <Sites /> },
+      { path: 'inverters', element: <Inverters /> },
     ],
   },
 ])
-
