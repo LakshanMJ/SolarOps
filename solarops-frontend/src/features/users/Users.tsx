@@ -1,103 +1,96 @@
 import { BACKEND_URLS } from "@/backendUrls";
 import { fetchData } from "@/utils/fetch";
 import SolarDataGrid from "@/utils/SolarDataGrid";
-import { Box, Tab, Tabs, Typography } from "@mui/material";
+import { Box, Button, IconButton, Tab, Tabs, Typography } from "@mui/material";
 import type { GridColDef } from "@mui/x-data-grid";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import CreateUpdateUsers from "./CreateUpdateUsers";
 
 const users = () => {
     const [usersData, setUsersData] = useState([])
     const [tabValue, setTabValue] = useState('1');
+    const [activeUserId, setActiveUserId] = useState<string | null>(null);
 
-    const columns: GridColDef[] = [
+    const columns = useMemo<GridColDef[]>(() => [
+        { field: 'name', headerName: 'User', flex: 1 },
+
+        { field: 'email', headerName: 'Email', align: 'center', headerAlign: 'center', flex: 1 },
+
+        { field: 'role', headerName: 'Roles', align: 'center', headerAlign: 'center', flex: 1.3 },
+
         {
-            field: 'severity',
-            headerName: 'Severity',
-            width: 130, // slightly wider for Chip
-            align: 'left',
-            headerAlign: 'left',
+            field: 'actions',
+            headerName: 'Actions',
+            headerAlign: 'center',
+            flex: 1,
             renderCell: (params) => (
-                <Chip
-                    label={params.value}
-                    color={severityColor[params.value as keyof typeof severityColor]}
-                    size="small"
-                />
+                <Box
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: 1,
+                    }}
+                >
+                    <IconButton
+                        size="small"
+                        onClick={() => {
+                            setSelectedInverter(params.row);
+                            setSelectedRowIds([params.id as number]);
+                        }}
+                    >
+                        <VisibilityIcon sx={{ color: 'white' }} fontSize="small" />
+                    </IconButton>
+
+                    <IconButton
+                        size="small"
+                        onClick={() => {
+                            setActiveInverterId(params.row.id);
+                        }}
+                    >
+                        <EditIcon sx={{ color: 'white' }} fontSize="small" />
+                    </IconButton>
+
+                    <IconButton
+                        size="small"
+                        onClick={() =>
+                            setInverterDeleteModal({
+                                show: true,
+                                id: params.row.id,
+                            })
+                        }
+                    >
+                        <DeleteIcon sx={{ color: 'white' }} fontSize="small" />
+                    </IconButton>
+                </Box>
             ),
-        },
-        {
-            field: 'message',
-            headerName: 'Message',
-            flex: 2, // take more space for long messages
-            minWidth: 200,
-            align: 'left',
-            headerAlign: 'left',
-        },
-        {
-            field: 'inverter',
-            headerName: 'Inverter',
-            flex: 1.2,
-            minWidth: 120,
-            align: 'left',
-            headerAlign: 'left',
-            valueGetter: (_, row) => row.inverter?.name,
-        },
-        {
-            field: 'site',
-            headerName: 'Site',
-            flex: 1.5,
-            minWidth: 140,
-            align: 'left',
-            headerAlign: 'left',
-            valueGetter: (_, row) => row.inverter?.site?.name,
-        },
-        {
-            field: 'createdAt',
-            headerName: 'Created At',
-            flex: 1.2,
-            minWidth: 150,
-            align: 'left',
-            headerAlign: 'left',
-        },
-        {
-            field: 'status',
-            headerName: 'Status',
-            width: 130, // fixed width works well for Chips
-            align: 'left',
-            headerAlign: 'left',
-            renderCell: (params) => (
-                <Chip
-                    label={params.value}
-                    color={statusColor[params.value as keyof typeof statusColor]}
-                    size="small"
-                />
-            ),
-        },
-        {
-            field: 'maintenanceAction',
-            headerName: 'Maintenance Actions',
-            flex: 1.5,
-            minWidth: 180,
-            headerAlign: 'left',
-        },
-    ];
+            sortable: false,
+            filterable: false,
+        }
+    ], []);
 
     const handleTabValueChange = (event: React.SyntheticEvent, newValue: string) => {
         setTabValue(newValue);
     };
 
-    useEffect(() => {
-        async function fetchUsers() {
-            try {
-                const usersData = await fetchData(BACKEND_URLS.USERS);
-                setUsersData(usersData);
-            } catch (err) {
-                console.error('Failed to load users data:', err);
-            }
-        }
 
+    async function fetchUsers() {
+        try {
+            const usersData = await fetchData(BACKEND_URLS.USERS);
+            setUsersData(usersData);
+        } catch (err) {
+            console.error('Failed to load users data:', err);
+        }
+    }
+
+
+    useEffect(() => {
         fetchUsers();
     }, []);
 
@@ -117,6 +110,16 @@ const users = () => {
                         </Box>
                         <TabPanel value="1">
                             <Box sx={{ height: 400, width: '100%', mt: 2 }}>
+                                <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        sx={{ mb: 2 }}
+                                        onClick={() => setActiveUserId('new')}
+                                    >
+                                        Add User
+                                    </Button>
+                                </Box>
                                 <SolarDataGrid
                                     rows={usersData}
                                     columns={columns}
@@ -127,12 +130,19 @@ const users = () => {
                                     initialState={{ pagination: { paginationModel: { pageSize: 5, page: 0 } } }}
                                     autoHeight
                                 />
+                                {activeUserId && (
+                                    <CreateUpdateUsers
+                                        open={activeUserId !== null}
+                                        userId={activeUserId}
+                                        onClose={() => setActiveUserId(null)}
+                                        fetchUsers={fetchUsers}
+                                    />
+                                )}
                             </Box>
                         </TabPanel>
                         <TabPanel value="2">Roles</TabPanel>
                     </TabContext>
                 </Box>
-
             </Box>
         </>
     );
