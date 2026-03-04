@@ -1,6 +1,5 @@
 import bcrypt from "bcrypt";
 import { prisma } from "../db/prisma.js";
-import { Role } from "@prisma/client"; // if using enum Role
 
 interface CreateUserInput {
   email: string;
@@ -9,28 +8,43 @@ interface CreateUserInput {
   lastName?: string;
   phone?: string;
   avatarUrl?: string;
-  role?: Role; // defaults to USER if not provided
+  roles?: string[]; // defaults to USER if not provided
 }
 
 // 🔹 Create a new user
 export const createUser = async (input: CreateUserInput) => {
-  console.log("Create user input:", input);
-  const { email, password, firstName, lastName, phone, avatarUrl, role } = input;
+  const {
+    email,
+    password,
+    firstName,
+    lastName,
+    phone,
+    avatarUrl,
+    roles,
+  } = input;
 
-  // hash password
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const user = await prisma.user.create({
     data: {
       email,
       password: hashedPassword,
-      role: role || Role.USER, // default to USER
       firstName,
       lastName,
       phone,
       avatarUrl,
-      isActive: true,           // default true
-      lastLoginAt: null,        // will update on login
+      isActive: true,
+      lastLoginAt: null,
+
+      // 👇 default USER role if none provided
+      roles: {
+        connect: roles?.length
+          ? roles.map((roleName) => ({ name: roleName }))
+          : [{ name: "USER" }],
+      },
+    },
+    include: {
+      roles: true,
     },
   });
 
@@ -39,17 +53,18 @@ export const createUser = async (input: CreateUserInput) => {
 
 // 🔹 Login user
 export const loginUser = async (email: string, password: string) => {
-  const user = await prisma.user.findUnique({ where: { email } });
+  const user = await prisma.user.findUnique({
+    where: { email },
+    include: { roles: true },
+  });
 
   if (!user) throw new Error("Invalid credentials");
 
-  // Check if user is active
   if (!user.isActive) throw new Error("User account is deactivated");
 
   const valid = await bcrypt.compare(password, user.password);
   if (!valid) throw new Error("Invalid credentials");
 
-  // Update last login time
   await prisma.user.update({
     where: { id: user.id },
     data: { lastLoginAt: new Date() },
