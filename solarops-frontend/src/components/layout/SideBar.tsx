@@ -6,7 +6,7 @@ const SideBar = () => {
   const location = useLocation();
 
   const menuItems = [
-    { label: 'Dashboard', path: '/' },
+    { label: 'Dashboard', path: '/dashboard' },
     { label: 'Sites', path: '/sites' },
     { label: 'Inverters', path: '/inverters' },
     { label: 'Alerts', path: '/alerts' },
@@ -16,7 +16,7 @@ const SideBar = () => {
     // { label: 'Control Room', path: '/control-room' },
     // { label: 'Maintenance', path: '/maintenance' },
     { label: 'Reports', path: '/reports' },
-    // { label: 'Admin', path: '/admin' },
+    { label: 'Users', path: '/users' },
   ];
 
   return (

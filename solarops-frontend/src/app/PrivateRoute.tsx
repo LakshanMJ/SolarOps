@@ -1,13 +1,31 @@
-import { useContext, type JSX } from "react";
+import { useContext, useEffect, useState, type JSX } from "react";
 import { AuthContext } from "./AuthContext";
 import { Navigate } from "react-router-dom";
 
 export default function PrivateRoute({ children }: { children: JSX.Element }) {
-  const { token } = useContext(AuthContext);
+  const { token, setToken } = useContext(AuthContext);
+  const [isValid, setIsValid] = useState<boolean | null>(null);
 
-  if (!token) {
-    return <Navigate to="/login" replace />;
-  }
+  useEffect(() => {
+    if (!token) return setIsValid(false);
+
+    // Optional: call backend to validate token/user
+    fetch("/api/auth/validate", {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(res => {
+        if (res.status === 200) setIsValid(true);
+        else {
+          setToken(null); // clear context
+          localStorage.removeItem("token");
+          setIsValid(false);
+        }
+      })
+      .catch(() => setIsValid(false));
+  }, [token]);
+
+  if (isValid === null) return null; // or loader
+  if (!isValid) return <Navigate to="/login" replace />;
 
   return children;
 }

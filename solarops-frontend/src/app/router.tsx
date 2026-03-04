@@ -6,11 +6,16 @@ import Sites from '@/features/sites/Sites'
 import Inverters from '@/features/inverters/Inverters'
 import PrivateRoute from './PrivateRoute'
 import Login from '@/features/login/Login'
+import Register from '@/features/register/Register'
+import Users from '@/features/users/Users'
 
 export const router = createBrowserRouter([
   {
     path: '/login',
     element: <Login />,
+  },
+  { path: 'register',
+    element: <Register />
   },
   {
     path: '/',
@@ -20,10 +25,12 @@ export const router = createBrowserRouter([
       </PrivateRoute>
     ),
     children: [
-      { index: true, element: <DashboardPage /> },
+      // { index: true, element: <DashboardPage /> },
+      { path: 'dashboard', element: <DashboardPage /> },
       { path: 'alerts', element: <AlertsPage /> },
       { path: 'sites', element: <Sites /> },
       { path: 'inverters', element: <Inverters /> },
+      { path: 'users', element: <Users /> },
     ],
   },
 ])

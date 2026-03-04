@@ -6,4 +6,5 @@ export const BACKEND_URLS = {
   ALERTS: 'http://localhost:4000/api/alerts',
   MANUFACTURERS: 'http://localhost:4000/api/manufacturers',
   UPLOAD_IMAGE: "http://localhost:4000/api/upload-image/",
+  USERS: 'http://localhost:4000/api/users',
 }

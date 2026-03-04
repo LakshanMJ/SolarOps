@@ -2,12 +2,14 @@ import { createContext, useState, ReactNode } from "react";
 
 interface AuthContextType {
   token: string | null;
+  setToken: (token: string | null) => void;
   login: (token: string) => void;
   logout: () => void;
 }
 
 export const AuthContext = createContext<AuthContextType>({
   token: null,
+  setToken: () => {},
   login: () => {},
   logout: () => {},
 });
