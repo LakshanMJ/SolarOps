@@ -4,9 +4,9 @@ import { createUser, loginUser } from "../services/auth.service.js";
 
 export const register = async (req: Request, res: Response) => {
   try {
-    const { email, password, firstName, lastName, phone, avatarUrl, role } = req.body;
+    const { email, password, firstName, lastName, phone, avatarUrl, userName, role } = req.body;
 
-    const user = await createUser({ email, password, firstName, lastName, phone, avatarUrl, role });
+    const user = await createUser({ email, password, firstName, lastName, phone, avatarUrl, userName, role });
 
     res.status(201).json({ message: "User created", userId: user.id });
   } catch (err: any) {

@@ -8,6 +8,7 @@ interface CreateUserInput {
   lastName?: string;
   phone?: string;
   avatarUrl?: string;
+  userName?: string;
   roles?: string[]; // defaults to USER if not provided
 }
 
@@ -20,10 +21,13 @@ export const createUser = async (input: CreateUserInput) => {
     lastName,
     phone,
     avatarUrl,
+    userName,
     roles,
   } = input;
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+  const tempPassword = password || "Solar@123";
+
+  const hashedPassword = await bcrypt.hash(tempPassword, 10);
 
   const user = await prisma.user.create({
     data: {
@@ -33,6 +37,7 @@ export const createUser = async (input: CreateUserInput) => {
       lastName,
       phone,
       avatarUrl,
+      userName,
       isActive: true,
       lastLoginAt: null,
 
