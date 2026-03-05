@@ -7,15 +7,14 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  MenuItem,
   TextField,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { MapContainer, Marker, TileLayer, useMapEvents } from "react-leaflet";
+
 
 const CreateUpdateUsers = ({ open, userId, onClose, fetchUsers }: any) => {
   const isEditMode = userId !== "new";
-  const [openMap, setOpenMap] = useState(false);
+  const token = localStorage.getItem("token");
   const [form, setForm] = useState<{
     firstName: string;
     lastName: string;
@@ -28,19 +27,6 @@ const CreateUpdateUsers = ({ open, userId, onClose, fetchUsers }: any) => {
     email: "",
   });
 
-  const MapClickHandler = ({ setForm, form }) => {
-    useMapEvents({
-      click(e) {
-        setForm({
-          ...form,
-          latitude: e.latlng.lat,
-          longitude: e.latlng.lng,
-        });
-      },
-    });
-
-    return null;
-  }
 
   // fetch site for edit
   useEffect(() => {
@@ -76,7 +62,10 @@ const CreateUpdateUsers = ({ open, userId, onClose, fetchUsers }: any) => {
           : BACKEND_URLS.USERS,
         {
           method: isEditMode ? "PUT" : "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
           body: JSON.stringify(payload),
         }
       );
@@ -138,38 +127,6 @@ const CreateUpdateUsers = ({ open, userId, onClose, fetchUsers }: any) => {
           <Button onClick={() => onClose(false)}>Cancel</Button>
           <Button variant="contained" onClick={saveUser}>
             Save User
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      <Dialog
-        open={openMap}
-        onClose={() => setOpenMap(false)}
-        maxWidth="md"
-        fullWidth
-      >
-        <DialogTitle>Select Site Location</DialogTitle>
-        <DialogContent sx={{ height: 400 }}>
-          <MapContainer
-            center={[6.9271, 79.8612]}
-            zoom={12}
-            style={{ height: "100%", width: "100%" }}
-          >
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-
-            <MapClickHandler form={form} setForm={setForm} />
-
-            {form.latitude && form.longitude && (
-              <Marker position={[form.latitude, form.longitude]} />
-            )}
-          </MapContainer>
-        </DialogContent>
-
-        <DialogActions>
-          <Button onClick={() => setOpenMap(false)}>
-            Done
           </Button>
         </DialogActions>
       </Dialog>

@@ -11,14 +11,22 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CreateUpdateUsers from "./CreateUpdateUsers";
+import DeleteModal from "@/utils/deleteModal";
+import UserDrawer from "./UserDrawer";
 
 const users = () => {
     const [usersData, setUsersData] = useState([])
     const [tabValue, setTabValue] = useState('1');
     const [activeUserId, setActiveUserId] = useState<string | null>(null);
+    const [userDeleteModal, setUserDeleteModal] = useState({
+        show: false,
+        id: null as string | null,
+    });
+    const [selectedUser, setSelectedUser] = useState<any>(null);
+    const [selectedRowIds, setSelectedRowIds] = useState<number[]>([]);
 
     const columns = useMemo<GridColDef[]>(() => [
-        { field: 'name', headerName: 'User', flex: 1 },
+        { field: 'userName', headerName: 'User', flex: 1 },
 
         { field: 'email', headerName: 'Email', align: 'center', headerAlign: 'center', flex: 1 },
 
@@ -41,7 +49,7 @@ const users = () => {
                     <IconButton
                         size="small"
                         onClick={() => {
-                            setSelectedInverter(params.row);
+                            setSelectedUser(params.row);    // use drawerrrrr
                             setSelectedRowIds([params.id as number]);
                         }}
                     >
@@ -51,7 +59,7 @@ const users = () => {
                     <IconButton
                         size="small"
                         onClick={() => {
-                            setActiveInverterId(params.row.id);
+                            setActiveUserId(params.row.id);
                         }}
                     >
                         <EditIcon sx={{ color: 'white' }} fontSize="small" />
@@ -60,7 +68,7 @@ const users = () => {
                     <IconButton
                         size="small"
                         onClick={() =>
-                            setInverterDeleteModal({
+                            setUserDeleteModal({
                                 show: true,
                                 id: params.row.id,
                             })
@@ -79,6 +87,18 @@ const users = () => {
         setTabValue(newValue);
     };
 
+    const handleDeleteSites = async () => {
+        if (!userDeleteModal.id) return;
+        try {
+            await fetchData(
+                `${BACKEND_URLS.USERS}/${userDeleteModal.id}`,
+                { method: "DELETE" }
+            );
+            await fetchUsers();
+        } catch (err) {
+            console.error("Delete failed:", err);
+        }
+    };
 
     async function fetchUsers() {
         try {
@@ -88,7 +108,6 @@ const users = () => {
             console.error('Failed to load users data:', err);
         }
     }
-
 
     useEffect(() => {
         fetchUsers();
@@ -125,6 +144,7 @@ const users = () => {
                                     columns={columns}
                                     pageSizeOptions={[5, 10]}
                                     rowsPerPageOptions={[5]}
+                                    selectionModel={selectedRowIds}
                                     disableSelectionOnClick
                                     disableColumnSorting
                                     initialState={{ pagination: { paginationModel: { pageSize: 5, page: 0 } } }}
@@ -143,6 +163,21 @@ const users = () => {
                         <TabPanel value="2">Roles</TabPanel>
                     </TabContext>
                 </Box>
+                <DeleteModal
+                    open={userDeleteModal.show}
+                    onClose={() =>
+                        setUserDeleteModal({
+                            ...userDeleteModal,
+                            show: false,
+                        })
+                    }
+                    onConfirm={handleDeleteSites}
+                />
+                <UserDrawer
+                    open={!!selectedUser}
+                    onClose={() => setSelectedUser(null)}
+                    user={selectedUser}
+                />
             </Box>
         </>
     );
