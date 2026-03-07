@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import { MapContainer, Marker, TileLayer, useMapEvents } from "react-leaflet";
 
 const CreateUpdateSites = ({ open, siteId, onClose, fetchSites }: any) => {
+  const token = localStorage.getItem("token");
   const isEditMode = siteId !== "new";
   // const [manufacturers, setManufacturers] = useState<any[]>([]);
   // const [sites, setSites] = useState<any[]>([]);
@@ -89,7 +90,10 @@ const CreateUpdateSites = ({ open, siteId, onClose, fetchSites }: any) => {
           : BACKEND_URLS.SITES,
         {
           method: isEditMode ? "PUT" : "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
           body: JSON.stringify(payload),
         }
       );

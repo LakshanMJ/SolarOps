@@ -13,9 +13,11 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CreateUpdateUsers from "./CreateUpdateUsers";
 import DeleteModal from "@/utils/deleteModal";
 import UserDrawer from "./UserDrawer";
+import CreateUpdateRoles from "./CreateUpdateRoles";
 
 const users = () => {
     const [usersData, setUsersData] = useState([])
+    const [rolesData, setRolesData] = useState([])
     const [tabValue, setTabValue] = useState('1');
     const [activeUserId, setActiveUserId] = useState<string | null>(null);
     const [userDeleteModal, setUserDeleteModal] = useState({
@@ -25,12 +27,45 @@ const users = () => {
     const [selectedUser, setSelectedUser] = useState<any>(null);
     const [selectedRowIds, setSelectedRowIds] = useState<number[]>([]);
 
-    const columns = useMemo<GridColDef[]>(() => [
-        { field: 'userName', headerName: 'User', flex: 1 },
+    const [activeRoleId, setActiveRoleId] = useState<string | null>(null);
+    const [roleDeleteModal, setRoleDeleteModal] = useState({
+        show: false,
+        id: null as string | null,
+    });
 
-        { field: 'email', headerName: 'Email', align: 'center', headerAlign: 'center', flex: 1 },
+    const userColumns = useMemo<GridColDef[]>(() => [
+        {
+            field: 'userName',
+            headerName: 'User',
+            renderCell: (params) => (
+                <Typography>{params.value || 'N/A'}</Typography>
+            ),
+            flex: 1
+        },
 
-        { field: 'role', headerName: 'Roles', align: 'center', headerAlign: 'center', flex: 1.3 },
+        {
+            field: 'email',
+            headerName: 'Email',
+            renderCell: (params) => (
+                <Typography>{params.value || 'N/A'}</Typography>
+            ),
+            align: 'center',
+            headerAlign: 'center',
+            flex: 1
+        },
+
+        {
+            field: 'roles', // match the key in your payload
+            headerName: 'Roles',
+            renderCell: (params) => {
+                const rolesArray = params.value as { id: string; name: string }[] | undefined;
+                const roleNames = rolesArray?.map((r) => r.name).join(', ');
+                return <Typography>{roleNames || 'N/A'}</Typography>;
+            },
+            align: 'center',
+            headerAlign: 'center',
+            flex: 1.3,
+        },
 
         {
             field: 'actions',
@@ -83,6 +118,67 @@ const users = () => {
         }
     ], []);
 
+    const roleColumns = useMemo<GridColDef[]>(() => [
+        {
+            field: 'name',
+            headerName: 'Name',
+            renderCell: (params) => (
+                <Typography>{params.value || 'N/A'}</Typography>
+            ),
+            flex: 1
+        },
+
+        {
+            field: 'actions',
+            headerName: 'Actions',
+            headerAlign: 'center',
+            flex: 1,
+            renderCell: (params) => (
+                <Box
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: 1,
+                    }}
+                >
+                    {/* <IconButton
+                        size="small"
+                        onClick={() => {
+                            setSelectedUser(params.row);    // use drawerrrrr
+                            setSelectedRowIds([params.id as number]);
+                        }}
+                    >
+                        <VisibilityIcon sx={{ color: 'white' }} fontSize="small" />
+                    </IconButton> */}
+
+                    <IconButton
+                        size="small"
+                        onClick={() => {
+                            setActiveRoleId(params.row.id);
+                        }}
+                    >
+                        <EditIcon sx={{ color: 'white' }} fontSize="small" />
+                    </IconButton>
+
+                    <IconButton
+                        size="small"
+                        onClick={() =>
+                            setRoleDeleteModal({
+                                show: true,
+                                id: params.row.id,
+                            })
+                        }
+                    >
+                        <DeleteIcon sx={{ color: 'white' }} fontSize="small" />
+                    </IconButton>
+                </Box>
+            ),
+            sortable: false,
+            filterable: false,
+        }
+    ], []);
+
     const handleTabValueChange = (event: React.SyntheticEvent, newValue: string) => {
         setTabValue(newValue);
     };
@@ -100,6 +196,19 @@ const users = () => {
         }
     };
 
+    const handleDeleteRoles = async () => {
+        if (!roleDeleteModal.id) return;
+        try {
+            await fetchData(
+                `${BACKEND_URLS.ROLES}/${roleDeleteModal.id}`,
+                { method: "DELETE" }
+            );
+            await fetchRoles();
+        } catch (err) {
+            console.error("Delete failed:", err);
+        }
+    };
+
     async function fetchUsers() {
         try {
             const usersData = await fetchData(BACKEND_URLS.USERS);
@@ -109,8 +218,18 @@ const users = () => {
         }
     }
 
+    async function fetchRoles() {
+        try {
+            const rolesData = await fetchData(BACKEND_URLS.ROLES);
+            setRolesData(rolesData);
+        } catch (err) {
+            console.error('Failed to load roles data:', err);
+        }
+    }
+
     useEffect(() => {
         fetchUsers();
+        fetchRoles();
     }, []);
 
     return (
@@ -122,7 +241,21 @@ const users = () => {
                 <Box sx={{ width: '100%', typography: 'body1' }}>
                     <TabContext value={tabValue}>
                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                            <TabList onChange={handleTabValueChange} aria-label="lab API tabs example">
+                            <TabList
+                                onChange={handleTabValueChange}
+                                aria-label="lab API tabs example"
+                                sx={{
+                                    '& .MuiTab-root': {
+                                        color: '#fff',
+                                    },
+                                    '& .Mui-selected': {
+                                        color: '#f59e0b !important',
+                                    },
+                                    '& .MuiTabs-indicator': {
+                                        backgroundColor: '#f59e0b',
+                                    },
+                                }}
+                            >
                                 <Tab label="Users" value="1" />
                                 <Tab label="Roles" value="2" />
                             </TabList>
@@ -141,7 +274,7 @@ const users = () => {
                                 </Box>
                                 <SolarDataGrid
                                     rows={usersData}
-                                    columns={columns}
+                                    columns={userColumns}
                                     pageSizeOptions={[5, 10]}
                                     rowsPerPageOptions={[5]}
                                     selectionModel={selectedRowIds}
@@ -156,11 +289,44 @@ const users = () => {
                                         userId={activeUserId}
                                         onClose={() => setActiveUserId(null)}
                                         fetchUsers={fetchUsers}
+                                        rolesList={rolesData}
                                     />
                                 )}
                             </Box>
                         </TabPanel>
-                        <TabPanel value="2">Roles</TabPanel>
+                        <TabPanel value="2">
+                            <Box sx={{ height: 400, width: '100%', mt: 2 }}>
+                                <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        sx={{ mb: 2 }}
+                                        onClick={() => setActiveRoleId('new')}
+                                    >
+                                        Add Role
+                                    </Button>
+                                </Box>
+                                <SolarDataGrid
+                                    rows={rolesData}
+                                    columns={roleColumns}
+                                    pageSizeOptions={[5, 10]}
+                                    rowsPerPageOptions={[5]}
+                                    selectionModel={selectedRowIds}
+                                    disableSelectionOnClick
+                                    disableColumnSorting
+                                    initialState={{ pagination: { paginationModel: { pageSize: 5, page: 0 } } }}
+                                    autoHeight
+                                />
+                                {activeRoleId && (
+                                    <CreateUpdateRoles
+                                        open={activeRoleId !== null}
+                                        roleId={activeRoleId}
+                                        onClose={() => setActiveRoleId(null)}
+                                        fetchRoles={fetchRoles}
+                                    />
+                                )}
+                            </Box>
+                        </TabPanel>
                     </TabContext>
                 </Box>
                 <DeleteModal
@@ -172,6 +338,16 @@ const users = () => {
                         })
                     }
                     onConfirm={handleDeleteSites}
+                />
+                <DeleteModal
+                    open={roleDeleteModal.show}
+                    onClose={() =>
+                        setRoleDeleteModal({
+                            ...roleDeleteModal,
+                            show: false,
+                        })
+                    }
+                    onConfirm={handleDeleteRoles}
                 />
                 <UserDrawer
                     open={!!selectedUser}

@@ -24,6 +24,7 @@ interface Form {
 }
 
 const CreateUpdateInverter = ({ open, inverterId, onClose, fetchInverters }: any) => {
+  const token = localStorage.getItem("token");
   const isEditMode = inverterId !== "new";
   const [manufacturers, setManufacturers] = useState<any[]>([]);
   const [sites, setSites] = useState<any[]>([]);
@@ -103,7 +104,10 @@ const CreateUpdateInverter = ({ open, inverterId, onClose, fetchInverters }: any
           : BACKEND_URLS.INVERTERS,
         {
           method: isEditMode ? "PUT" : "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
           body: JSON.stringify(payload),
         }
       );

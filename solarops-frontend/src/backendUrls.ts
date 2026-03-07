@@ -7,4 +7,5 @@ export const BACKEND_URLS = {
   MANUFACTURERS: 'http://localhost:4000/api/manufacturers',
   UPLOAD_IMAGE: "http://localhost:4000/api/upload-image/",
   USERS: 'http://localhost:4000/api/users',
+  ROLES: 'http://localhost:4000/api/roles',
 }
