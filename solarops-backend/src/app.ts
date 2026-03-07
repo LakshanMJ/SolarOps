@@ -12,6 +12,7 @@ import uploadRoutes from './routes/upload.js';
 import { fileURLToPath } from 'url'
 import authRoutes from './routes/auth.routes.js'
 import usersRoutes from './routes/users.routes.js'
+import rolesRoutes from './routes/roles.routes.js'
 
 // __dirname replacement for ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -37,5 +38,6 @@ app.use('/api/inverters', invertersRoutes)
 app.use('/api/alerts', alertsRoutes);
 app.use('/api/manufacturers', manufacturersRoutes);
 app.use('/api/users', usersRoutes);
+app.use('/api/roles', rolesRoutes);
 
 export default app

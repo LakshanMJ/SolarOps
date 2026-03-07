@@ -1,42 +1,86 @@
 import { prisma } from "../db/prisma.js";
 import { User } from "@prisma/client";
+import bcrypt from 'bcrypt'
 
-export async function createUserService(payload: any) {
-  const tempPassword = payload.password || "Temp@123";
+// export async function createUserService(payload: any) {
+//   const tempPassword = payload.password || "Temp@123";
 
-  const hashedPassword = await bcrypt.hash(tempPassword, 10);
+//   const hashedPassword = await bcrypt.hash(tempPassword, 10);
 
-  const user = await prisma.user.create({
-    data: {
-      ...payload,
-      password: hashedPassword,
+//   const user = await prisma.user.create({
+//     data: {
+//       ...payload,
+//       password: hashedPassword,
+//     },
+//   });
+
+//   // remove password before returning
+//   const { password, ...rest } = user;
+//   return rest;
+// }
+
+export async function getUsersService() {
+  // Fetch all users with roles, excluding password directly
+  const users = await prisma.user.findMany({
+    where: { deletedAt: null },
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      email: true,
+      firstName: true,
+      lastName: true,
+      userName: true,
+      phone: true,
+      avatarUrl: true,
+      isActive: true,
+      createdAt: true,
+      updatedAt: true,
+      roles: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
     },
   });
 
-  // remove password before returning
-  const { password, ...rest } = user;
-  return rest;
-}
-
-export async function getUsersService(): Promise<Omit<User, "password">[]> {
-  // Fetch all users
-  const users = await prisma.user.findMany({
-    where: { deletedAt: null }, 
-    orderBy: { createdAt: "desc" },
-  });
-
-  // Remove password before returning
-  return users.map(({ password, ...rest }) => rest);
+  // users already excludes password
+  return users;
 }
 
 export async function getUsersByIdService(id: string) {
-  const user = await prisma.user.findUnique({
-    where: { id },
+  const user = await prisma.user.findFirst({
+    where: {
+      id,
+      deletedAt: null,
+    },
+    select: {
+      id: true,
+      email: true,
+      firstName: true,
+      lastName: true,
+      userName: true,
+      phone: true,
+      avatarUrl: true,
+      isActive: true,
+      createdAt: true,
+      updatedAt: true,
+      roles: {
+        select: {
+          id: true,
+        },
+      },
+    },
   });
 
-  if (!user || user.deletedAt) return null; // ignore soft-deleted
-  const { password, ...rest } = user;
-  return rest;
+  if (!user) return null;
+
+  return {
+    ...user,
+    roles: user.roles
+      .map((r) => r?.id)
+      .filter((id): id is string => Boolean(id)),
+  };
 }
 
 export async function updateUserService(id: string, payload: any) {

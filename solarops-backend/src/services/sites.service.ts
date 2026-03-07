@@ -1,30 +1,33 @@
 import { prisma } from '../db/prisma.js'
+import activeInverterCount from '../utils/activeInverterCount.js'
+import calculateAveragePRPerSite from '../utils/calculateAveragePRPerSite.js'
+import calculateSiteHealth from '../utils/calculateSiteHealth.js'
+import unresolvedAlertsCount from '../utils/unresolvedAlertsCount.js'
 
-type Alert = { id: string; status: string }
+export async function createSiteService(data) {
+  const { name, latitude, longitude, region, peakCapacityMw } = data;
 
-function calculateSiteHealth(inverters: { status: string }[]) {
-  if (!inverters.length) return 'Unknown'
-
-  const weights: Record<string, number> = {
-    Online: 1,
-    Degraded: 0.6,
-    Critical: 0.3,
-    Offline: 0,
+  if (!name || latitude == null || longitude == null || !region || !peakCapacityMw) {
+    throw new Error("VALIDATION_ERROR");
   }
 
-  const totalScore = inverters.reduce((sum, inv) => sum + (weights[inv.status] ?? 0), 0)
-  const score = totalScore / inverters.length
+  const newSite = await prisma.site.create({
+    data: {
+      name,
+      latitude: parseFloat(latitude),
+      longitude: parseFloat(longitude),
+      region,
+      peakCapacityMw: parseFloat(peakCapacityMw),
+    },
+  });
 
-  if (score >= 0.85) return 'Good'
-  if (score >= 0.6) return 'Warning'
-  return 'Critical'
+  return newSite;
 }
 
 export async function getSitesService() {
-  // Fetch all sites with inverters, telemetry, and alerts
   const sites = await prisma.site.findMany({
     where: {
-      deletedAt: null, // ✅ hide soft-deleted records
+      deletedAt: null,
     },
     select: {
       id: true,
@@ -48,28 +51,15 @@ export async function getSitesService() {
     }
   })
 
-  // Map into frontend-friendly structure
   const siteData = sites.map(site => {
-    const activeInverters = site.inverters.filter(inv => inv.status === 'Online').length
 
-    // Count all unresolved alerts from all inverters in this site
-    const alertsCount = site.inverters
-      .flatMap(inv => inv.alerts)
-      .filter(alert => alert.status !== 'Resolved').length
+    const activeInverters = activeInverterCount(site.inverters);
 
-    // Calculate avg PR per site
-    let avgPR = 0
-    if (site.inverters.length > 0) {
-      const inverterPRs = site.inverters.map(inv => {
-        if (!inv.telemetry || inv.telemetry.length === 0) return 0
-        const sumOutput = inv.telemetry.reduce((sum, t) => sum + t.acOutputKw, 0)
-        return (sumOutput / inv.telemetry.length) * (inv.status === 'Online' ? 1 : 0)
-      })
-      avgPR = inverterPRs.reduce((a, b) => a + b, 0) / inverterPRs.length
-    }
+    const alertsCount = unresolvedAlertsCount(site.inverters);
 
-    // Compute health
-    const health = calculateSiteHealth(site.inverters)
+    const avgPR = calculateAveragePRPerSite(site.inverters);
+
+    const health = calculateSiteHealth(site.inverters);
 
     return {
       id: site.id,
@@ -86,6 +76,56 @@ export async function getSitesService() {
   })
 
   return siteData
+}
+
+export async function getSiteByIdService(id: string) {
+  const site = await prisma.site.findUnique({
+    where: { id },
+  });
+
+  if (!site) {
+    throw new Error("SITE_NOT_FOUND");
+  }
+
+  return site;
+}
+
+export async function updateSiteService(id: string, data: any) {
+  const { name, latitude, longitude, region, peakCapacityMw } = data;
+
+  // Simple validation: at least one field must be provided
+  if (
+    name === undefined &&
+    latitude === undefined &&
+    longitude === undefined &&
+    region === undefined &&
+    peakCapacityMw === undefined
+  ) {
+    throw new Error("VALIDATION_ERROR");
+  }
+
+  // Check if site exists first
+  const existingSite = await prisma.site.findUnique({
+    where: { id },
+  });
+
+  if (!existingSite) {
+    return null; // Controller will handle 404
+  }
+
+  // Update site
+  const updatedSite = await prisma.site.update({
+    where: { id },
+    data: {
+      name: name ?? existingSite.name,
+      latitude: latitude !== undefined ? parseFloat(latitude) : existingSite.latitude,
+      longitude: longitude !== undefined ? parseFloat(longitude) : existingSite.longitude,
+      region: region ?? existingSite.region,
+      peakCapacityMw: peakCapacityMw !== undefined ? parseFloat(peakCapacityMw) : existingSite.peakCapacityMw,
+    },
+  });
+
+  return updatedSite;
 }
 
 export async function deleteSiteService(siteId: string) {

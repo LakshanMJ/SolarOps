@@ -1,19 +1,13 @@
 import { Router } from 'express'
-import { getSites, createSite, deleteSite, getSiteById } from '../controllers/sites.controller.js'
+import { getSites, createSite, deleteSite, getSiteById, updateSite } from '../controllers/sites.controller.js'
 import { authMiddleware } from '../middleware/auth.middleware.js';
 
 const router = Router()
 
-// Get all sites
+router.post('/', authMiddleware, createSite); 
 router.get('/', authMiddleware, getSites);
-
-// Get site by id
 router.get("/:id", authMiddleware, getSiteById);
-
-// Create a new site
-router.post('/', authMiddleware, createSite);   
-
-// Delete a new site
+router.put("/:id", authMiddleware, updateSite);
 router.delete("/:id", authMiddleware, deleteSite);
 
 export default router

@@ -1,6 +1,29 @@
 import { prisma } from '../db/prisma.js'
 
-type Alert = { id: string; resolved: boolean }
+export async function createOrUpdateInverterService(payload: {
+  id?: string;
+  name: string;
+  siteId: string;
+  manufacturerId?: string;
+  serialNumber?: string;
+  capacityKw: number;
+  image?: string | null;
+  status: 'Online' | 'Degraded' | 'Critical' | 'Offline';
+  installedAt: Date;
+}) {
+  if (payload.id) {
+    // Update existing inverter
+    return prisma.inverter.update({
+      where: { id: payload.id },
+      data: payload,
+    });
+  } else {
+    // Create new inverter
+    return prisma.inverter.create({
+      data: payload,
+    });
+  }
+}
 
 export async function getInvertersService() {
   // Fetch all NON-DELETED inverters
@@ -59,25 +82,18 @@ export async function getInvertersService() {
   return inverterData;
 }
 
-export async function createOrUpdateInverterService(payload: {   // CHANGE THIS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  id?: string // Added ID to the payload to check for existence
-  name: string
-  siteId: string
-  manufacturerId?: string
-  serialNumber?: string
-  capacityKw: number
-  image?: string | null
-  status: 'Online' | 'Degraded' | 'Critical' | 'Offline'
-  installedAt: Date
-}) {
-  return prisma.inverter.upsert({
-    where: {
-      // Use 'id' if you have it, or another unique field like 'serialNumber'
-      id: payload.id || 'new-id'
+export async function getInverterByIdService(id: string) {
+  const inverter = await prisma.inverter.findUnique({
+    where: { id },
+    include: {
+      site: true,
+      manufacturer: true,
     },
-    update: payload, // Data to apply if the record exists
-    create: payload  // Data to apply if the record is new
-  })
+  });
+  if (!inverter) {
+    throw new Error("INVERTER_NOT_FOUND");
+  }
+  return inverter;
 }
 
 export async function deleteInverterService(inverterId: string) {
@@ -90,7 +106,6 @@ export async function deleteInverterService(inverterId: string) {
     throw new Error("Inverter not found");
   }
 
-  // ✅ SOFT DELETE (instead of hard delete)
   await prisma.inverter.update({
     where: { id: inverterId },
     data: {

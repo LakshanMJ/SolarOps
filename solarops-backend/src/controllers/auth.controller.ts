@@ -4,13 +4,10 @@ import { createUser, loginUser } from "../services/auth.service.js";
 
 export const register = async (req: Request, res: Response) => {
   try {
-    const { email, password, firstName, lastName, phone, avatarUrl, userName, role } = req.body;
-
-    const user = await createUser({ email, password, firstName, lastName, phone, avatarUrl, userName, role });
-
-    res.status(201).json({ message: "User created", userId: user.id });
+    const user = await createUser(req.body);
+    res.status(201).json({ message: "User created successfully", user });
   } catch (err: any) {
-    res.status(500).json({ message: err.message });
+    res.status(400).json({ message: err.message });
   }
 };
 
@@ -19,8 +16,10 @@ export const login = async (req: Request, res: Response) => {
     const { email, password } = req.body;
     const user = await loginUser(email, password);
 
+    const roles = user.roles.map(r => r.name);
+
     const token = jwt.sign(
-      { userId: user.id, role: user.role },
+      { userId: user.id, roles }, // note plural
       process.env.JWT_SECRET!,
       { expiresIn: "7d" }
     );
