@@ -26,10 +26,12 @@ export async function createOrUpdateInverterService(payload: {
 }
 
 export async function getInvertersService() {
-  // Fetch all NON-DELETED inverters
   const inverters = await prisma.inverter.findMany({
     where: {
-      deletedAt: null, // ✅ hide soft-deleted records
+      deletedAt: null,
+    },
+    orderBy: {
+      createdAt: 'desc',
     },
     select: {
       id: true,

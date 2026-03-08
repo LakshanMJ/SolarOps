@@ -4,30 +4,82 @@ import calculateAveragePRPerSite from '../utils/calculateAveragePRPerSite.js'
 import calculateSiteHealth from '../utils/calculateSiteHealth.js'
 import unresolvedAlertsCount from '../utils/unresolvedAlertsCount.js'
 
-export async function createSiteService(data) {
-  const { name, latitude, longitude, region, peakCapacityMw } = data;
+export async function createOrUpdateSiteService(payload: {
+  id?: string
+  name?: string
+  latitude?: number | string
+  longitude?: number | string
+  region?: string
+  peakCapacityMw?: number | string
+}) {
+  const { id, name, latitude, longitude, region, peakCapacityMw } = payload
 
-  if (!name || latitude == null || longitude == null || !region || !peakCapacityMw) {
-    throw new Error("VALIDATION_ERROR");
+  // -----------------------
+  // UPDATE
+  // -----------------------
+  if (id) {
+    const existingSite = await prisma.site.findUnique({
+      where: { id },
+    })
+
+    if (!existingSite) return null
+
+    if (
+      name === undefined &&
+      latitude === undefined &&
+      longitude === undefined &&
+      region === undefined &&
+      peakCapacityMw === undefined
+    ) {
+      throw new Error('VALIDATION_ERROR')
+    }
+
+    return prisma.site.update({
+      where: { id },
+      data: {
+        name: name ?? existingSite.name,
+        latitude:
+          latitude !== undefined
+            ? parseFloat(latitude as string)
+            : existingSite.latitude,
+        longitude:
+          longitude !== undefined
+            ? parseFloat(longitude as string)
+            : existingSite.longitude,
+        region: region ?? existingSite.region,
+        peakCapacityMw:
+          peakCapacityMw !== undefined
+            ? parseFloat(peakCapacityMw as string)
+            : existingSite.peakCapacityMw,
+      },
+    })
   }
 
-  const newSite = await prisma.site.create({
+  // -----------------------
+  // CREATE
+  // -----------------------
+  if (!name || latitude == null || longitude == null || !region || !peakCapacityMw) {
+    throw new Error('VALIDATION_ERROR')
+  }
+
+  return prisma.site.create({
     data: {
       name,
-      latitude: parseFloat(latitude),
-      longitude: parseFloat(longitude),
+      latitude: parseFloat(latitude as string),
+      longitude: parseFloat(longitude as string),
       region,
-      peakCapacityMw: parseFloat(peakCapacityMw),
+      peakCapacityMw: parseFloat(peakCapacityMw as string),
     },
-  });
-
-  return newSite;
+  })
 }
 
 export async function getSitesService() {
   const sites = await prisma.site.findMany({
     where: {
       deletedAt: null,
+    },
+    orderBy: {
+      createdAt: 'desc',
     },
     select: {
       id: true,
@@ -88,44 +140,6 @@ export async function getSiteByIdService(id: string) {
   }
 
   return site;
-}
-
-export async function updateSiteService(id: string, data: any) {
-  const { name, latitude, longitude, region, peakCapacityMw } = data;
-
-  // Simple validation: at least one field must be provided
-  if (
-    name === undefined &&
-    latitude === undefined &&
-    longitude === undefined &&
-    region === undefined &&
-    peakCapacityMw === undefined
-  ) {
-    throw new Error("VALIDATION_ERROR");
-  }
-
-  // Check if site exists first
-  const existingSite = await prisma.site.findUnique({
-    where: { id },
-  });
-
-  if (!existingSite) {
-    return null; // Controller will handle 404
-  }
-
-  // Update site
-  const updatedSite = await prisma.site.update({
-    where: { id },
-    data: {
-      name: name ?? existingSite.name,
-      latitude: latitude !== undefined ? parseFloat(latitude) : existingSite.latitude,
-      longitude: longitude !== undefined ? parseFloat(longitude) : existingSite.longitude,
-      region: region ?? existingSite.region,
-      peakCapacityMw: peakCapacityMw !== undefined ? parseFloat(peakCapacityMw) : existingSite.peakCapacityMw,
-    },
-  });
-
-  return updatedSite;
 }
 
 export async function deleteSiteService(siteId: string) {

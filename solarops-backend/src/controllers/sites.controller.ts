@@ -1,17 +1,29 @@
 import type { NextFunction } from 'express'
 import { prisma } from '../db/prisma.js'
-import { createSiteService, deleteSiteService, getSiteByIdService, getSitesService, updateSiteService } from '../services/sites.service.js'
+import { createOrUpdateSiteService, deleteSiteService, getSiteByIdService, getSitesService } from '../services/sites.service.js'
 import { Request, Response } from "express";
 
-export const createSite = async (req, res) => {
+export const createOrUpdateSite = async (req: Request, res: Response) => {
   try {
-    const newSite = await createSiteService(req.body);
-    res.status(201).json(newSite);
+    const id = req.params.id;
+    const payload = {
+      id,
+      ...req.body,
+    };
+
+    const site = await createOrUpdateSiteService(payload);
+
+    if (!site && id) {
+      return res.status(404).json({ message: "Site not found" });
+    }
+
+    res.status(id ? 200 : 201).json(site);
   } catch (error) {
     if (error instanceof Error && error.message === "VALIDATION_ERROR") {
       return res.status(400).json({ error: "All fields are required" });
     }
-    console.error("Error creating site:", error);
+
+    console.error("Error creating/updating site:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -42,32 +54,6 @@ export async function getSiteById(req: any, res: any) {
     res.status(500).json({ error: "Failed to fetch site" });
   }
 }
-
-export const updateSite = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    const data = req.body;
-
-    if (!id || Array.isArray(id)) {
-      return res.status(400).json({ message: "Invalid site id" });
-    }
-
-    const updatedSite = await updateSiteService(id, data);
-
-    if (!updatedSite) {
-      return res.status(404).json({ message: "Site not found" });
-    }
-
-    res.status(200).json(updatedSite);
-  } catch (error: any) {
-    if (error instanceof Error && error.message === "VALIDATION_ERROR") {
-      return res.status(400).json({ error: "All fields are required" });
-    }
-
-    console.error("Error updating site:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-};
 
 export const deleteSite = async (req: Request, res: Response) => {
   try {

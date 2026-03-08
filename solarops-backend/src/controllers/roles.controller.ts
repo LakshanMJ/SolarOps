@@ -1,20 +1,18 @@
 import { Request, Response } from "express"
-import { createRoleService, deleteRoleService, getRoleByIdService, getRolesService, updateRoleService } from "../services/roles.services.js"
+import { createOrUpdateRoleService, deleteRoleService, getRoleByIdService, getRolesService } from "../services/roles.services.js"
 
-interface CreateRoleBody {
-  name: string
-}
-
-export async function createRole(
-  req: Request<{}, {}, CreateRoleBody>,
-  res: Response
-) {
+export async function createOrUpdateRole(req: Request, res: Response) {
   try {
-    const data = await createRoleService(req.body)
-    res.status(201).json(data)
+    const data = await createOrUpdateRoleService(req.body)
+
+    if (!data) {
+      return res.status(404).json({ message: 'Role not found' })
+    }
+
+    res.status(200).json(data)
   } catch (error) {
     console.error(error)
-    res.status(500).json({ message: "Failed to create role" })
+    res.status(500).json({ message: 'Failed to create or update role' })
   }
 }
 
@@ -41,29 +39,6 @@ export async function getRoleById(req: Request<{ id: string }>, res: Response) {
   } catch (error) {
     console.error(error)
     res.status(500).json({ message: "Failed to fetch role" })
-  }
-}
-
-interface UpdateRoleBody {
-  name?: string
-}
-
-export async function updateRole(
-  req: Request<{ id: string }, {}, UpdateRoleBody>,
-  res: Response
-) {
-  try {
-    const { id } = req.params
-    const data = await updateRoleService(id, req.body)
-
-    if (!data) {
-      return res.status(404).json({ message: "Role not found" })
-    }
-
-    res.json(data)
-  } catch (error) {
-    console.error(error)
-    res.status(500).json({ message: "Failed to update role" })
   }
 }
 

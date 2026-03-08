@@ -1,23 +1,4 @@
 import { prisma } from "../db/prisma.js";
-import { User } from "@prisma/client";
-import bcrypt from 'bcrypt'
-
-// export async function createUserService(payload: any) {
-//   const tempPassword = payload.password || "Temp@123";
-
-//   const hashedPassword = await bcrypt.hash(tempPassword, 10);
-
-//   const user = await prisma.user.create({
-//     data: {
-//       ...payload,
-//       password: hashedPassword,
-//     },
-//   });
-
-//   // remove password before returning
-//   const { password, ...rest } = user;
-//   return rest;
-// }
 
 export async function getUsersService() {
   // Fetch all users with roles, excluding password directly
@@ -93,7 +74,7 @@ export async function updateUserService(id: string, payload: any) {
 export async function deleteUserService(id: string) {
   const updatedUser = await prisma.user.update({
     where: { id },
-    data: { deletedAt: new Date() }, // mark as deleted
+    data: { deletedAt: new Date() },
   });
 
   // remove password before returning

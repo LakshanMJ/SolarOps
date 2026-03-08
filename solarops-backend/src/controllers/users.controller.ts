@@ -1,16 +1,5 @@
 import { Request, Response } from 'express'
-import { prisma } from '../db/prisma.js'
-import { createUserService, deleteUserService, getUsersByIdService, getUsersService, updateUserService } from '../services/users.service.js'
-
-// export async function createUser(req: Request, res: Response) {
-//   try {
-//     const data = await createUserService(req.body)
-//     res.status(201).json(data)
-//   } catch (error) {
-//     console.error(error)
-//     res.status(500).json({ message: 'Failed to create user' })
-//   }
-// }
+import { deleteUserService, getUsersByIdService, getUsersService, updateUserService } from '../services/users.service.js'
 
 export async function getUsers(req: Request, res: Response) {
   console.log('Fetching users...')

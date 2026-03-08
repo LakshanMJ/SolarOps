@@ -28,7 +28,6 @@ app.use(cors())
 app.use(express.json())
 
 app.use("/auth", authRoutes);
-// Serve files in the uploads folder
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use("/api/upload-image", uploadRoutes);
 
