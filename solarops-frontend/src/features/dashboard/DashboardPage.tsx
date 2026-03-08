@@ -15,6 +15,7 @@ import InverterHealth from '@/components/kpi/InverterHealth'
 import { useEffect, useState } from 'react';
 import { fetchData } from '@/utils/fetch';
 import { BACKEND_URLS } from '@/backendUrls';
+import Toast from '@/components/toast/Toast';
 
 const data = [
   { name: 'Mon', value: 10 },

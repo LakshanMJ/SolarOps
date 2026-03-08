@@ -6,12 +6,15 @@ import { ThemeProvider } from '@mui/material/styles';
 import theme from './utils/theme';
 import { AuthProvider } from './app/AuthContext';
 import './index.css'
+import { ToastProvider } from './components/toast/ToastContext';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ThemeProvider theme={theme}>
-      <AuthProvider>   {/* 🔥 ADD THIS */}
-        <RouterProvider router={router} />
+    <ThemeProvider theme={theme}> 
+      <AuthProvider>
+        <ToastProvider>
+          <RouterProvider router={router} />
+        </ToastProvider>
       </AuthProvider>
     </ThemeProvider>
   </StrictMode>

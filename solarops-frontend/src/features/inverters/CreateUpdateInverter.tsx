@@ -1,4 +1,5 @@
 import { BACKEND_URLS } from "@/backendUrls";
+import { useToast } from "@/components/toast/ToastContext";
 import { fetchData } from "@/utils/fetch";
 import ImageUploadDropzone from "@/utils/ImageUploadDropzone";
 import {
@@ -14,21 +15,24 @@ import {
 import { useEffect, useState } from "react";
 
 interface Form {
+  id?: string | null;
   name: string;
   manufacturerId: string;
   serialNumber: string;
   capacityKw: number | null;
   siteId: string;
-  status: "Offline"; 
-  image: File | string | null; 
+  status: "Offline";
+  image: File | string | null;
 }
 
 const CreateUpdateInverter = ({ open, inverterId, onClose, fetchInverters }: any) => {
   const token = localStorage.getItem("token");
+  const { addToast } = useToast();
   const isEditMode = inverterId !== "new";
   const [manufacturers, setManufacturers] = useState<any[]>([]);
   const [sites, setSites] = useState<any[]>([]);
   const [form, setForm] = useState<Form>({
+    id: null,
     name: "",
     manufacturerId: "",
     serialNumber: "",
@@ -51,6 +55,7 @@ const CreateUpdateInverter = ({ open, inverterId, onClose, fetchInverters }: any
     fetchData(`${BACKEND_URLS.INVERTERS}/${inverterId}`)
       .then((data) => {
         setForm({
+          id: data.id,
           name: data.name ?? "",
           manufacturerId: data.manufacturerId ?? "",
           serialNumber: data.serialNumber ?? "",
@@ -97,6 +102,10 @@ const CreateUpdateInverter = ({ open, inverterId, onClose, fetchInverters }: any
         installedAt: new Date(),
       };
 
+      const payloadToSend = isEditMode
+        ? { ...payload, id: inverterId }
+        : payload;
+
       // POST or PUT
       const res = await fetch(
         isEditMode
@@ -108,19 +117,27 @@ const CreateUpdateInverter = ({ open, inverterId, onClose, fetchInverters }: any
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
           },
-          body: JSON.stringify(payload),
+          body: JSON.stringify(payloadToSend),
         }
       );
 
       if (!res.ok) throw new Error("Failed to save inverter");
       await res.json();
 
-      alert("Inverter saved successfully!");
+      addToast({
+        type: "success",
+        title: "Success",
+        message: "Inverter saved successfully!"
+      });
       onClose(false);
       fetchInverters();
     } catch (err: any) {
       console.error(err);
-      alert("Error saving inverter: " + err.message);
+      addToast({
+        type: "error",
+        title: "Error",
+        message: err.message || "Error saving inverter"
+      });
     }
   };
 

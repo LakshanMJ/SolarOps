@@ -10,14 +10,18 @@ import {
   TextField,
 } from "@mui/material";
 import { useEffect, useState } from "react";
+import { useToast } from "@/components/toast/ToastContext";
 
 
 const CreateUpdateRoles = ({ open, roleId, onClose, fetchRoles }: any) => {
+  const { addToast } = useToast();
   const isEditMode = roleId !== "new";
   const token = localStorage.getItem("token");
   const [form, setForm] = useState<{
+    id: null;
     name: string;
   }>({
+    id: null,
     name: ""
   });
 
@@ -29,6 +33,7 @@ const CreateUpdateRoles = ({ open, roleId, onClose, fetchRoles }: any) => {
     fetchData(`${BACKEND_URLS.ROLES}/${roleId}`)
       .then((data) => {
         setForm({
+          id: data.id,
           name: data.name ?? ""
         });
       })
@@ -43,6 +48,10 @@ const CreateUpdateRoles = ({ open, roleId, onClose, fetchRoles }: any) => {
         name: form.name
       };
 
+      const payloadToSend = isEditMode
+        ? { ...payload, id: roleId }
+        : payload;
+
       // POST or PUT
       const res = await fetch(
         isEditMode
@@ -54,7 +63,7 @@ const CreateUpdateRoles = ({ open, roleId, onClose, fetchRoles }: any) => {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
           },
-          body: JSON.stringify(payload),
+          body: JSON.stringify(payloadToSend),
         }
       );
 
@@ -62,12 +71,20 @@ const CreateUpdateRoles = ({ open, roleId, onClose, fetchRoles }: any) => {
 
       await res.json();
 
-      alert("Role saved successfully!");
+      addToast({
+        type: "success",
+        title: "Success",
+        message: "Role saved successfully"
+      });
       onClose(false);
       fetchRoles();
     } catch (err: any) {
       console.error(err);
-      alert("Error saving role: " + err.message);
+      addToast({
+        type: "error",
+        title: "Error",
+        message: err.message || "Failed to save role"
+      });
     }
   };
 

@@ -5,55 +5,18 @@ import { useEffect, useState } from 'react';
 import { BACKEND_URLS } from '@/backendUrls';
 import { fetchData } from '@/utils/fetch';
 
-type AlertRow = {
+interface AlertRow {
   id: string;
+  severity: 'Warning' | 'Critical' | 'Info';
   message: string;
-  createdAt: string;
-  inverter: {
+  inverter?: {
     name: string;
-    site: {
-      name: string;
-    };
+    site?: { name: string };
   };
-};
-
-
-// Sample alerts
-const alertsData = [
-  {
-    id: 1,
-    severity: 'critical',
-    message: 'Inverter offline',
-    inverter: 'INV-101',
-    site: 'Site A',
-    createdAt: '2026-01-22 08:12',
-    resolvedAt: null,
-    status: 'Active',
-    maintenanceAction: 'Dispatch technician',
-  },
-  {
-    id: 2,
-    severity: 'warning',
-    message: 'PR drop detected',
-    inverter: 'INV-102',
-    site: 'Site B',
-    createdAt: '2026-01-21 14:35',
-    resolvedAt: '2026-01-21 16:00',
-    status: 'Resolved',
-    maintenanceAction: 'Reset inverter',
-  },
-  {
-    id: 3,
-    severity: 'info',
-    message: 'Temperature high',
-    inverter: 'INV-103',
-    site: 'Site C',
-    createdAt: '2026-01-20 12:20',
-    resolvedAt: null,
-    status: 'Active',
-    maintenanceAction: 'Monitor',
-  },
-];
+  createdAt: string;
+  status: 'Open' | 'Closed';
+  maintenanceAction?: string;
+}
 
 // Colors
 const severityColor = {
@@ -76,7 +39,7 @@ export default function AlertsPage() {
     {
       field: 'severity',
       headerName: 'Severity',
-      width: 130, // slightly wider for Chip
+      width: 130,
       align: 'left',
       headerAlign: 'left',
       renderCell: (params) => (
@@ -90,7 +53,7 @@ export default function AlertsPage() {
     {
       field: 'message',
       headerName: 'Message',
-      flex: 2, // take more space for long messages
+      flex: 2,
       minWidth: 200,
       align: 'left',
       headerAlign: 'left',
@@ -120,11 +83,25 @@ export default function AlertsPage() {
       minWidth: 150,
       align: 'left',
       headerAlign: 'left',
+      valueGetter: (value, row: AlertRow) => row?.createdAt || '',
+      valueFormatter: (value: string) => {
+        if (!value) return '';
+        const date = new Date(value);
+        const options: Intl.DateTimeFormatOptions = {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: 'numeric',
+          minute: '2-digit',
+          hour12: true,
+        };
+        return date.toLocaleString(undefined, options);
+      },
     },
     {
       field: 'status',
       headerName: 'Status',
-      width: 130, // fixed width works well for Chips
+      width: 130,
       align: 'left',
       headerAlign: 'left',
       renderCell: (params) => (
@@ -167,6 +144,7 @@ export default function AlertsPage() {
         <SolarDataGrid
           rows={alertsData}
           columns={columns}
+          getRowId={(row) => row.id}
           pageSizeOptions={[5, 10]}
           rowsPerPageOptions={[5]}
           disableSelectionOnClick

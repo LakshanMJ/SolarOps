@@ -1,4 +1,5 @@
 import { BACKEND_URLS } from "@/backendUrls";
+import { useToast } from "@/components/toast/ToastContext";
 import { fetchData } from "@/utils/fetch";
 import {
   Box,
@@ -17,7 +18,7 @@ import { useEffect, useState } from "react";
 
 
 const CreateUpdateUsers = ({ open, userId, onClose, fetchUsers, rolesList }: any) => {
-  // console.log(rolesList, 'rolesList')
+  const { addToast } = useToast();
   const isEditMode = userId !== "new";
   const token = localStorage.getItem("token");
   const [form, setForm] = useState<{
@@ -33,7 +34,7 @@ const CreateUpdateUsers = ({ open, userId, onClose, fetchUsers, rolesList }: any
     email: "",
     roles: []
   });
-console.log(JSON.stringify(form), 'form')
+  console.log(JSON.stringify(form), 'form')
 
   // fetch site for edit
   useEffect(() => {
@@ -83,12 +84,20 @@ console.log(JSON.stringify(form), 'form')
 
       await res.json();
 
-      alert("User saved successfully!");
+      addToast({
+        type: "success",
+        title: "Success",
+        message: "User saved successfully!"
+      });
       onClose(false);
       fetchUsers();
     } catch (err: any) {
       console.error(err);
-      alert("Error saving user: " + err.message);
+      addToast({
+        type: "error",
+        title: "Error",
+        message: err.message || "Error saving user"
+      });
     }
   };
 

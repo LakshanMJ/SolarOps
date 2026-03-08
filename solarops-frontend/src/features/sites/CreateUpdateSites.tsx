@@ -1,4 +1,5 @@
 import { BACKEND_URLS } from "@/backendUrls";
+import { useToast } from "@/components/toast/ToastContext";
 import { fetchData } from "@/utils/fetch";
 import {
   Box,
@@ -15,17 +16,20 @@ import { MapContainer, Marker, TileLayer, useMapEvents } from "react-leaflet";
 
 const CreateUpdateSites = ({ open, siteId, onClose, fetchSites }: any) => {
   const token = localStorage.getItem("token");
+  const { addToast } = useToast();
   const isEditMode = siteId !== "new";
   // const [manufacturers, setManufacturers] = useState<any[]>([]);
   // const [sites, setSites] = useState<any[]>([]);
   const [openMap, setOpenMap] = useState(false);
   const [form, setForm] = useState<{
+    id: string | null;
     name: string;
     region: string;
     peakCapacityMw: string;
     latitude: number | null;
     longitude: number | null;
   }>({
+    id: null,
     name: "",
     region: "",
     peakCapacityMw: "",
@@ -33,7 +37,7 @@ const CreateUpdateSites = ({ open, siteId, onClose, fetchSites }: any) => {
     longitude: null,
   });
 
-  console.log(form,'form data')
+  console.log(form, 'form data')
   // fetch options
   // useEffect(() => {
   //   fetchData(BACKEND_URLS.MANUFACTURERS).then(setManufacturers).catch(console.error);
@@ -61,6 +65,7 @@ const CreateUpdateSites = ({ open, siteId, onClose, fetchSites }: any) => {
     fetchData(`${BACKEND_URLS.SITES}/${siteId}`)
       .then((data) => {
         setForm({
+          id: data.id,
           name: data.name ?? "",
           region: data.region ?? "",
           peakCapacityMw: data.peakCapacityMw?.toString() ?? "",
@@ -83,6 +88,10 @@ const CreateUpdateSites = ({ open, siteId, onClose, fetchSites }: any) => {
         longitude: form.longitude || undefined,
       };
 
+      const payloadToSend = isEditMode
+        ? { ...payload, id: siteId }
+        : payload;
+
       // POST or PUT
       const res = await fetch(
         isEditMode
@@ -94,7 +103,7 @@ const CreateUpdateSites = ({ open, siteId, onClose, fetchSites }: any) => {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
           },
-          body: JSON.stringify(payload),
+          body: JSON.stringify(payloadToSend),
         }
       );
 
@@ -102,12 +111,20 @@ const CreateUpdateSites = ({ open, siteId, onClose, fetchSites }: any) => {
 
       await res.json();
 
-      alert("Site saved successfully!");
+      addToast({
+        type: "success",
+        title: "Success",
+        message: "Site saved successfully!"
+      });
       onClose(false);
       fetchSites();
     } catch (err: any) {
       console.error(err);
-      alert("Error saving site: " + err.message);
+      addToast({
+        type: "error",
+        title: "Error",
+        message: err.message || "Error saving site"
+      });
     }
   };
 
