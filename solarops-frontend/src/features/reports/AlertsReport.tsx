@@ -76,13 +76,13 @@ export default function AlertsReport() {
                 window.URL.revokeObjectURL(url);
             });
     };
-    
+
     const handleFilterChange = (key: string, value: any) => {
         setFilters(prev => ({ ...prev, [key]: value }));
     };
 
     return (
-        <Box sx={{ maxWidth: 1100, margin: "auto", mt: 4 }}>
+        <Box sx={{ width: '100%', margin: "left", mt: 4 }}>
 
             <Card sx={{ p: 3, borderRadius: 3, bgcolor: "#334155" }}>
 
@@ -100,25 +100,30 @@ export default function AlertsReport() {
                     Export comprehensive history of system alerts, faults, and warnings with advanced filtering.
                 </Typography>
 
-                <Box display="flex" gap={2} alignItems="center" sx={{ mt: 2 }}>
+                <Box display="flex" gap={2} sx={{ mt: 2 }}>
 
                     {/* Status */}
-                    <FormControl sx={{ minWidth: 300, maxWidth: 350 }}>
+                    <FormControl sx={{ flex: 1 }}>
                         <InputLabel
                             sx={{
                                 color: "white",
+                                transform: "translate(14px, 9px) scale(1)",
                                 "&.Mui-focused": { color: "white" },
+                                "&.MuiInputLabel-shrink": {
+                                    transform: "translate(14px, -9px) scale(0.75)",
+                                },
                             }}
                         >
                             Status
                         </InputLabel>
+
                         <Select
                             value={filters.status}
                             label="Status"
                             onChange={(e) => handleFilterChange("status", e.target.value)}
                             sx={{
                                 color: "white",
-                                height: 40, // slightly taller
+                                height: 40,
                                 ".MuiOutlinedInput-notchedOutline": { borderColor: "white" },
                                 "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "white" },
                                 "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "white" },
@@ -132,10 +137,20 @@ export default function AlertsReport() {
                     </FormControl>
 
                     {/* Site */}
-                    <FormControl sx={{ minWidth: 300, maxWidth: 350 }}>
-                        <InputLabel sx={{ color: "white", "&.Mui-focused": { color: "white" } }}>
+                    <FormControl sx={{ minWidth: 370, maxWidth: 450 }}>
+                        <InputLabel
+                            sx={{
+                                color: "white",
+                                transform: "translate(14px, 9px) scale(1)",
+                                "&.Mui-focused": { color: "white" },
+                                "&.MuiInputLabel-shrink": {
+                                    transform: "translate(14px, -9px) scale(0.75)",
+                                },
+                            }}
+                        >
                             Site
                         </InputLabel>
+
                         <Select
                             value={filters.site}
                             label="Site"
@@ -149,16 +164,26 @@ export default function AlertsReport() {
                                 ".MuiSvgIcon-root": { color: "white" },
                             }}
                         >
-                            <MenuItem value="active">Site 1</MenuItem> // bind the api
+                            <MenuItem value="active">Site 1</MenuItem>
                             <MenuItem value="inactive">Site 2</MenuItem>
                         </Select>
                     </FormControl>
 
                     {/* Severity */}
-                    <FormControl sx={{ minWidth: 300, maxWidth: 350 }}>
-                        <InputLabel sx={{ color: "white", "&.Mui-focused": { color: "white" } }}>
+                    <FormControl sx={{ minWidth: 370, maxWidth: 450 }}>
+                        <InputLabel
+                            sx={{
+                                color: "white",
+                                transform: "translate(14px, 9px) scale(1)",
+                                "&.Mui-focused": { color: "white" },
+                                "&.MuiInputLabel-shrink": {
+                                    transform: "translate(14px, -9px) scale(0.75)",
+                                },
+                            }}
+                        >
                             Severity
                         </InputLabel>
+
                         <Select
                             value={filters.severity}
                             label="Severity"
@@ -179,96 +204,108 @@ export default function AlertsReport() {
 
                 </Box>
 
-                <LocalizationProvider dateAdapter={AdapterDayjs} >
-                    <Box display="flex" gap={2} alignItems="center" sx={{ mt: 2 }}>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+  <Box display="flex" gap={2} alignItems="center" sx={{ mt: 2 }} flexWrap="wrap">
 
-                        {/* From Date */}
-                        <DatePicker
-                            label="From Date"
-                            value={filters.fromDate}
-                            onChange={(newValue) => handleFilterChange("fromDate", newValue)}
-                            slotProps={{
-                                textField: {
-                                    size: "small",
-                                    sx: {
-                                        minWidth: 230,
-                                        maxWidth: 260,
-                                        height: 42,
-                                        "& input": {
-                                            color: "white",
-                                            WebkitTextFillColor: "white", // selected/typed date
-                                        },
-                                        "& .MuiInputLabel-root": {
-                                            color: "white", // label
-                                            "&.Mui-focused": { color: "white" },
-                                        },
-                                        "& .MuiOutlinedInput-notchedOutline": {
-                                            borderColor: "white", // border
-                                        },
-                                        "&:hover .MuiOutlinedInput-notchedOutline": {
-                                            borderColor: "white", // hover border
-                                        },
-                                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                                            borderColor: "white", // focused border
-                                        },
-                                        "& .MuiSvgIcon-root": {
-                                            color: "white", // calendar icon
-                                        },
-                                    },
-                                },
-                            }}
-                        />
+    {/* From Date */}
+    <DatePicker
+      label="From Date"
+      value={filters.fromDate}
+      onChange={(newValue) => handleFilterChange("fromDate", newValue)}
+      slotProps={{
+        textField: {
+          size: "small",
+          sx: {
+            flex: 1, // lets it expand with gap
+            height: 45,
+            "& input": {
+              color: "white",
+              WebkitTextFillColor: "white",
+            },
+            "& .MuiInputLabel-root": {
+              color: "white",
+              "&.Mui-focused": { color: "white" },
+            },
+            "& .MuiOutlinedInput-notchedOutline": {
+              borderColor: "white",
+            },
+            "&:hover .MuiOutlinedInput-notchedOutline": {
+              borderColor: "white",
+            },
+            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+              borderColor: "white",
+            },
+            "& .MuiSvgIcon-root": {
+              color: "white",
+            },
+          },
+        },
+      }}
+    />
 
-                        {/* To Date */}
-                        <DatePicker
-                            label="To Date"
-                            value={filters.toDate}
-                            onChange={(newValue) => handleFilterChange("toDate", newValue)}
-                            slotProps={{
-                                textField: {
-                                    size: "small",
-                                    sx: {
-                                        minWidth: 230,
-                                        maxWidth: 260,
-                                        height: 42,
-                                        "& input": {
-                                            color: "white",
-                                            WebkitTextFillColor: "white",
-                                        },
-                                        "& .MuiInputLabel-root": {
-                                            color: "white",
-                                            "&.Mui-focused": { color: "white" },
-                                        },
-                                        "& .MuiOutlinedInput-notchedOutline": {
-                                            borderColor: "white",
-                                        },
-                                        "&:hover .MuiOutlinedInput-notchedOutline": {
-                                            borderColor: "white",
-                                        },
-                                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                                            borderColor: "white",
-                                        },
-                                        "& .MuiSvgIcon-root": {
-                                            color: "white",
-                                        },
-                                    },
-                                },
-                            }}
-                        />
+    {/* To Date */}
+    <DatePicker
+      label="To Date"
+      value={filters.toDate}
+      onChange={(newValue) => handleFilterChange("toDate", newValue)}
+      slotProps={{
+        textField: {
+          size: "small",
+          sx: {
+            flex: 1, // lets it expand with gap
+            height: 45,
+            "& input": {
+              color: "white",
+              WebkitTextFillColor: "white",
+            },
+            "& .MuiInputLabel-root": {
+              color: "white",
+              "&.Mui-focused": { color: "white" },
+            },
+            "& .MuiOutlinedInput-notchedOutline": {
+              borderColor: "white",
+            },
+            "&:hover .MuiOutlinedInput-notchedOutline": {
+              borderColor: "white",
+            },
+            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+              borderColor: "white",
+            },
+            "& .MuiSvgIcon-root": {
+              color: "white",
+            },
+          },
+        },
+      }}
+    />
 
-                        {/* Buttons */}
-                        <Button variant="contained" onClick={() => console.log("Generate report")}>
-                            Today
-                        </Button>
-                        <Button variant="contained" onClick={() => console.log("Generate report")}>
-                            Last 7 Days
-                        </Button>
-                        <Button variant="contained" onClick={() => console.log("Generate report")}>
-                            Last 30 Days
-                        </Button>
+    {/* Buttons */}
+    <Button
+      variant="contained"
+      sx={{ minWidth: 120, height: 45 }}
+      onClick={() => console.log("Generate report")}
+    >
+      Today
+    </Button>
 
-                    </Box>
-                </LocalizationProvider>
+    <Button
+      variant="contained"
+      sx={{ minWidth: 120, height: 45 }}
+      onClick={() => console.log("Generate report")}
+    >
+      Last 7 Days
+    </Button>
+
+    <Button
+      variant="contained"
+      sx={{ minWidth: 120, height: 45 }}
+      onClick={() => console.log("Generate report")}
+    >
+      Last 30 Days
+    </Button>
+
+  </Box>
+</LocalizationProvider>
 
                 <Divider sx={{ my: 3 }} />
 

@@ -31,7 +31,7 @@ export default function SitePerformanceReport() {
     };
 
     return (
-        <Box sx={{ maxWidth: 1100, margin: "auto", mt: 4 }}>
+        <Box sx={{ width: '100%', margin: "left", mt: 4 }}>
 
             <Card sx={{ p: 3, borderRadius: 3 }}>
 
