@@ -2,108 +2,176 @@ import React, { useState } from "react";
 import {
     Box,
     Card,
-    CardContent,
     Typography,
-    Grid,
     Button,
     Divider,
-    Chip,
-    FormControl,
-    InputLabel,
-    Select,
     MenuItem,
-    TextField,
-    Alert
+    Alert,
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import type { Dayjs } from "dayjs";
+import SolarSelect from "@/utils/SolarSelect";
+import SolarDatePicker from "@/utils/SolarDatePicker";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 
-export default function SitePerformanceReport() {
-    const [fromDate, setFromDate] = useState<Dayjs | null>(null);
-    const [toDate, setToDate] = useState<Dayjs | null>(null);
-    const [reportType, setReportType] = useState("");
+export default function SitePerformanceReport(metaData:any) {
+    const [filters, setFilters] = useState({
+        reportType: "",
+        status: "",
+        site: "",
+        severity: "",
+        category: "",
+        fromDate: null as Dayjs | null,
+        toDate: null as Dayjs | null,
+    });
 
-    const handleChange = (event) => {
-        setReportType(event.target.value);
+    const getTimestampedFilename = (prefix: string, ext: string) => {
+        const now = new Date();
+        const yyyy = now.getFullYear();
+        const mm = String(now.getMonth() + 1).padStart(2, "0"); // month 01–12
+        const dd = String(now.getDate()).padStart(2, "0");
+        const hh = String(now.getHours()).padStart(2, "0");
+        const min = String(now.getMinutes()).padStart(2, "0");
+        const ss = String(now.getSeconds()).padStart(2, "0");
+
+        return `${prefix}_${yyyy}${mm}${dd}_${hh}${min}${ss}.${ext}`;
+    };
+
+    const handleExportCSV = () => {
+        fetch("/api/export/csv", {
+            method: "POST",
+            body: JSON.stringify(filters),
+        })
+            .then(res => res.blob())
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = getTimestampedFilename("alerts_report", "csv"); // dynamic filename
+                a.click();
+                window.URL.revokeObjectURL(url);
+            });
+    };
+
+    const handleExportPDF = () => {
+        fetch("/api/export/pdf", {
+            method: "POST",
+            body: JSON.stringify(filters),
+        })
+            .then(res => res.blob())
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = getTimestampedFilename("alerts_report", "pdf"); // dynamic filename
+                a.click();
+                window.URL.revokeObjectURL(url);
+            });
+    };
+
+    const handleFilterChange = (key: string, value: any) => {
+        setFilters(prev => ({ ...prev, [key]: value }));
     };
 
     return (
         <Box sx={{ width: '100%', margin: "left", mt: 4 }}>
 
-            <Card sx={{ p: 3, borderRadius: 3 }}>
+            <Card sx={{ p: 3, borderRadius: 3, bgcolor: "#334155" }}>
 
                 {/* Header */}
-                <Box display="flex" alignItems="center" justifyContent="space-between">
-                    <Box display="flex" alignItems="center" gap={1}>
-
-                        <AssessmentIcon />
-
-                        <Typography variant="h6" fontWeight={600}>
+                <Box display="flex" alignItems="center" gap={2}>
+                    <AssessmentIcon sx={{ fontSize: 40 }} />
+                    <Box>
+                        <Typography
+                            variant="h6"
+                            fontWeight={600}
+                            sx={{ color: "var(--text-primary)" }}
+                        >
                             Site Performance Report
                         </Typography>
 
+                        <Typography
+                            variant="body2"
+                            sx={{ color: "var(--text-secondary)", mt: 0 }}
+                        >
+                            Generate detailed performance analysisfor a specific site over a selected time period
+                        </Typography>
                     </Box>
                 </Box>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <Box display="flex" gap={2}>
 
-                        {/* Select */}
-                        <FormControl sx={{ minWidth: 200 }}>
-                            <InputLabel>Report Type</InputLabel>
-                            <Select
-                                value={reportType}
-                                label="Report Type"
-                                onChange={handleChange}
-                            >
-                                <MenuItem value="sales">Sales</MenuItem>
-                                <MenuItem value="users">Users</MenuItem>
-                                <MenuItem value="orders">Orders</MenuItem>
-                            </Select>
-                        </FormControl>
+                <Divider sx={{ my: 3 }} />
 
+                <Box display="flex" gap={2} sx={{ mt: 2 }}>
+                    {/* Site */}
+                    <SolarSelect
+                        label="Site"
+                        value={filters.site}
+                        onChange={(e) => handleFilterChange("site", e.target.value)}
+                    >
+                        <MenuItem value="active">Site 1</MenuItem>
+                        <MenuItem value="inactive">Site 2</MenuItem>
+                    </SolarSelect>
+
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
                         {/* From Date */}
-                        <DatePicker
+                        <SolarDatePicker
                             label="From Date"
-                            value={fromDate}
-                            onChange={(newValue) => setFromDate(newValue)}
-                            slotProps={{ textField: { size: "small" } }}
+                            value={filters.fromDate}
+                            onChange={(newValue) => handleFilterChange("fromDate", newValue)}
                         />
 
                         {/* To Date */}
-                        <DatePicker
+                        <SolarDatePicker
                             label="To Date"
-                            value={toDate}
-                            onChange={(newValue) => setToDate(newValue)}
-                            slotProps={{ textField: { size: "small" } }}
+                            value={filters.toDate}
+                            onChange={(newValue) => handleFilterChange("toDate", newValue)}
                         />
+                    </LocalizationProvider>
+                </Box>
 
-                    </Box>
-                </LocalizationProvider>
-
-                <Alert variant="outlined" severity="info">
+                <Alert variant="outlined" severity="info" sx={{ mt: 2 }}>
                     Report Includes
-                    Energy production vs Expected
-                    Performance Ratio (PR) analysis
-                    Inverter availability breakdown
+                    <ul style={{ marginTop: 8, marginBottom: 0, paddingLeft: 20 }}>
+                        <li>Energy production vs Expected</li>
+                        <li>Performance Ratio (PR) analysis</li>
+                        <li>Inverter availability breakdown</li>
+                    </ul>
                 </Alert>
 
                 <Divider sx={{ my: 3 }} />
 
-                <Box display="flex" gap={2}>
-                    <Button variant="contained">
-                        Generate Report
-                    </Button>
+                <Box display="flex" gap={2} alignItems="center">
 
-                    <Button variant="outlined">
+                    <Button
+                        variant="contained"
+                        startIcon={
+                            <img
+                                src="/public/csv.png" // <-- replace with your PNG path
+                                alt="CSV"
+                                style={{ width: 20, height: 20 }} // adjust size
+                            />
+                        }
+                        onClick={handleExportCSV}
+                    >
                         Export CSV
                     </Button>
+
+                    <Button
+                        variant="outlined"
+                        startIcon={
+                            <img
+                                src="/public/pdf.png" // <-- replace with your PNG path
+                                alt="PDF"
+                                style={{ width: 20, height: 20 }}
+                            />
+                        }
+                        onClick={handleExportPDF}
+                    >
+                        Export PDF
+                    </Button>
                 </Box>
-
             </Card>
-
         </Box>
     );
 }

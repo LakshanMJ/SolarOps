@@ -1,6 +1,6 @@
 import { createTheme } from '@mui/material/styles';
 
-const   theme = createTheme({
+const theme = createTheme({
   typography: {
     fontFamily: "Inter",
   },
@@ -26,8 +26,7 @@ const   theme = createTheme({
         h6: { fontFamily: "Inter", fontWeight: 600 },
       },
     },
-    
-     MuiInputBase: {
+    MuiInputBase: {
       styleOverrides: {
         root: {
           color: "white",
@@ -35,6 +34,13 @@ const   theme = createTheme({
         input: {
           color: "white",
           WebkitTextFillColor: "white",
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          textTransform: "none",
         },
       },
     },

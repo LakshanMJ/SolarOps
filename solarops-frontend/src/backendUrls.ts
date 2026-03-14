@@ -8,4 +8,5 @@ export const BACKEND_URLS = {
   UPLOAD_IMAGE: "http://localhost:4000/api/upload-image/",
   USERS: 'http://localhost:4000/api/users',
   ROLES: 'http://localhost:4000/api/roles',
+  METADATA: 'http://localhost:4000/api/metadata',
 }
