@@ -13,7 +13,7 @@ import { fileURLToPath } from 'url'
 import authRoutes from './routes/auth.routes.js'
 import usersRoutes from './routes/users.routes.js'
 import rolesRoutes from './routes/roles.routes.js'
-import exportRoutes from './routes/export.routes.js'
+import exportRoutes from './routes/reports.routes.js'
 import metaDataRoutes from './routes/metadata.routes.js'
 
 // __dirname replacement for ES modules
@@ -40,7 +40,7 @@ app.use('/api/alerts', alertsRoutes);
 app.use('/api/manufacturers', manufacturersRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/roles', rolesRoutes);
-app.use("/api/export", exportRoutes);
+app.use("/api/reports/", exportRoutes);
 app.use("/api", metaDataRoutes);
 
 export default app
