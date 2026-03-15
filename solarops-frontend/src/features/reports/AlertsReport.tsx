@@ -6,6 +6,8 @@ import {
     Button,
     Divider,
     MenuItem,
+    ToggleButtonGroup,
+    ToggleButton,
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -14,37 +16,22 @@ import WarningIcon from '@mui/icons-material/Warning';
 import SolarSelect from "@/utils/SolarSelect";
 import SolarDatePicker from "@/utils/SolarDatePicker";
 import { getTimestampedFilename } from "@/utils/getTimestampedFilename";
+import { BACKEND_URLS } from "@/backendUrls";
+import { exportReportFile } from "@/utils/exportFile";
+import dayjs from "dayjs";
 
-export default  function AlertsReport({metaData}:any) {
+export default function AlertsReport({ metaData, sites }: any) {
+    console.log(metaData?.alertStatus, 'metaData?.alertStatus')
 
-
+    const [alignment, setAlignment] = useState('');
     const [filters, setFilters] = useState({
         reportType: "",
         status: "",
-        site: "",
+        siteId: "",
         severity: "",
-        category: "",
         fromDate: null as Dayjs | null,
         toDate: null as Dayjs | null,
     });
-
-    console.log(filters, 'filters')
-
-    const handleExportCSV = () => {
-        fetch("/api/export/csv", {
-            method: "POST",
-            body: JSON.stringify(filters),
-        })
-            .then(res => res.blob())
-            .then(blob => {
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = getTimestampedFilename("alerts_report", "csv");
-                a.click();
-                window.URL.revokeObjectURL(url);
-            });
-    };
 
     const handleExportPDF = () => {
         fetch("/api/export/pdf", {
@@ -62,8 +49,36 @@ export default  function AlertsReport({metaData}:any) {
             });
     };
 
-    const handleFilterChange = (key: string, value: any) => {
-        setFilters(prev => ({ ...prev, [key]: value }));
+    const handleFilterChange = (field: string, value: any) => {
+        setFilters((prev) => ({
+            ...prev,
+            [field]: value
+        }));
+    };
+
+    const handleToggleButtonChange = (_: any, newAlignment: string | null) => {
+        if (newAlignment) setAlignment(newAlignment);
+
+        const today = dayjs();
+        if (newAlignment === "today") {
+            setFilters((prev) => ({
+                ...prev,
+                fromDate: today,
+                toDate: today,
+            }));
+        } else if (newAlignment === "last7Days") {
+            setFilters((prev) => ({
+                ...prev,
+                fromDate: today.subtract(6, "day"),
+                toDate: today,
+            }));
+        } else if (newAlignment === "last30Days") {
+            setFilters((prev) => ({
+                ...prev,
+                fromDate: today.subtract(29, "day"),
+                toDate: today,
+            }));
+        }
     };
 
     return (
@@ -103,33 +118,38 @@ export default  function AlertsReport({metaData}:any) {
                         value={filters.status}
                         onChange={(e) => handleFilterChange("status", e.target.value)}
                     >
-                        <MenuItem value="open">Open</MenuItem>
-                        <MenuItem value="acknowledged">Acknowledged</MenuItem>
-                        <MenuItem value="resolved">Resolved</MenuItem>
+                        {metaData?.alertStatus?.map((status) => (
+                            <MenuItem key={status} value={status}>
+                                {status}
+                            </MenuItem>
+                        ))}
                     </SolarSelect>
 
                     {/* Site */}
                     <SolarSelect
                         label="Site"
-                        value={filters.site}
-                        onChange={(e) => handleFilterChange("site", e.target.value)}
+                        value={filters.siteId}
+                        onChange={(e) => handleFilterChange("siteId", e.target.value)}
                     >
-                        <MenuItem value="active">Site 1</MenuItem>
-                        <MenuItem value="inactive">Site 2</MenuItem>
+                        {sites?.map((site) => (
+                            <MenuItem key={site.name} value={site.id}>
+                                {site?.name}
+                            </MenuItem>
+                        ))}
                     </SolarSelect>
 
                     {/* Severity */}
-                    {/* <SolarSelect
+                    <SolarSelect
                         label="Severity"
                         value={filters.severity}
                         onChange={(e) => handleFilterChange("severity", e.target.value)}
                     >
-                        {metaData?.alertSeverity.map((severity) => (
-                            <MenuItem key={severity} value={severity.toLowerCase()}>
+                        {metaData?.alertSeverity?.map((severity) => (
+                            <MenuItem key={severity} value={severity}>
                                 {severity}
                             </MenuItem>
                         ))}
-                    </SolarSelect> */}
+                    </SolarSelect>
                 </Box>
 
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -150,29 +170,32 @@ export default  function AlertsReport({metaData}:any) {
                         />
 
                         {/* Buttons */}
-                        <Button
-                            variant="contained"
-                            sx={{ minWidth: 80, height: 35 }}
-                            onClick={() => console.log("Generate report")}
+                        <ToggleButtonGroup
+                            value={alignment}
+                            exclusive
+                            onChange={handleToggleButtonChange}
+                            aria-label="Platform"
+                            sx={{
+                                display: "flex",
+                                gap: 2, // spacing between buttons
+                                "& .MuiToggleButton-root": {
+                                    minWidth: 80,
+                                    height: 35,
+                                    borderRadius: 1,
+                                    border: "1px solid",          // ✅ add border
+                                    borderColor: "primary.main",  // optional: border color
+                                    textTransform: "none",
+                                },
+                                "& .MuiToggleButton-root.Mui-selected": {
+                                    backgroundColor: "primary.dark", // selected color
+                                    color: "white",
+                                },
+                            }}
                         >
-                            Today
-                        </Button>
-
-                        <Button
-                            variant="contained"
-                            sx={{ minWidth: 100, height: 35 }}
-                            onClick={() => console.log("Generate report")}
-                        >
-                            Last 7 Days
-                        </Button>
-
-                        <Button
-                            variant="contained"
-                            sx={{ minWidth: 120, height: 35 }}
-                            onClick={() => console.log("Generate report")}
-                        >
-                            Last 30 Days
-                        </Button>
+                            <ToggleButton value="today">Today</ToggleButton>
+                            <ToggleButton value="last7Days">Last 7 Days</ToggleButton>
+                            <ToggleButton value="last30Days">Last 30 Days</ToggleButton>
+                        </ToggleButtonGroup>
 
                     </Box>
                 </LocalizationProvider>
@@ -190,7 +213,7 @@ export default  function AlertsReport({metaData}:any) {
                                 style={{ width: 20, height: 20 }} // adjust size
                             />
                         }
-                        onClick={handleExportCSV}
+                        onClick={() => exportReportFile("alerts", "csv", filters)}
                     >
                         Export CSV
                     </Button>

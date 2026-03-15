@@ -14,45 +14,32 @@ import type { Dayjs } from "dayjs";
 import SolarSelect from "@/utils/SolarSelect";
 import SolarDatePicker from "@/utils/SolarDatePicker";
 import AssessmentIcon from "@mui/icons-material/Assessment";
+import { getTimestampedFilename } from "@/utils/getTimestampedFilename";
+import { exportReportFile } from "@/utils/exportFile";
 
-export default function SitePerformanceReport(metaData:any) {
+export default function SitePerformanceReport({ metaData, sites }: any) {
     const [filters, setFilters] = useState({
         reportType: "",
-        status: "",
-        site: "",
-        severity: "",
-        category: "",
+        siteId: "",
         fromDate: null as Dayjs | null,
         toDate: null as Dayjs | null,
     });
 
-    const getTimestampedFilename = (prefix: string, ext: string) => {
-        const now = new Date();
-        const yyyy = now.getFullYear();
-        const mm = String(now.getMonth() + 1).padStart(2, "0"); // month 01–12
-        const dd = String(now.getDate()).padStart(2, "0");
-        const hh = String(now.getHours()).padStart(2, "0");
-        const min = String(now.getMinutes()).padStart(2, "0");
-        const ss = String(now.getSeconds()).padStart(2, "0");
-
-        return `${prefix}_${yyyy}${mm}${dd}_${hh}${min}${ss}.${ext}`;
-    };
-
-    const handleExportCSV = () => {
-        fetch("/api/export/csv", {
-            method: "POST",
-            body: JSON.stringify(filters),
-        })
-            .then(res => res.blob())
-            .then(blob => {
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = getTimestampedFilename("alerts_report", "csv"); // dynamic filename
-                a.click();
-                window.URL.revokeObjectURL(url);
-            });
-    };
+    // const handleExportCSV = () => {
+    //     fetch("/api/export/csv", {
+    //         method: "POST",
+    //         body: JSON.stringify(filters),
+    //     })
+    //         .then(res => res.blob())
+    //         .then(blob => {
+    //             const url = window.URL.createObjectURL(blob);
+    //             const a = document.createElement("a");
+    //             a.href = url;
+    //             a.download = getTimestampedFilename("alerts_report", "csv"); // dynamic filename
+    //             a.click();
+    //             window.URL.revokeObjectURL(url);
+    //         });
+    // };
 
     const handleExportPDF = () => {
         fetch("/api/export/pdf", {
@@ -106,11 +93,14 @@ export default function SitePerformanceReport(metaData:any) {
                     {/* Site */}
                     <SolarSelect
                         label="Site"
-                        value={filters.site}
-                        onChange={(e) => handleFilterChange("site", e.target.value)}
+                        value={filters.siteId}
+                        onChange={(e) => handleFilterChange("siteId", e.target.value)}
                     >
-                        <MenuItem value="active">Site 1</MenuItem>
-                        <MenuItem value="inactive">Site 2</MenuItem>
+                        {sites?.map((site) => (
+                            <MenuItem key={site.name} value={site.id}>
+                                {site?.name}
+                            </MenuItem>
+                        ))}
                     </SolarSelect>
 
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -147,12 +137,31 @@ export default function SitePerformanceReport(metaData:any) {
                         variant="contained"
                         startIcon={
                             <img
-                                src="/public/csv.png" // <-- replace with your PNG path
+                                src="/public/csv.png"
                                 alt="CSV"
-                                style={{ width: 20, height: 20 }} // adjust size
+                                style={{ width: 20, height: 20 }}
                             />
                         }
-                        onClick={handleExportCSV}
+                        onClick={() => {
+                            const { fromDate, toDate } = filters;
+
+                            // Check if both dates are provided
+                            if (!fromDate || !toDate) {
+                                alert("Please select both From and To dates before exporting.");
+                                return;
+                            }
+
+                            // Optional: check that fromDate is before toDate
+                            const from = new Date(fromDate);
+                            const to = new Date(toDate);
+                            if (from > to) {
+                                alert("From Date cannot be after To Date.");
+                                return;
+                            }
+
+                            // All good → call export
+                            exportReportFile("site-performance", "csv", filters);
+                        }}
                     >
                         Export CSV
                     </Button>

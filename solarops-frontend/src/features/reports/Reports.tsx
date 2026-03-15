@@ -9,7 +9,9 @@ import { BACKEND_URLS } from "@/backendUrls";
 const Reports = () => {
 
     const [metaData, setMetaData] = useState([])
+    const [sites, setSites] = useState([]);
     console.log(metaData,'metaData')
+
     const fetchMetadata = async () => {
         try {
             const res = await fetchData(
@@ -17,20 +19,26 @@ const Reports = () => {
                 { method: "GET" }
             );
 
-            if (!res.ok) {
-                throw new Error("Failed to fetch metadata");
-            }
-
-            const data = await res.json();
-            setMetaData(data)
+            setMetaData(res)
+            
         } catch (error) {
             console.error("Metadata fetch error:", error);
             throw error;
         }
     };
 
+    const fetchSites = async () => {
+        try {
+            const siteData = await fetchData(BACKEND_URLS.SITES);
+            setSites(siteData);
+        } catch (err) {
+            console.error("Failed to load site data:", err);
+        }
+    };
+
     useEffect(() => {
         fetchMetadata();
+        fetchSites();
     }, []);
 
     return (
@@ -52,11 +60,11 @@ const Reports = () => {
             </Box>
 
             <Box>
-                <SitePerformanceReport metaData={metaData}/>
+                <SitePerformanceReport metaData={metaData} sites={sites}/>
             </Box>
 
             <Box>
-                <AlertsReport metaData={metaData}/>
+                <AlertsReport metaData={metaData} sites={sites}/>
             </Box>
         </Box>
     );
