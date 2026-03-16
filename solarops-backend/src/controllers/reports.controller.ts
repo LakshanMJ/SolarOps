@@ -1,9 +1,10 @@
 // controllers/reports.controller.ts
 import { Request, Response } from "express";
 import { getAlertsData } from "../services/alertsReport.service.js";
-// import { getFleetSummaryData } from "../services/fleetSummaryReport.service";
-import { exportCSV, exportPDF } from "../utils/export.utils.js";
+import { getFleetSummaryData } from "../services/fleetSummaryReport.service.js";
 import { getSitePerformanceData } from "../services/sitePerformanceReport.service.js";
+import { exportCSV, exportPDF } from "../utils/export.utils.js";
+
 
 // Map of report types
 const reportMap: Record<
@@ -11,7 +12,7 @@ const reportMap: Record<
     { fetchData: (query: any) => Promise<any> }
 > = {
     "alerts": { fetchData: getAlertsData },
-    // "fleet-summary": { fetchData: getFleetSummaryData },
+    "fleet-summary": { fetchData: getFleetSummaryData },
     "site-performance": { fetchData: getSitePerformanceData },
 };
 
