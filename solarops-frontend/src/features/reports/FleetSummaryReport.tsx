@@ -15,45 +15,15 @@ import SolarSelect from "@/utils/SolarSelect";
 import SolarDatePicker from "@/utils/SolarDatePicker";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 import LayersIcon from '@mui/icons-material/Layers';
+import { exportReportFile } from "@/utils/exportFile";
+import { getTimestampedFilename } from "@/utils/getTimestampedFilename";
 
-export default function FleetSummaryReport(metaData:any) {
+export default function FleetSummaryReport(metaData: any) {
     const [filters, setFilters] = useState({
         reportType: "",
-        status: "",
-        site: "",
-        severity: "",
-        category: "",
         fromDate: null as Dayjs | null,
         toDate: null as Dayjs | null,
     });
-
-    const getTimestampedFilename = (prefix: string, ext: string) => {
-        const now = new Date();
-        const yyyy = now.getFullYear();
-        const mm = String(now.getMonth() + 1).padStart(2, "0"); // month 01–12
-        const dd = String(now.getDate()).padStart(2, "0");
-        const hh = String(now.getHours()).padStart(2, "0");
-        const min = String(now.getMinutes()).padStart(2, "0");
-        const ss = String(now.getSeconds()).padStart(2, "0");
-
-        return `${prefix}_${yyyy}${mm}${dd}_${hh}${min}${ss}.${ext}`;
-    };
-
-    const handleExportCSV = () => {
-        fetch("/api/export/csv", {
-            method: "POST",
-            body: JSON.stringify(filters),
-        })
-            .then(res => res.blob())
-            .then(blob => {
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = getTimestampedFilename("alerts_report", "csv"); // dynamic filename
-                a.click();
-                window.URL.revokeObjectURL(url);
-            });
-    };
 
     const handleExportPDF = () => {
         fetch("/api/export/pdf", {
@@ -103,18 +73,33 @@ export default function FleetSummaryReport(metaData:any) {
 
                 <Divider sx={{ my: 3 }} />
 
-                {/* <Box display="flex" gap={2} sx={{ mt: 2 }}>
-                </Box> */}
+                <Box display="flex" gap={2} sx={{ mt: 2 }}>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        {/* From Date */}
+                        <SolarDatePicker
+                            label="From Date"
+                            value={filters.fromDate}
+                            onChange={(newValue) => handleFilterChange("fromDate", newValue)}
+                        />
+
+                        {/* To Date */}
+                        <SolarDatePicker
+                            label="To Date"
+                            value={filters.toDate}
+                            onChange={(newValue) => handleFilterChange("toDate", newValue)}
+                        />
+                    </LocalizationProvider>
+                </Box>
 
                 <Alert variant="outlined" severity="info" sx={{ mt: 2 }}>
                     Report Includes
                     <ul style={{ marginTop: 8, marginBottom: 0, paddingLeft: 20 }}>
                         <li>Total Sites</li>
                         <li>Total Inverters</li>
-                        <li>Online / Offline count</li>
+                        <li>Online / Offline Inverters Count</li>
                         <li>Active Alerts</li>
                         <li>Average PR</li>
-                        <li>Total Output (sum telemetry)</li>
+                        <li>Total Output</li>
                     </ul>
                 </Alert>
 
@@ -131,7 +116,26 @@ export default function FleetSummaryReport(metaData:any) {
                                 style={{ width: 20, height: 20 }} // adjust size
                             />
                         }
-                        onClick={handleExportCSV}
+                        onClick={() => {
+                            const { fromDate, toDate } = filters;
+
+                            // Check if both dates are provided
+                            if (!fromDate || !toDate) {
+                                alert("Please select both From and To dates before exporting.");
+                                return;
+                            }
+
+                            // Optional: check that fromDate is before toDate
+                            const from = new Date(fromDate);
+                            const to = new Date(toDate);
+                            if (from > to) {
+                                alert("From Date cannot be after To Date.");
+                                return;
+                            }
+
+                            // All good → call export
+                            exportReportFile("fleet-summary", "csv", filters);
+                        }}
                     >
                         Export CSV
                     </Button>
@@ -145,7 +149,26 @@ export default function FleetSummaryReport(metaData:any) {
                                 style={{ width: 20, height: 20 }}
                             />
                         }
-                        onClick={handleExportPDF}
+                        onClick={() => {
+                            const { fromDate, toDate } = filters;
+
+                            // Check if both dates are provided
+                            if (!fromDate || !toDate) {
+                                alert("Please select both From and To dates before exporting.");
+                                return;
+                            }
+
+                            // Optional: check that fromDate is before toDate
+                            const from = new Date(fromDate);
+                            const to = new Date(toDate);
+                            if (from > to) {
+                                alert("From Date cannot be after To Date.");
+                                return;
+                            }
+
+                            // All good → call export
+                            exportReportFile("fleet-summary", "pdf", filters);
+                        }}
                     >
                         Export PDF
                     </Button>

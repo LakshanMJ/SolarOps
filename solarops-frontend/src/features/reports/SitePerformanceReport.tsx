@@ -25,22 +25,6 @@ export default function SitePerformanceReport({ metaData, sites }: any) {
         toDate: null as Dayjs | null,
     });
 
-    // const handleExportCSV = () => {
-    //     fetch("/api/export/csv", {
-    //         method: "POST",
-    //         body: JSON.stringify(filters),
-    //     })
-    //         .then(res => res.blob())
-    //         .then(blob => {
-    //             const url = window.URL.createObjectURL(blob);
-    //             const a = document.createElement("a");
-    //             a.href = url;
-    //             a.download = getTimestampedFilename("alerts_report", "csv"); // dynamic filename
-    //             a.click();
-    //             window.URL.revokeObjectURL(url);
-    //         });
-    // };
-
     const handleExportPDF = () => {
         fetch("/api/export/pdf", {
             method: "POST",
@@ -123,9 +107,18 @@ export default function SitePerformanceReport({ metaData, sites }: any) {
                 <Alert variant="outlined" severity="info" sx={{ mt: 2 }}>
                     Report Includes
                     <ul style={{ marginTop: 8, marginBottom: 0, paddingLeft: 20 }}>
-                        <li>Energy production vs Expected</li>
-                        <li>Performance Ratio (PR) analysis</li>
-                        <li>Inverter availability breakdown</li>
+                        {/* <li>siteName</li>
+                        <li>region</li>
+                        <li>capacityMw</li> */}
+                        <li>totalInverters</li>
+                        <li>activeInverters</li>
+                        <li>alertsCount</li>
+                        <li>avgOutput</li>
+                        <li>avgPR</li>
+                        <li>health</li>
+                        <li>energy Produced</li>
+                        <li>downtime Percentage</li>
+                        <li>alert Rate</li>
                     </ul>
                 </Alert>
 
@@ -143,11 +136,16 @@ export default function SitePerformanceReport({ metaData, sites }: any) {
                             />
                         }
                         onClick={() => {
-                            const { fromDate, toDate } = filters;
+                            const { fromDate, toDate, siteId } = filters;
 
                             // Check if both dates are provided
                             if (!fromDate || !toDate) {
                                 alert("Please select both From and To dates before exporting.");
+                                return;
+                            }
+
+                            if (!siteId) {
+                                alert("Please select a site before exporting.");
                                 return;
                             }
 
