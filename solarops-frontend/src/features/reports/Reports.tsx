@@ -1,7 +1,7 @@
 import { Box, Typography } from "@mui/material";
-import FleetSummaryReport from "./FleetSummaryReport";
-import SitePerformanceReport from "./SitePerformanceReport";
-import AlertsReport from "./AlertsReport";
+import FleetSummaryReport from "./FleetSummaryReport/FleetSummaryReport";
+import SitePerformanceReport from "./SitePerformanceReport/SitePerformanceReport";
+import AlertsReport from "./AlertsReport/AlertsReport";
 import { useEffect, useState } from "react";
 import { fetchData } from "@/utils/fetch";
 import { BACKEND_URLS } from "@/backendUrls";

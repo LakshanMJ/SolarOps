@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
     Box,
     Card,
@@ -17,8 +17,12 @@ import AssessmentIcon from "@mui/icons-material/Assessment";
 import LayersIcon from '@mui/icons-material/Layers';
 import { exportReportFile } from "@/utils/exportFile";
 import { getTimestampedFilename } from "@/utils/getTimestampedFilename";
+import { FleetPerformanceReportPdf } from "@/utils/pdf/FleetPerformanceReportPdf";
+import { useNavigate } from "react-router-dom";
 
 export default function FleetSummaryReport(metaData: any) {
+    // const navigate = useNavigate();
+    const reportRef = useRef(null);
     const [filters, setFilters] = useState({
         reportType: "",
         fromDate: null as Dayjs | null,
@@ -142,32 +146,17 @@ export default function FleetSummaryReport(metaData: any) {
 
                     <Button
                         variant="outlined"
-                        startIcon={
-                            <img
-                                src="/public/pdf.png" // <-- replace with your PNG path
-                                alt="PDF"
-                                style={{ width: 20, height: 20 }}
-                            />
-                        }
+                        startIcon={<img src="/public/pdf.png" alt="PDF" style={{ width: 20, height: 20 }} />}
                         onClick={() => {
                             const { fromDate, toDate } = filters;
 
-                            // Check if both dates are provided
                             if (!fromDate || !toDate) {
                                 alert("Please select both From and To dates before exporting.");
                                 return;
                             }
 
-                            // Optional: check that fromDate is before toDate
-                            const from = new Date(fromDate);
-                            const to = new Date(toDate);
-                            if (from > to) {
-                                alert("From Date cannot be after To Date.");
-                                return;
-                            }
-
-                            // All good → call export
-                            exportReportFile("fleet-summary", "pdf", filters);
+                            const apiUrl = `http://localhost:4000/api/reports/fleet-summary/export?format=pdf&fromDate=${fromDate}&toDate=${toDate}`;
+                            window.open(apiUrl, "_blank"); // opens PDF in a new tab
                         }}
                     >
                         Export PDF
