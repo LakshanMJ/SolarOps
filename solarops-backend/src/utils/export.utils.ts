@@ -2,6 +2,7 @@
 import { Response } from "express";
 import { Parser } from "json2csv"; // npm i json2csv
 import PDFDocument from "pdfkit"; // npm i pdfkit
+import puppeteer from "puppeteer";
 
 export const exportCSV = (res: Response, data: any[]) => {
     const parser = new Parser();
@@ -28,28 +29,28 @@ export const exportCSV = (res: Response, data: any[]) => {
 //     doc.end();
 // };
 
-export const exportPDF = async (res: Response, data: any) => {
+// export const exportPDF = async (res: Response, data: any) => {
 
-  const html = renderToStaticMarkup(
-    <FleetPerformanceReport data={data} />
-  );
+//   const html = renderToStaticMarkup(
+//     <FleetPerformanceReport data={data} />
+//   );
 
-  const browser = await puppeteer.launch();
-  const page = await browser.newPage();
+//   const browser = await puppeteer.launch();
+//   const page = await browser.newPage();
 
-  await page.setContent(html);
+//   await page.setContent(html);
 
-  const pdf = await page.pdf({
-    format: "A4",
-    printBackground: true
-  });
+//   const pdf = await page.pdf({
+//     format: "A4",
+//     printBackground: true
+//   });
 
-  await browser.close();
+//   await browser.close();
 
-  res.set({
-    "Content-Type": "application/pdf",
-    "Content-Disposition": "attachment; filename=report.pdf"
-  });
+//   res.set({
+//     "Content-Type": "application/pdf",
+//     "Content-Disposition": "attachment; filename=report.pdf"
+//   });
 
-  res.send(pdf);
-};
+//   res.send(pdf);
+// };

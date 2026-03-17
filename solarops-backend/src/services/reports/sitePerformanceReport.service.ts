@@ -1,11 +1,12 @@
 // services/sitePerformanceReport.service.ts
 import type { $Enums } from "@prisma/client";
-import { prisma } from "../db/prisma.js";
-import activeInverterCount from "../utils/activeInverterCount.js";
-import calculateAveragePRPerSite from "../utils/calculateAveragePRPerSite.js";
-import calculateSiteHealth from "../utils/calculateSiteHealth.js";
-import { calculateAlertRate, calculateDowntime, energyProducedKwh } from "../utils/sitePerformanceReportCalculations.js";
-import unresolvedAlertsCount from "../utils/unresolvedAlertsCount.js";
+
+import activeInverterCount from "../../utils/activeInverterCount.js";
+import calculateAveragePRPerSite from "../../utils/calculateAveragePRPerSite.js";
+import calculateSiteHealth from "../../utils/calculateSiteHealth.js";
+import unresolvedAlertsCount from "../../utils/unresolvedAlertsCount.js";
+import { calculateAlertRate, calculateDowntime, energyProducedKwh } from "../../utils/sitePerformanceReportCalculations.js";
+import { prisma } from "../../db/prisma.js";
 
 export async function getSitePerformanceData(query: any) {
   const { siteId, fromDate, toDate } = query;
