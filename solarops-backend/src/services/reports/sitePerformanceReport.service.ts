@@ -1,6 +1,4 @@
-// services/sitePerformanceReport.service.ts
 import type { $Enums } from "@prisma/client";
-
 import activeInverterCount from "../../utils/activeInverterCount.js";
 import calculateAveragePRPerSite from "../../utils/calculateAveragePRPerSite.js";
 import calculateSiteHealth from "../../utils/calculateSiteHealth.js";
