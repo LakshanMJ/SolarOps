@@ -1,20 +1,19 @@
 // FleetReportPage.tsx
 import { useEffect, useRef } from "react";
-import { useLocation, useSearchParams } from "react-router-dom"; // if using react-router
+import { useSearchParams } from "react-router-dom";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { FleetSummaryReportPdfLayout } from "./FleetSummaryReportPdfLayout";
 
 export default function FleetSummaryReportPdfView() {
   const reportRef = useRef<HTMLDivElement>(null);
-  // const location = useLocation();
   const [searchParams] = useSearchParams();
-   // Get filters from query params
+
   const filters = {
     fromDate: searchParams.get("fromDate"),
     toDate: searchParams.get("toDate"),
   };
-  
+
   const hasGenerated = useRef(false);
 
   useEffect(() => {
@@ -22,45 +21,65 @@ export default function FleetSummaryReportPdfView() {
     hasGenerated.current = true;
 
     const generatePDF = async () => {
-      await new Promise((r) => setTimeout(r, 500));
+      if (!reportRef.current) return;
 
-      const canvas = await html2canvas(reportRef.current!, {
+      // Wait for Recharts animations to finish (crucial for file size)
+      await new Promise((r) => setTimeout(r, 1000));
+
+      const fullCanvas = await html2canvas(reportRef.current, {
         scale: 2,
         useCORS: true,
         backgroundColor: "#ffffff",
       });
 
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF("p", "mm", "a4");
+      // Create a NEW canvas with exact A4 size
+      const croppedCanvas = document.createElement("canvas");
+      croppedCanvas.width = 794;
+      croppedCanvas.height = 1123;
 
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
-
-      const imgWidth = pageWidth;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-      let heightLeft = imgHeight;
-      let position = 0;
-
-      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-
-      while (heightLeft > 0) {
-        position = heightLeft - imgHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
+      const ctx = croppedCanvas.getContext("2d");
+      if (!ctx) {
+        throw new Error("Canvas context not available");
       }
 
-      pdf.save("fleet-performance-report.pdf");
+      // Copy ONLY the top 1123px from original
+      ctx.drawImage(fullCanvas, 0, 0, 794, 1123, 0, 0, 794, 1123);
+
+      // Use this instead
+      const imgData = croppedCanvas.toDataURL("image/jpeg", 0.75);
+
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
+        compress: true // Internal PDF compression
+      });
+
+      // Force the image to fit 210mm x 297mm exactly. 
+      // No loops, no "heightLeft" logic. Just one page.
+      pdf.addImage(imgData, "JPEG", 0, 0, 210, 296.5);
+
+      pdf.save("fleet-report.pdf");
     };
 
     generatePDF();
   }, [filters]);
 
   return (
-    <div ref={reportRef}>
-      <FleetSummaryReportPdfLayout filters={filters} />
+    /* We use a wrapper with a fixed aspect ratio to ensure html2canvas 
+       sees exactly what should be on one page */
+    <div
+      style={{
+        width: '794px',
+        height: '1123px',
+        overflow: 'hidden',
+        margin: '0 auto',
+        background: '#fff'
+      }}
+    >
+      <div ref={reportRef} >
+        <FleetSummaryReportPdfLayout filters={filters} />
+      </div>
     </div>
   );
 }

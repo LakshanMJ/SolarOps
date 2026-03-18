@@ -19,30 +19,67 @@ import { exportReportFile } from "@/utils/exportFile";
 import { getTimestampedFilename } from "@/utils/getTimestampedFilename";
 import { FleetPerformanceReportPdf } from "@/utils/pdf/FleetPerformanceReportPdf";
 import { useNavigate } from "react-router-dom";
+import { FleetSummaryReportPdfLayout } from "./pdf/FleetSummaryReportPdfLayout";
+import { useReactToPrint } from "react-to-print";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
 export default function FleetSummaryReport(metaData: any) {
     // const navigate = useNavigate();
-    const reportRef = useRef(null);
     const [filters, setFilters] = useState({
         reportType: "",
         fromDate: null as Dayjs | null,
         toDate: null as Dayjs | null,
     });
 
-    const handleExportPDF = () => {
-        fetch("/api/export/pdf", {
-            method: "POST",
-            body: JSON.stringify(filters),
-        })
-            .then(res => res.blob())
-            .then(blob => {
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = getTimestampedFilename("alerts_report", "pdf"); // dynamic filename
-                a.click();
-                window.URL.revokeObjectURL(url);
-            });
+    const reportRef = useRef<HTMLDivElement>(null);
+
+    // const handlePrint = useReactToPrint({
+    //     content: () => reportRef.current,
+    //     documentTitle: "fleet-report",
+    // });
+
+    const getFileName = () => {
+        const now = new Date();
+
+        const date = now.toISOString().slice(0, 10); // YYYY-MM-DD
+        const time = now.toTimeString().slice(0, 8).replace(/:/g, "-"); // HH-MM-SS
+
+        return `fleet_summary_report_${date}_${time}.pdf`;
+    };
+
+    const handleExportPdf = async () => {
+        const { fromDate, toDate } = filters;
+
+        if (!fromDate || !toDate) {
+            alert("Please select both From and To dates before exporting.");
+            return;
+        }
+
+        if (!reportRef.current) return;
+
+        const canvas = await html2canvas(reportRef.current, { scale: 4 });
+        const imgData = canvas.toDataURL("image/png");
+
+        const pdf = new jsPDF("p", "mm", "a4");
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+        pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight, undefined, "FAST");
+
+        // ✅ Filename with date range
+        const fileName = `fleet_summary_${fromDate.format("YYYY-MM-DD")}_to_${toDate.format("YYYY-MM-DD")}.pdf`;
+
+        // ✅ Set PDF title (helps when user saves from browser)
+        pdf.setProperties({
+            title: fileName,
+        });
+
+        // ✅ Open in new tab
+        const blob = pdf.output("blob");
+        const url = URL.createObjectURL(blob);
+        window.open(url, "_blank");
+        setTimeout(() => URL.revokeObjectURL(url), 10000);
     };
 
     const handleFilterChange = (key: string, value: any) => {
@@ -146,23 +183,23 @@ export default function FleetSummaryReport(metaData: any) {
 
                     <Button
                         variant="outlined"
-                        startIcon={<img src="/public/pdf.png" alt="PDF" style={{ width: 20, height: 20 }} />}
-                        onClick={() => {
-                            const { fromDate, toDate } = filters;
-
-                            if (!fromDate || !toDate) {
-                                alert("Please select both From and To dates before exporting.");
-                                return;
-                            }
-
-                            const apiUrl = `http://localhost:4000/api/reports/fleet-summary/export?format=pdf&fromDate=${fromDate}&toDate=${toDate}`;
-                            window.open(apiUrl, "_blank"); // opens PDF in a new tab
-                        }}
+                        startIcon={<img src="/pdf.png" alt="PDF" style={{ width: 20, height: 20 }} />}
+                        onClick={handleExportPdf}
                     >
                         Export PDF
                     </Button>
                 </Box>
             </Card>
+            <div
+                ref={reportRef}
+                // style={{
+                //     position: "absolute",   // UNCOMMENT THIS !!!!!!!!
+                //     top: "-9999px",
+                //     left: "-9999px",
+                // }}
+            >
+                <FleetSummaryReportPdfLayout filters={filters} />
+            </div>
         </Box>
     );
 }
