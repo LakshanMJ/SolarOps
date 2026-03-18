@@ -11,21 +11,14 @@ import {
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import type { Dayjs } from "dayjs";
-import SolarSelect from "@/utils/SolarSelect";
 import SolarDatePicker from "@/utils/SolarDatePicker";
-import AssessmentIcon from "@mui/icons-material/Assessment";
 import LayersIcon from '@mui/icons-material/Layers';
 import { exportReportFile } from "@/utils/exportFile";
-import { getTimestampedFilename } from "@/utils/getTimestampedFilename";
-import { FleetPerformanceReportPdf } from "@/utils/pdf/FleetPerformanceReportPdf";
-import { useNavigate } from "react-router-dom";
-import { FleetSummaryReportPdfLayout } from "./pdf/FleetSummaryReportPdfLayout";
-import { useReactToPrint } from "react-to-print";
+import { FleetSummaryReportPdfLayout } from "./FleetSummaryReportPdfLayout";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
 export default function FleetSummaryReport(metaData: any) {
-    // const navigate = useNavigate();
     const [filters, setFilters] = useState({
         reportType: "",
         fromDate: null as Dayjs | null,
@@ -33,20 +26,6 @@ export default function FleetSummaryReport(metaData: any) {
     });
 
     const reportRef = useRef<HTMLDivElement>(null);
-
-    // const handlePrint = useReactToPrint({
-    //     content: () => reportRef.current,
-    //     documentTitle: "fleet-report",
-    // });
-
-    const getFileName = () => {
-        const now = new Date();
-
-        const date = now.toISOString().slice(0, 10); // YYYY-MM-DD
-        const time = now.toTimeString().slice(0, 8).replace(/:/g, "-"); // HH-MM-SS
-
-        return `fleet_summary_report_${date}_${time}.pdf`;
-    };
 
     const handleExportPdf = async () => {
         const { fromDate, toDate } = filters;
@@ -192,11 +171,11 @@ export default function FleetSummaryReport(metaData: any) {
             </Card>
             <div
                 ref={reportRef}
-                // style={{
-                //     position: "absolute",   // UNCOMMENT THIS !!!!!!!!
-                //     top: "-9999px",
-                //     left: "-9999px",
-                // }}
+                style={{
+                    position: "absolute",
+                    top: "-9999px",
+                    left: "-9999px",
+                }}
             >
                 <FleetSummaryReportPdfLayout filters={filters} />
             </div>

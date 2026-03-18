@@ -9,7 +9,6 @@ import Login from '@/features/login/Login'
 import Register from '@/features/register/Register'
 import Users from '@/features/users/Users'
 import Reports from '@/features/reports/Reports'
-import FleetSummaryReportPdfView from '@/features/reports/FleetSummaryReport/pdf/FleetSummaryReportPdfView'
 
 export const router = createBrowserRouter([
   {
@@ -19,7 +18,6 @@ export const router = createBrowserRouter([
   { path: 'register',
     element: <Register />
   },
-  { path: '/fleet-report', element: <FleetSummaryReportPdfView /> },
   {
     path: '/',
     element: (
@@ -35,7 +33,6 @@ export const router = createBrowserRouter([
       { path: 'alerts', element: <AlertsPage /> },
       { path: 'reports', element: <Reports /> },
       { path: 'users', element: <Users /> },
-      // { path: 'fleet-report', element: <FleetSummaryReportPdfView /> },
     ],
   },
 ])
