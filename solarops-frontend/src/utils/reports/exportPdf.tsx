@@ -4,7 +4,7 @@ import { createRoot } from "react-dom/client";
 import { reportFetchMap } from "./reportFetchMap";
 import { reportRenderMap } from "./reportRenderMap";
 
-const A4_WIDTH_PX = 210 * 4;   // ~840px
+const A4_WIDTH_PX = 198 * 4;   // ~840px
 const A4_HEIGHT_PX = 297 * 4;  // ~1188px
 
 const handleExportPdf = async (
@@ -36,8 +36,8 @@ const handleExportPdf = async (
         container.style.left = "-9999px";
         container.style.width = `${A4_WIDTH_PX}px`;
         container.style.minHeight = `${A4_HEIGHT_PX}px`;
-        container.style.padding = "20px"; // optional padding
-        container.style.boxSizing = "border-box"; // ensures padding doesn't shrink content
+        container.style.padding = "0px"; // optional padding
+        // container.style.boxSizing = "border-box"; // ensures padding doesn't shrink content
         container.style.background = "white"; // important for PDF
         document.body.appendChild(container);
 

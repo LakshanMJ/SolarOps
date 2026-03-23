@@ -9,8 +9,12 @@ import {
     Clock,
     Bell,
     CheckCircle,
-    XCircle
+    XCircle,
+    Building2,
+    MapPinned,
+    MapPin
 } from 'lucide-react';
+
 
 const reportData = {
     siteInfo: {
@@ -105,7 +109,7 @@ const Icons = {
     ),
 };
 
-export function SitePerformanceReportPdfLayout(data:any) {
+export function SitePerformanceReportPdfLayout(data: any) {
     const { siteInfo, metrics } = reportData;
     const inverterEfficiency = ((metrics.activeInverters / metrics.totalInverters) * 100).toFixed(1);
     const healthStatus = metrics.health;
@@ -122,22 +126,57 @@ export function SitePerformanceReportPdfLayout(data:any) {
                 fontFamily: "'Inter', sans-serif"
             }}
         >
-            {/* Header */}
-            <div style={{ padding: '20px 30px', backgroundColor: '#1d4ed8', color: '#fff' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div>
-                        <h1 style={{ margin: 0, fontSize: '22px' }}>Site Performance Report</h1>
-                        <p style={{ margin: 0, fontSize: '14px', opacity: 0.9 }}>{siteInfo.name}</p>
-                        <p style={{ margin: 0, fontSize: '12px', opacity: 0.8 }}>{siteInfo.location}</p>
+            <div style={{ padding: '20px 30px', backgroundColor: '#1d4ed8', color: '#ffffff' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <img
+                            src="public/solarops_logo.png"        // put your PNG in public folder
+                            alt="Sun Icon"
+                            width={52}            // same size as your <Sun size={32} />
+                            height={52}
+                            style={{ display: "block" }} // optional, keeps layout clean
+                        />
+                        <div>
+                            <h1 style={{ fontSize: '24px', fontWeight: 'bold', margin: 0 }}>Solar Ops</h1>
+                            <p style={{ margin: 0, fontSize: "14px", opacity: 0.9 }}>
+                                Site Performance Report
+                            </p>
+                            {/* <p style={{ margin: 0, fontSize: '14px', opacity: 0.9 }}>{siteInfo.name}</p>
+                            <p style={{ margin: 0, fontSize: '12px', opacity: 0.8 }}>{siteInfo.location}</p> */}
+                        </div>
                     </div>
+                    <div style={{ textAlign: 'right', fontSize: '12px' }}>
+                        <p style={{ margin: 0, opacity: 0.8 }}>Report Date</p>
+                        <p style={{ fontWeight: 'bold', margin: 0 }}>March 17, 2026</p>
+                    </div>
+                </div>
+            </div>
 
-                    <div style={{ textAlign: 'right' }}>
-                        <p style={{ margin: 0, fontSize: '12px', opacity: 0.8 }}>Report Date</p>
-                        <p style={{ margin: 0, fontWeight: 'bold' }}>{siteInfo.reportDate}</p>
-                        <p style={{ margin: 0, fontSize: '11px', opacity: 0.8 }}>
-                            {siteInfo.reportPeriod}
-                        </p>
-                    </div>
+            {/* Site Information */}
+            <div style={{ padding: '20px 30px' }}>
+                {/* Site Name with Icon */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '0 0 4px 0' }}>
+                    <Building2 size={30}/>
+                    <p style={{
+                        fontSize: '16px',
+                        fontWeight: '600',
+                        color: '#1f2937',
+                        margin: 0
+                    }}>
+                        {siteInfo.name}
+                    </p>
+                </div>
+
+                {/* Location with Icon */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: '4px' }}>
+                    <MapPin size={20} />
+                    <p style={{
+                        fontSize: '13px',
+                        color: '#6b7280',
+                        margin: 0
+                    }}>
+                        {siteInfo.location}
+                    </p>
                 </div>
             </div>
 

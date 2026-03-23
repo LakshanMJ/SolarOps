@@ -7,7 +7,7 @@ type ReportType = "alerts" | "fleet-summary" | "site-performance";
 
 export const reportRenderMap: Record<
   ReportType,
-  (data: any,isFirstPage:any) => JSX.Element
+  (data: any,isFirstPage?:any) => JSX.Element
 > = {
   "fleet-summary": (data) => <FleetSummaryReportPdfLayout data={data} />,
   alerts: (data, isFirstPage) => <AlertsReportPdfLayout data={data} isFirstPage={isFirstPage} />,

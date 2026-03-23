@@ -12,7 +12,7 @@ const chartData = [
     { name: 'Site F', output: 360, pr: 86 },
 ];
 
-export function FleetSummaryReportPdfLayout(data:any) {
+export function FleetSummaryReportPdfLayout(data: any) {
     return (
         /* Standard A4 dimensions at 96 DPI: 794px x 1123px */
         <div
@@ -42,7 +42,9 @@ export function FleetSummaryReportPdfLayout(data:any) {
                         />
                         <div>
                             <h1 style={{ fontSize: '24px', fontWeight: 'bold', margin: 0 }}>Solar Ops</h1>
-                            <h1 style={{ fontSize: '20px', fontWeight: 'bold', margin: 0 }}>Fleet Performance Report</h1>
+                            <p style={{ margin: 0, fontSize: "14px", opacity: 0.9 }}>
+                                Fleet Performance Report
+                            </p>
                         </div>
                     </div>
                     <div style={{ textAlign: 'right', fontSize: '12px' }}>
