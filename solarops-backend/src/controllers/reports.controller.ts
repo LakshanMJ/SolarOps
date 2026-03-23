@@ -2,13 +2,8 @@
 import { Request, Response } from "express";
 import { getAlertsData } from "../services/reports/alertsReport.service.js";
 import { getFleetSummaryData } from "../services/reports/fleetSummaryReport.service.js";
-import {
-    exportCSV,
-    // exportPDF
-} from "../utils/export.utils.js";
+import {exportCSV} from "../utils/export.utils.js";
 import { getSitePerformanceData } from "../services/reports/sitePerformanceReport.service.js";
-import puppeteer from "puppeteer";
-
 
 // Map of report types
 const reportMap: Record<
@@ -35,7 +30,7 @@ export const getReport = async (req: Request, res: Response) => {
     }
 };
 
-// Export report as CSV or PDF
+// Export report
 export const exportReport = async (req: Request, res: Response) => {
     const reportType = req.params.reportType as string;
     const { format } = req.query;
@@ -55,11 +50,7 @@ export const exportReport = async (req: Request, res: Response) => {
         }
 
         // ✅ Only CSV supported now
-        if (format === "csv") {
-            return exportCSV(res, data);
-        }
-
-        return res.status(400).json({ error: "Invalid format. Only CSV supported." });
+        return exportCSV(res, data);
 
     } catch (err: any) {
         return res.status(500).json({
