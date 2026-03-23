@@ -12,7 +12,7 @@ const chartData = [
     { name: 'Site F', output: 360, pr: 86 },
 ];
 
-export function FleetSummaryReportPdfLayout() {
+export function FleetSummaryReportPdfLayout(data:any) {
     return (
         /* Standard A4 dimensions at 96 DPI: 794px x 1123px */
         <div

@@ -1,11 +1,10 @@
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import {
     Box,
     Card,
     Typography,
     Button,
     Divider,
-    MenuItem,
     Alert,
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -13,10 +12,8 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import type { Dayjs } from "dayjs";
 import SolarDatePicker from "@/utils/SolarDatePicker";
 import LayersIcon from '@mui/icons-material/Layers';
-import { exportReportFile } from "@/utils/exportFile";
-import { FleetSummaryReportPdfLayout } from "./FleetSummaryReportPdfLayout";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
+import { exportReportFile } from "@/utils/reports/exportCsv";
+import handleExportPdf from "@/utils/reports/exportPdf";
 
 export default function FleetSummaryReport(metaData: any) {
     const [filters, setFilters] = useState({
@@ -26,40 +23,6 @@ export default function FleetSummaryReport(metaData: any) {
     });
 
     const reportRef = useRef<HTMLDivElement>(null);
-
-    const handleExportPdf = async () => {
-        const { fromDate, toDate } = filters;
-
-        if (!fromDate || !toDate) {
-            alert("Please select both From and To dates before exporting.");
-            return;
-        }
-
-        if (!reportRef.current) return;
-
-        const canvas = await html2canvas(reportRef.current, { scale: 4 });
-        const imgData = canvas.toDataURL("image/png");
-
-        const pdf = new jsPDF("p", "mm", "a4");
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-
-        pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight, undefined, "FAST");
-
-        // ✅ Filename with date range
-        const fileName = `fleet_summary_${fromDate.format("YYYY-MM-DD")}_to_${toDate.format("YYYY-MM-DD")}.pdf`;
-
-        // ✅ Set PDF title (helps when user saves from browser)
-        pdf.setProperties({
-            title: fileName,
-        });
-
-        // ✅ Open in new tab
-        const blob = pdf.output("blob");
-        const url = URL.createObjectURL(blob);
-        window.open(url, "_blank");
-        setTimeout(() => URL.revokeObjectURL(url), 10000);
-    };
 
     const handleFilterChange = (key: string, value: any) => {
         setFilters(prev => ({ ...prev, [key]: value }));
@@ -154,7 +117,7 @@ export default function FleetSummaryReport(metaData: any) {
                             }
 
                             // All good → call export
-                            exportReportFile("fleet-summary", "csv", filters);
+                            exportReportFile("fleet-summary", filters);
                         }}
                     >
                         Export CSV
@@ -163,22 +126,12 @@ export default function FleetSummaryReport(metaData: any) {
                     <Button
                         variant="outlined"
                         startIcon={<img src="/pdf.png" alt="PDF" style={{ width: 20, height: 20 }} />}
-                        onClick={handleExportPdf}
+                        onClick={() => handleExportPdf("fleet-summary", filters, reportRef)}
                     >
                         Export PDF
                     </Button>
                 </Box>
             </Card>
-            <div
-                ref={reportRef}
-                style={{
-                    position: "absolute",
-                    top: "-9999px",
-                    left: "-9999px",
-                }}
-            >
-                <FleetSummaryReportPdfLayout filters={filters} />
-            </div>
         </Box>
     );
 }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
     Box,
     Card,
@@ -15,13 +15,11 @@ import type { Dayjs } from "dayjs";
 import WarningIcon from '@mui/icons-material/Warning';
 import SolarSelect from "@/utils/SolarSelect";
 import SolarDatePicker from "@/utils/SolarDatePicker";
-import { getTimestampedFilename } from "@/utils/getTimestampedFilename";
-import { BACKEND_URLS } from "@/backendUrls";
-import { exportReportFile } from "@/utils/exportFile";
 import dayjs from "dayjs";
+import { exportReportFile } from "@/utils/reports/exportCsv";
+import { exportMultiPagePdf } from "@/utils/reports/exportMultiPagePdf";
 
 export default function AlertsReport({ metaData, sites }: any) {
-    console.log(metaData?.alertStatus, 'metaData?.alertStatus')
 
     const [alignment, setAlignment] = useState('');
     const [filters, setFilters] = useState({
@@ -33,21 +31,7 @@ export default function AlertsReport({ metaData, sites }: any) {
         toDate: null as Dayjs | null,
     });
 
-    const handleExportPDF = () => {
-        fetch("/api/export/pdf", {
-            method: "POST",
-            body: JSON.stringify(filters),
-        })
-            .then(res => res.blob())
-            .then(blob => {
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = getTimestampedFilename("alerts_report", "pdf");
-                a.click();
-                window.URL.revokeObjectURL(url);
-            });
-    };
+    const reportRef = useRef<HTMLDivElement>(null);
 
     const handleFilterChange = (field: string, value: any) => {
         setFilters((prev) => ({
@@ -213,21 +197,15 @@ export default function AlertsReport({ metaData, sites }: any) {
                                 style={{ width: 20, height: 20 }} // adjust size
                             />
                         }
-                        onClick={() => exportReportFile("alerts", "csv", filters)}
+                        onClick={() => exportReportFile("alerts", filters)}
                     >
                         Export CSV
                     </Button>
 
                     <Button
                         variant="outlined"
-                        startIcon={
-                            <img
-                                src="/public/pdf.png" // <-- replace with your PNG path
-                                alt="PDF"
-                                style={{ width: 20, height: 20 }}
-                            />
-                        }
-                        onClick={handleExportPDF}
+                        startIcon={<img src="/public/pdf.png" alt="PDF" style={{ width: 20, height: 20 }} />}
+                        onClick={() => exportMultiPagePdf("alerts", filters)}
                     >
                         Export PDF
                     </Button>

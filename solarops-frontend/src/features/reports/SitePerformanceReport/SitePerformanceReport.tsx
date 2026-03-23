@@ -14,12 +14,8 @@ import type { Dayjs } from "dayjs";
 import SolarSelect from "@/utils/SolarSelect";
 import SolarDatePicker from "@/utils/SolarDatePicker";
 import AssessmentIcon from "@mui/icons-material/Assessment";
-import { getTimestampedFilename } from "@/utils/getTimestampedFilename";
-import { exportReportFile } from "@/utils/exportFile";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
-import { SitePerformanceReportPdfLayout } from "./SitePerformanceReportPdfLayout";
-import { Test } from "./test";
+import { exportReportFile } from "@/utils/reports/exportCsv";
+import handleExportPdf from "@/utils/reports/exportPdf";
 
 export default function SitePerformanceReport({ metaData, sites }: any) {
     const [filters, setFilters] = useState({
@@ -30,56 +26,6 @@ export default function SitePerformanceReport({ metaData, sites }: any) {
     });
 
     const reportRef = useRef<HTMLDivElement>(null);
-
-    const handleExportPdf = async () => {
-        const { fromDate, toDate, siteId } = filters;
-
-        if (!fromDate || !toDate || !siteId) {
-            alert("Please select all the fields before exporting.");
-            return;
-        }
-
-        if (!reportRef.current) return;
-
-        const canvas = await html2canvas(reportRef.current, { scale: 4 });
-        const imgData = canvas.toDataURL("image/png");
-
-        const pdf = new jsPDF("p", "mm", "a4");
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-
-        pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight, undefined, "FAST");
-
-        // ✅ Filename with date range
-        const fileName = `site_performance${fromDate.format("YYYY-MM-DD")}_to_${toDate.format("YYYY-MM-DD")}.pdf`;
-
-        // ✅ Set PDF title (helps when user saves from browser)
-        pdf.setProperties({
-            title: fileName,
-        });
-
-        // ✅ Open in new tab
-        const blob = pdf.output("blob");
-        const url = URL.createObjectURL(blob);
-        window.open(url, "_blank");
-        setTimeout(() => URL.revokeObjectURL(url), 10000);
-    };
-
-    // const handleExportPDF = () => {
-    //     fetch("/api/export/pdf", {
-    //         method: "POST",
-    //         body: JSON.stringify(filters),
-    //     })
-    //         .then(res => res.blob())
-    //         .then(blob => {
-    //             const url = window.URL.createObjectURL(blob);
-    //             const a = document.createElement("a");
-    //             a.href = url;
-    //             a.download = getTimestampedFilename("alerts_report", "pdf"); // dynamic filename
-    //             a.click();
-    //             window.URL.revokeObjectURL(url);
-    //         });
-    // };
 
     const handleFilterChange = (key: string, value: any) => {
         setFilters(prev => ({ ...prev, [key]: value }));
@@ -198,45 +144,21 @@ export default function SitePerformanceReport({ metaData, sites }: any) {
                             }
 
                             // All good → call export
-                            exportReportFile("site-performance", "csv", filters);
+                            exportReportFile("site-performance", filters);
                         }}
                     >
                         Export CSV
                     </Button>
 
-                    {/* <Button
-                        variant="outlined"
-                        startIcon={
-                            <img
-                                src="/public/pdf.png" // <-- replace with your PNG path
-                                alt="PDF"
-                                style={{ width: 20, height: 20 }}
-                            />
-                        }
-                        onClick={handleExportPDF}
-                    >
-                        Export PDF
-                    </Button> */}
                     <Button
                         variant="outlined"
                         startIcon={<img src="/pdf.png" alt="PDF" style={{ width: 20, height: 20 }} />}
-                        onClick={handleExportPdf}
+                        onClick={() => handleExportPdf("site-performance", filters,reportRef)}
                     >
                         Export PDF
                     </Button>
                 </Box>
             </Card>
-            <div
-                ref={reportRef}
-                style={{
-                    position: "absolute",
-                    top: "-9999px",
-                    left: "-9999px",
-                }}
-            >
-                {/* <SitePerformanceReportPdfLayout filters={filters} /> */}
-                <Test/>
-            </div>
         </Box>
     );
 }

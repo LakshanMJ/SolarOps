@@ -14,8 +14,9 @@ export const BACKEND_URLS = {
   REPORTS_BASE: 'http://localhost:4000/api/reports',
 
   // Alerts report export
-  ALERTS_EXPORT_CSV: 'http://localhost:4000/api/reports/alerts/export?format=csv',
-  ALERTS_EXPORT_PDF: 'http://localhost:4000/api/reports/alerts/export?format=pdf',
+  ALERTS_EXPORT: 'http://localhost:4000/api/reports/alerts/export',
+  // ALERTS_EXPORT_CSV: 'http://localhost:4000/api/reports/alerts/export?format=csv',
+  // ALERTS_EXPORT_PDF: 'http://localhost:4000/api/reports/alerts/export?format=pdf',
 
   // Fleet Summary report export
   FLEET_SUMMARY_EXPORT_CSV: 'http://localhost:4000/api/reports/fleet-summary/export?format=csv',
