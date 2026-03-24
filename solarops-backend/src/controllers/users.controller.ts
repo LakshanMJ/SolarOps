@@ -45,3 +45,15 @@ export async function deleteUser(req: Request<{ id: string }>, res: Response) {
     res.status(500).json({ message: 'Failed to delete user' })
   }
 }
+
+export async function getCurrentUser(req: Request, res: Response) {
+  try {
+    // Assuming your auth middleware adds the user ID to req.user.id
+    const userId = req.user.id;
+    const data = await getUsersByIdService(userId);
+    res.json(data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to fetch current user" });
+  }
+}

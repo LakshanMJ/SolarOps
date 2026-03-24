@@ -1,9 +1,11 @@
 import { Router } from 'express'
 import { authMiddleware } from '../middleware/auth.middleware.js'
-import { deleteUser, getUsers, getUsersById, updateUser } from '../controllers/users.controller.js'
+import { deleteUser, getCurrentUser, getUsers, getUsersById, updateUser } from '../controllers/users.controller.js'
 import { register } from '../controllers/auth.controller.js'
 
 const router = Router()
+
+router.get("/me", authMiddleware, getCurrentUser);
 
 router.post('/', authMiddleware,register)
 router.get('/', authMiddleware, getUsers)
