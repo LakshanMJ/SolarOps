@@ -2,14 +2,11 @@ import {
   Box,
   Stack,
   Typography,
-  Select,
-  MenuItem,
   Chip,
 } from '@mui/material'
-import { useState } from 'react'
 
 export default function Header() {
-  const [range, setRange] = useState('7d')
+  // const [range, setRange] = useState('7d')
 
   return (
     <Box
@@ -44,18 +41,22 @@ export default function Header() {
             src="/solarops_logo.png"
             alt="SolarOps Logo"
             sx={{
-              width: 32,
-              height: 32,
+              width: 36,
+              height: 36,
               objectFit: 'contain',
             }}
           />
 
-          <Typography variant="h6" fontWeight={600}>
+          {/* <Typography variant="h6" fontWeight={600}>
+            SolarOps
+          </Typography> */}
+
+          <Typography variant="h6" sx={{ fontWeight: 800, letterSpacing: -0.5 }}>
             SolarOps
           </Typography>
         </Box>
 
-        <Select
+        {/* <Select
           size="small"
           value={range}
           onChange={(e) => setRange(e.target.value)}
@@ -63,7 +64,7 @@ export default function Header() {
           <MenuItem value="24h">Last 24 Hours</MenuItem>
           <MenuItem value="7d">Last 7 Days</MenuItem>
           <MenuItem value="30d">Last 30 Days</MenuItem>
-        </Select>
+        </Select> */}
 
         <Stack direction="row" alignItems="center" spacing={1}>
           <Chip

@@ -26,6 +26,7 @@ export type Inverter = {
 const Inverters = () => {
 
   const [selectedInverter, setSelectedInverter] = useState<any>(null);
+  console.log(selectedInverter,'selectedInverter')
   const [selectedRowIds, setSelectedRowIds] = useState<number[]>([]);
   const [inverterData, setInverterData] = useState<Inverter[]>([]);
   // const [openAddInverterModal, setOpenAddInverterModal] = useState(false);
@@ -196,7 +197,6 @@ const Inverters = () => {
           fetchInverters={fetchInverters}
         />
       )}
-
       <DeleteModal
         open={inverterDeleteModal.show}
         onClose={() =>

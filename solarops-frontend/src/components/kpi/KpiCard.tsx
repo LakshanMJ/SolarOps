@@ -1,6 +1,8 @@
 import { Box, Typography } from '@mui/material';
 
 const KpiCard = ({ label, value, status }: { label: string; value: string; status?: 'good' | 'warning' | 'critical' }) => {
+  const isAlert = status === 'critical' || status === 'warning';
+  
   const statusColor =
     status === 'good'
       ? '#22c55e'
@@ -13,8 +15,7 @@ const KpiCard = ({ label, value, status }: { label: string; value: string; statu
   return (
     <Box
       sx={{
-        backgroundColor: '#334155',
-        border: '1px solid #334155',
+        backgroundColor: '#1e293b', // Slightly darker to make the glow pop
         borderRadius: 2,
         px: 2,
         py: 1.75,
@@ -23,9 +24,12 @@ const KpiCard = ({ label, value, status }: { label: string; value: string; statu
         gap: 0.5,
         position: 'relative',
         overflow: 'hidden',
+        transition: 'all 0.3s ease',
+        // Optional: subtle glow for the whole card on critical
+        boxShadow: status === 'critical' ? `0 0 15px -5px ${statusColor}40` : 'none', 
       }}
     >
-
+      {/* Side Accent Bar with Glow */}
       <Box
         sx={{
           position: 'absolute',
@@ -34,7 +38,8 @@ const KpiCard = ({ label, value, status }: { label: string; value: string; statu
           width: 4,
           height: '100%',
           backgroundColor: statusColor,
-          opacity: 0.9,
+          // The Magic: Spread the glow using box-shadow
+          boxShadow: isAlert ? `2px 0px 10px 1px ${statusColor}` : 'none',
         }}
       />
 
@@ -42,11 +47,22 @@ const KpiCard = ({ label, value, status }: { label: string; value: string; statu
         {label}
       </Typography>
 
-      <Typography variant="h6" sx={{ fontWeight: 600 }}>
+      <Typography variant="h6" sx={{ fontWeight: 600, color: '#f8fafc' }}>
         {value}
       </Typography>
 
-      <Typography variant="caption" sx={{ color: statusColor }}>
+      {/* Status Text with Glow */}
+      <Typography 
+        variant="caption" 
+        sx={{ 
+          color: statusColor,
+          fontWeight: isAlert ? 700 : 500,
+          // Text shadow makes the font look like it's emitting light
+          textShadow: isAlert ? `0 0 8px ${statusColor}80` : 'none',
+          textTransform: 'uppercase',
+          letterSpacing: 0.5
+        }}
+      >
         {status === 'good' ? 'Normal' : status === 'warning' ? 'Attention' : status === 'critical' ? 'Critical' : ''}
       </Typography>
     </Box>

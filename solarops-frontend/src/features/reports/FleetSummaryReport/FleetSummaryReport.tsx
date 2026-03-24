@@ -6,6 +6,8 @@ import {
     Button,
     Divider,
     Alert,
+    ToggleButtonGroup,
+    ToggleButton,
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -14,8 +16,10 @@ import SolarDatePicker from "@/utils/SolarDatePicker";
 import LayersIcon from '@mui/icons-material/Layers';
 import { exportReportFile } from "@/utils/reports/exportCsv";
 import handleExportPdf from "@/utils/reports/exportPdf";
+import dayjs from "dayjs";
 
 export default function FleetSummaryReport(metaData: any) {
+    const [alignment, setAlignment] = useState('');
     const [filters, setFilters] = useState({
         reportType: "",
         fromDate: null as Dayjs | null,
@@ -28,6 +32,31 @@ export default function FleetSummaryReport(metaData: any) {
         setFilters(prev => ({ ...prev, [key]: value }));
     };
 
+    const handleToggleButtonChange = (_: any, newAlignment: string | null) => {
+        if (newAlignment) setAlignment(newAlignment);
+
+        const today = dayjs();
+        if (newAlignment === "today") {
+            setFilters((prev) => ({
+                ...prev,
+                fromDate: today,
+                toDate: today,
+            }));
+        } else if (newAlignment === "last7Days") {
+            setFilters((prev) => ({
+                ...prev,
+                fromDate: today.subtract(6, "day"),
+                toDate: today,
+            }));
+        } else if (newAlignment === "last30Days") {
+            setFilters((prev) => ({
+                ...prev,
+                fromDate: today.subtract(29, "day"),
+                toDate: today,
+            }));
+        }
+    };
+    
     return (
         <Box sx={{ width: '100%', margin: "left", mt: 4 }}>
 
@@ -71,6 +100,34 @@ export default function FleetSummaryReport(metaData: any) {
                             value={filters.toDate}
                             onChange={(newValue) => handleFilterChange("toDate", newValue)}
                         />
+
+                        {/* Buttons */}
+                        <ToggleButtonGroup
+                            value={alignment}
+                            exclusive
+                            onChange={handleToggleButtonChange}
+                            aria-label="Platform"
+                            sx={{
+                                display: "flex",
+                                gap: 2, // spacing between buttons
+                                "& .MuiToggleButton-root": {
+                                    minWidth: 80,
+                                    height: 35,
+                                    borderRadius: 1,
+                                    border: "1px solid",          // ✅ add border
+                                    borderColor: "primary.main",  // optional: border color
+                                    textTransform: "none",
+                                },
+                                "& .MuiToggleButton-root.Mui-selected": {
+                                    backgroundColor: "primary.dark", // selected color
+                                    color: "white",
+                                },
+                            }}
+                        >
+                            <ToggleButton value="today">Today</ToggleButton>
+                            <ToggleButton value="last7Days">Last 7 Days</ToggleButton>
+                            <ToggleButton value="last30Days">Last 30 Days</ToggleButton>
+                        </ToggleButtonGroup>
                     </LocalizationProvider>
                 </Box>
 

@@ -115,10 +115,10 @@ export function AlertsReportPdfLayout({ data, isFirstPage }: any) {
             gap: "15px",
             marginBottom: "20px"
           }}>
-            <StatCard label="Total Alerts" value={total} icon={<CircleAlert color="#2563eb"/>} color="#dbeafe" text="#2563eb"  />
-            <StatCard label="Critical" value={critical} icon={<TriangleAlert color="#dc2626"/>} color="#fee2e2" text="#dc2626" />
+            <StatCard label="Total Alerts" value={total} icon={<CircleAlert color="#2563eb" />} color="#dbeafe" text="#2563eb" />
+            <StatCard label="Critical" value={critical} icon={<TriangleAlert color="#dc2626" />} color="#fee2e2" text="#dc2626" />
             <StatCard label="Open" value={open} icon={<SquareCheck color="#d97706" />} color="#fef3c7" text="#d97706" />
-            <StatCard label="Resolved" value={resolved} icon={<FolderOpenDot color="#16a34a"/>} color="#dcfce7" text="#16a34a" />
+            <StatCard label="Resolved" value={resolved} icon={<FolderOpenDot color="#16a34a" />} color="#dcfce7" text="#16a34a" />
           </div>
         )}
 
@@ -132,8 +132,9 @@ export function AlertsReportPdfLayout({ data, isFirstPage }: any) {
           {/* Table Header */}
           <div style={{
             display: "grid",
-            gridTemplateColumns: "1fr 2fr 1fr 1fr 1.5fr 1fr",
-            backgroundColor: "#1f2937",
+            gridTemplateColumns: "0.6fr 2.4fr 0.8fr 1fr 1.5fr 0.6fr",
+            // backgroundColor: "#1f2937",
+            backgroundColor: "#58667a",
             color: "#fff",
             fontSize: "12px",
             fontWeight: "600",
@@ -148,7 +149,7 @@ export function AlertsReportPdfLayout({ data, isFirstPage }: any) {
           </div>
 
           {/* Rows */}
-          {data.map((alert, i) => (
+          {/* {data.map((alert, i) => (
             <div
               key={alert.id}
               style={{
@@ -156,7 +157,8 @@ export function AlertsReportPdfLayout({ data, isFirstPage }: any) {
                 gridTemplateColumns: "1fr 2fr 1fr 1fr 1.5fr 1fr",
                 padding: "10px",
                 fontSize: "11px",
-                backgroundColor: "#a9b6c3",
+                // backgroundColor: "#a9b6c3",
+                backgroundColor: "#d8e7f3",
                 borderBottom: "1px solid #eee"
               }}
             >
@@ -174,6 +176,47 @@ export function AlertsReportPdfLayout({ data, isFirstPage }: any) {
                   hour12: true,
                 }).replace(/\//g, '-').replace(',', ',')}
               </span>
+              <StatusBadge status={alert.status} />
+            </div>
+          ))} */}
+          {data.map((alert, i) => (
+            <div
+              key={alert.id}
+              style={{
+                display: "grid",
+                gridTemplateColumns: "0.6fr 2.4fr 0.8fr 1fr 1.5fr 0.6fr",
+                padding: "10px",
+                fontSize: "11px",
+                backgroundColor: "#d8e7f3",
+                borderBottom: "1px solid #eee",
+                alignItems: "center"
+              }}
+            >
+              <SeverityBadge severity={alert.severity} />
+
+              <span style={{ color: "#1e293b", fontWeight: 500 }}>
+                {alert.message}
+              </span>
+
+              <span style={{ color: "#1e293b" }}>
+                {alert.inverterName}
+              </span>
+
+              <span style={{ color: "#1e293b" }}>
+                {alert.siteName}
+              </span>
+
+              <span style={{ color: "#1e293b", fontSize: "10px" }}>
+                {new Date(alert.createdAt).toLocaleString('en-GB', {
+                  year: 'numeric',
+                  month: '2-digit',
+                  day: '2-digit',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  hour12: true,
+                }).replace(/\//g, '-').replace(',', ',')}
+              </span>
+
               <StatusBadge status={alert.status} />
             </div>
           ))}
@@ -229,15 +272,19 @@ function SeverityBadge({ severity }) {
   const isCritical = severity === "Critical";
 
   return (
-    <span style={{
-      padding: "4px 8px",
-      borderRadius: "12px",
-      fontSize: "10px",
-      color: "#fff",
-      backgroundColor: isCritical ? "#dc2626" : "#d97706",
-      textAlign: "center",
-      width: "fit-content"
-    }}>
+    <span
+      style={{
+        padding: "4px 8px",
+        borderRadius: "12px",
+        fontSize: "10px",
+        color: "#fff",
+        backgroundColor: isCritical ? "#dc2626" : "#d97706",
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: "fit-content"
+      }}
+    >
       {severity}
     </span>
   );
@@ -247,15 +294,19 @@ function StatusBadge({ status }) {
   const isOpen = status === "Open";
 
   return (
-    <span style={{
-      padding: "4px 8px",
-      borderRadius: "12px",
-      fontSize: "10px",
-      color: "#fff",
-      backgroundColor: isOpen ? "#dc2626" : "#16a34a",
-      textAlign: "center",
-      width: "fit-content"
-    }}>
+    <span
+      style={{
+        padding: "4px 8px",
+        borderRadius: "12px",
+        fontSize: "10px",
+        color: "#fff",
+        backgroundColor: isOpen ? "#dc2626" : "#16a34a",
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: "fit-content"
+      }}
+    >
       {status}
     </span>
   );

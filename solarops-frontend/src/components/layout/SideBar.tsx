@@ -1,23 +1,36 @@
-import { Box, Typography, Button } from '@mui/material';
+import { BACKEND_URLS } from '@/backendUrls';
+import { Box, Typography, Button, IconButton } from '@mui/material';
+import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { AlertTriangle, FileText, LayoutDashboard, MapPin, Power, Users, Zap } from 'lucide-react';
 
 const SideBar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
   const menuItems = [
-    { label: 'Dashboard', path: '/dashboard' },
-    { label: 'Sites', path: '/sites' },
-    { label: 'Inverters', path: '/inverters' },
-    { label: 'Alerts', path: '/alerts' },
-    // { label: 'Telemetry', path: '/telemetry' },
-    // { label: 'Analytics', path: '/analytics' },
-    // { label: 'Map View', path: '/map-view' },
-    // { label: 'Control Room', path: '/control-room' },
-    // { label: 'Maintenance', path: '/maintenance' },
-    { label: 'Reports', path: '/reports' },
-    { label: 'Users and Roles', path: '/users' },
+    { label: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard size={20} /> },
+    { label: 'Sites', path: '/sites', icon: <MapPin size={20} /> },
+    { label: 'Inverters', path: '/inverters', icon: <Zap size={20} /> },
+    { label: 'Alerts', path: '/alerts', icon: <AlertTriangle size={20} /> },
+    { label: 'Reports', path: '/reports', icon: <FileText size={20} /> },
+    { label: 'Users and Roles', path: '/users', icon: <Users size={20} /> },
   ];
+
+  const [user, setUser] = useState<any>(null);
+  console.log(user, 'userrrrr')
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      fetch(BACKEND_URLS.CURRENT_USER, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then(res => res.json())
+        .then(data => setUser(data))
+        .catch(err => console.error(err));
+    }
+  }, []);
 
   return (
     <Box
@@ -51,6 +64,7 @@ const SideBar = () => {
             <Button
               key={item.label}
               variant="text"
+              startIcon={item.icon}
               onClick={() => navigate(item.path)}
               sx={{
                 justifyContent: 'flex-start',
@@ -93,13 +107,30 @@ const SideBar = () => {
         sx={{
           px: 3,
           py: 2,
-          borderTop: '1px solid #1e293b',
+          borderTop: "1px solid #1e293b",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between", // user on left, logout on right
         }}
       >
-        <Typography variant="body2">Admin User</Typography>
-        <Typography variant="caption" sx={{ color: '#9ca3af' }}>
-          Operations Manager
-        </Typography>
+        <Box>
+          <Typography variant="body2">
+            {user?.firstName} {user?.lastName}
+          </Typography>
+          <Typography variant="caption" sx={{ color: "#9ca3af" }}>
+            {'user?.jobTitle'}
+          </Typography>
+        </Box>
+
+        <IconButton
+          onClick={() => {
+            localStorage.removeItem("token"); // clear token
+            window.location.reload(); // or navigate to login
+          }}
+          sx={{ color: "#f59e0b" }}
+        >
+          <Power />
+        </IconButton>
       </Box>
     </Box>
   );

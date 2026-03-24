@@ -180,7 +180,6 @@ export default function AlertsReport({ metaData, sites }: any) {
                             <ToggleButton value="last7Days">Last 7 Days</ToggleButton>
                             <ToggleButton value="last30Days">Last 30 Days</ToggleButton>
                         </ToggleButtonGroup>
-
                     </Box>
                 </LocalizationProvider>
 

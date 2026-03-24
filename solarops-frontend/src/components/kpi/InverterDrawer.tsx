@@ -20,15 +20,17 @@ interface InverterDrawerProps {
     onClose: () => void;
 }
 
+
 const InverterDrawer = ({ open, inverter, onClose }: InverterDrawerProps) => {
+
     return (
         <Drawer anchor="right" open={open} onClose={onClose}>
             <Box sx={{ width: 340, p: 2, backgroundColor: '#273443' }}>
                 {inverter && (
                     <>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                            <Typography variant="h6" sx={{ color: '#fff' }}>
-                                {inverter.inverterId}
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 0.5 }}>
+                            <Typography variant="h6" sx={{ color: '#ffffff' }}>
+                                {inverter?.name}
                             </Typography>
                             {inverter.status !== 'Offline' && <LiveIndicator />}
                         </Box>

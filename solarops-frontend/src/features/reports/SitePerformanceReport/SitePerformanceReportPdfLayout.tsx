@@ -1,17 +1,6 @@
-import React from 'react';
 import {
-    Activity,
-    AlertTriangle,
-    TrendingUp,
-    Percent,
-    Heart,
-    BatteryFull,
-    Clock,
-    Bell,
     CheckCircle,
-    XCircle,
     Building2,
-    MapPinned,
     MapPin
 } from 'lucide-react';
 
@@ -19,7 +8,7 @@ import {
 const reportData = {
     siteInfo: {
         name: 'Solar Site Alpha',
-        location: 'Phoenix, Arizona',
+        location: 'Colombo 07',
         reportDate: 'March 19, 2026',
         reportPeriod: 'March 1-18, 2026',
     },
@@ -155,8 +144,8 @@ export function SitePerformanceReportPdfLayout(data: any) {
             {/* Site Information */}
             <div style={{ padding: '20px 30px' }}>
                 {/* Site Name with Icon */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '0 0 4px 0' }}>
-                    <Building2 size={30}/>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '0 0 4px 0', color:'#1f2937' }}>
+                    <Building2 size={30} />
                     <p style={{
                         fontSize: '16px',
                         fontWeight: '600',
@@ -168,11 +157,11 @@ export function SitePerformanceReportPdfLayout(data: any) {
                 </div>
 
                 {/* Location with Icon */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: '4px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: '4px', color:'#1f2937' }}>
                     <MapPin size={20} />
                     <p style={{
                         fontSize: '13px',
-                        color: '#6b7280',
+                        color: '#1f2937',
                         margin: 0
                     }}>
                         {siteInfo.location}
@@ -199,20 +188,20 @@ export function SitePerformanceReportPdfLayout(data: any) {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                         <CheckCircle color="#16a34a" />
                         <div>
-                            <h2 style={{ fontSize: '16px', fontWeight: 'bold', color: '#6b7280', margin: 0 }}>
+                            <h2 style={{ fontSize: '16px', fontWeight: 'bold', color: '#1f2937', margin: 0 }}>
                                 Overall System Health: <span style={{ color: healthStatus === 'Good' ? '#15803d' : healthStatus === 'Fair' ? '#a16207' : '#b91c1c' }}>{healthStatus}</span>
                             </h2>
                         </div>
                     </div>
 
                     <div style={{ textAlign: 'right' }}>
-                        <p style={{ margin: 0, fontSize: '12px', color: '#6b7280' }}>
+                        <p style={{ margin: 0, fontSize: '12px', color: '#1f2937' }}>
                             Active Inverters
                         </p>
-                        <p style={{ margin: 0, fontWeight: 'bold' }}>
+                        <p style={{ margin: 0, fontWeight: 'bold', color: '#1f2937' }}>
                             {metrics.activeInverters}/{metrics.totalInverters}
                         </p>
-                        <p style={{ margin: 0, fontSize: '11px', color: '#6b7280' }}>
+                        <p style={{ margin: 0, fontSize: '11px', color: '#1f2937' }}>
                             {inverterEfficiency}% operational
                         </p>
                     </div>
@@ -257,9 +246,12 @@ export function SitePerformanceReportPdfLayout(data: any) {
                             Alert Rate: {metrics.alertRate} alerts/day
                         </h2>
                     </div>
-                    <p style={{ fontSize: '12px', color: '#6b7280', margin: '5px 0 0 26px' }}>
-                        Downtime: <strong>{metrics.downtimePercentage}%</strong> of total time
+                    {/* <p style={{ fontSize: '12px', color: '#6b7280', margin: '5px 0 0 26px' }}>
+                        Downtime: <strong>{metrics.downtimePercentage}%</strong>
                     </p>
+                    <p style={{ fontSize: '12px', color: '#6b7280', margin: '5px 0 0 26px' }}>
+                        of total time
+                    </p> */}
                 </div>
 
                 {/* Secondary Metrics Grid */}
@@ -299,8 +291,8 @@ export function SitePerformanceReportPdfLayout(data: any) {
                     />
                     <MetricCard
                         title="Downtime"
-                        value={metrics.downtimePercentage}
-                        unit="% of total time"
+                        value={`${metrics.downtimePercentage}%`}
+                        unit="of total time"
                         bg="#fff7ed"
                         accent="#c2410c"
                         icon={<Icons.Clock color="#c2410c" size={80} />}
