@@ -42,6 +42,7 @@ export async function getUsersByIdService(id: string) {
       lastName: true,
       userName: true,
       phone: true,
+      title:true,
       avatarUrl: true,
       isActive: true,
       createdAt: true,
