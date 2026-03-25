@@ -9,19 +9,33 @@ interface SolarChipProps {
 
 const STATUS_STYLES: Record<SolarStatus, any> = {
     Online: {
-        color: 'success',
+        sx: {
+            backgroundColor: 'rgba(34, 197, 94, 0.2)',
+            color: '#4ade80',
+            borderColor: 'rgba(34, 197, 94, 0.3)'
+        }
+
     },
     Degraded: {
-        color: 'warning',
+        sx: {
+            backgroundColor: 'rgba(245, 158, 11, 0.2)', // Soft Orange
+            color: '#fbbf24',
+            border: '1px solid rgba(245, 158, 11, 0.3)',
+        }
     },
     Critical: {
-        color: 'error',
+        sx: {
+            backgroundColor: 'rgba(239, 68, 68, 0.2)', // Soft Red
+            color: '#f87171',
+            border: '1px solid rgba(239, 68, 68, 0.3)',
+        }
     },
     Offline: {
         sx: {
-            bgcolor: '#6B7280',
-            color: '#fff',
-        },
+            backgroundColor: 'rgba(107, 114, 128, 0.2)', // Soft Gray
+            color: '#9ca3af',
+            border: '1px solid rgba(107, 114, 128, 0.3)',
+        }
     },
 };
 

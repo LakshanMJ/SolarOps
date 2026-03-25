@@ -289,7 +289,7 @@ const users = () => {
                                         userId={activeUserId}
                                         onClose={() => setActiveUserId(null)}
                                         fetchUsers={fetchUsers}
-                                        rolesList={rolesData}
+                                        // rolesList={rolesData}
                                     />
                                 )}
                             </Box>

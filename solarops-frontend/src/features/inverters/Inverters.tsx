@@ -11,6 +11,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CreateUpdateInverter from "./CreateUpdateInverter";
 import DeleteModal from "@/utils/deleteModal";
+// import InvtDrwer from "@/components/kpi/invtDrwer";
 
 export type Inverter = {
   id: string
@@ -189,6 +190,14 @@ const Inverters = () => {
         onClose={() => setSelectedInverter(null)}
         inverter={selectedInverter}
       />
+
+      {/* <InvtDrwer
+        open={!!selectedInverter}
+        onClose={() => setSelectedInverter(null)}
+        inverter={selectedInverter}
+      /> */}
+
+
       {activeInverterId && (
         <CreateUpdateInverter
           open={activeInverterId !== null}

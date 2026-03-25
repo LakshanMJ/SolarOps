@@ -32,14 +32,42 @@ const InverterDrawer = ({ open, inverter, onClose }: InverterDrawerProps) => {
                             <Typography variant="h6" sx={{ color: '#ffffff' }}>
                                 {inverter?.name}
                             </Typography>
-                            {inverter.status !== 'Offline' && <LiveIndicator />}
+                            {inverter.status !== 'Offline' && (
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                    <Box sx={{ position: 'relative' }}>
+                                        <Box sx={{
+                                            width: '8px',
+                                            height: '8px',
+                                            backgroundColor: '#22c55e',
+                                            borderRadius: '50%',
+                                            animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
+                                        }} />
+                                        <Box sx={{
+                                            position: 'absolute',
+                                            inset: 0,
+                                            width: '8px',
+                                            height: '8px',
+                                            backgroundColor: '#22c55e',
+                                            borderRadius: '50%',
+                                            animation: 'ping 1s cubic-bezier(0, 0, 0.2, 1) infinite'
+                                        }} />
+                                    </Box>
+                                    <Typography component="span" sx={{
+                                        fontSize: '12px',
+                                        color: '#4ade80',
+                                        fontWeight: 500
+                                    }}>
+                                        LIVE
+                                    </Typography>
+                                </Box>
+                            )}
                         </Box>
 
                         <SolarStatusChip status={inverter?.status} />
 
                         <Box
                             component="img"
-                            src="/inverter.png"
+                            src="inverter_images/inverter.png"
                             alt="Inverter"
                             sx={{
                                 width: '100%',
@@ -63,19 +91,72 @@ const InverterDrawer = ({ open, inverter, onClose }: InverterDrawerProps) => {
                             variant="subtitle2"
                             gutterBottom
                             sx={{
-                                fontWeight: 1000,
+                                fontWeight: 900,
                                 textTransform: 'uppercase',
-                                color: 'var(--text-secondary)',
-                                letterSpacing: '0.06em',
+                                // color: 'var(--text-secondary)',
+                                fontSize: '12px',
+                                letterSpacing: '0.05em',
+                                color: '#94a3b8',
+                                marginBottom: '12px',
+                                margin: 0
                             }}
                         >
                             Overview
                         </Typography>
 
-                        <Typography variant="body2" sx={{ color: '#fff' }}>Site: {inverter.site}</Typography>
-                        <Typography variant="body2" sx={{ color: '#fff' }}>Model: SG60CX</Typography>
-                        <Typography variant="body2" sx={{ color: '#fff' }}>Firmware version: v1.2.3</Typography>
-                        <Typography variant="body2" sx={{ color: '#fff' }}>Capacity: 60 kW</Typography>
+                        <Box sx={{ mb: 0.5 }}>
+                            <Typography component="span" variant="body2" sx={{ color: '#cbd5e1', mr: 1 }}>
+                                Site:
+                            </Typography>
+                            <Typography component="span" variant="body2" sx={{ color: '#ffffff', fontWeight: 600 }}>
+                                {inverter.site}
+                            </Typography>
+                        </Box>
+
+                        <Box sx={{ mb: 0.5 }}>
+                            <Typography component="span" variant="body2" sx={{ color: '#cbd5e1', mr: 1 }}>
+                                Manufacturer:
+                            </Typography>
+                            <Typography component="span" variant="body2" sx={{ color: '#ffffff', fontWeight: 600 }}>
+                                {'Manufacturer_name'}
+                            </Typography>
+                        </Box>
+
+                        <Box sx={{ mb: 0.5 }}>
+                            <Typography component="span" variant="body2" sx={{ color: '#cbd5e1', mr: 1 }}>
+                                Serial Number:
+                            </Typography>
+                            <Typography component="span" variant="body2" sx={{ color: '#ffffff', fontWeight: 600 }}>
+                                {'serial_number'}
+                            </Typography>
+                        </Box>
+
+                        <Box sx={{ mb: 0.5 }}>
+                            <Typography component="span" variant="body2" sx={{ color: '#cbd5e1', mr: 1 }}>
+                                Model:
+                            </Typography>
+                            <Typography component="span" variant="body2" sx={{ color: '#ffffff', fontWeight: 600 }}>
+                                {'SG60CX'}
+                            </Typography>
+                        </Box>
+
+                        <Box sx={{ mb: 0.5 }}>
+                            <Typography component="span" variant="body2" sx={{ color: '#cbd5e1', mr: 1 }}>
+                                Firmware version:
+                            </Typography>
+                            <Typography component="span" variant="body2" sx={{ color: '#ffffff', fontWeight: 600 }}>
+                                {'v1.2.3'}
+                            </Typography>
+                        </Box>
+
+                        <Box sx={{ mb: 0.5 }}>
+                            <Typography component="span" variant="body2" sx={{ color: '#cbd5e1', mr: 1 }}>
+                                Capacity:
+                            </Typography>
+                            <Typography component="span" variant="body2" sx={{ color: '#ffffff', fontWeight: 600 }}>
+                                {'60 kW'}
+                            </Typography>
+                        </Box>
 
                         <Divider sx={{ my: 2 }} />
 
@@ -83,17 +164,43 @@ const InverterDrawer = ({ open, inverter, onClose }: InverterDrawerProps) => {
                             variant="subtitle2"
                             gutterBottom
                             sx={{
-                                fontWeight: 1000,
+                                fontWeight: 900,
                                 textTransform: 'uppercase',
-                                color: 'var(--text-secondary)',
-                                letterSpacing: '0.06em',
+                                // color: 'var(--text-secondary)',
+                                fontSize: '12px',
+                                letterSpacing: '0.05em',
+                                color: '#94a3b8',
+                                marginBottom: '12px',
+                                margin: 0
                             }}
                         >
                             Live Metrics
                         </Typography>
-                        <Typography variant="body2" sx={{ color: '#fff' }}>Output: {inverter.currentOutput} kW</Typography>
-                        <Typography variant="body2" sx={{ color: '#fff' }}>Temp: {inverter.temp} °C</Typography>
-                        <Typography variant="body2" sx={{ color: '#fff' }}>PR: {inverter.pr}%</Typography>
+
+                        <Box sx={{ mb: 0.5 }}>
+                            <Typography component="span" variant="body2" sx={{ color: '#cbd5e1', mr: 1 }}>
+                                Output:
+                            </Typography>
+                            <Typography component="span" variant="body2" sx={{ color: '#ffffff', fontWeight: 600 }}>
+                                {inverter.currentOutput} kW
+                            </Typography>
+                        </Box>
+                        <Box sx={{ mb: 0.5 }}>
+                            <Typography component="span" variant="body2" sx={{ color: '#cbd5e1', mr: 1 }}>
+                                Temp:
+                            </Typography>
+                            <Typography component="span" variant="body2" sx={{ color: '#ffffff', fontWeight: 600 }}>
+                                {inverter.temp} °C
+                            </Typography>
+                        </Box>
+                        <Box sx={{ mb: 0.5 }}>
+                            <Typography component="span" variant="body2" sx={{ color: '#cbd5e1', mr: 1 }}>
+                                PR:
+                            </Typography>
+                            <Typography component="span" variant="body2" sx={{ color: '#ffffff', fontWeight: 600 }}>
+                                {inverter.pr}%
+                            </Typography>
+                        </Box>
 
                         <Divider sx={{ my: 2 }} />
 
@@ -101,15 +208,26 @@ const InverterDrawer = ({ open, inverter, onClose }: InverterDrawerProps) => {
                             variant="subtitle2"
                             gutterBottom
                             sx={{
-                                fontWeight: 1000,
+                                fontWeight: 900,
                                 textTransform: 'uppercase',
-                                color: 'var(--text-secondary)',
-                                letterSpacing: '0.06em',
+                                // color: 'var(--text-secondary)',
+                                fontSize: '12px',
+                                letterSpacing: '0.05em',
+                                color: '#94a3b8',
+                                marginBottom: '12px',
+                                margin: 0
                             }}
                         >
                             Alerts
                         </Typography>
-                        <Typography variant="body2" sx={{ color: '#fff' }}>Last fault: Grid voltage fluctuation</Typography>
+                        <Box sx={{ mb: 0.5 }}>
+                            <Typography component="span" variant="body2" sx={{ color: '#cbd5e1', mr: 1 }}>
+                                Last fault:
+                            </Typography>
+                            <Typography component="span" variant="body2" sx={{ color: '#ffffff', fontWeight: 600 }}>
+                                {'Grid voltage fluctuation'}
+                            </Typography>
+                        </Box>
                     </>
                 )}
             </Box>

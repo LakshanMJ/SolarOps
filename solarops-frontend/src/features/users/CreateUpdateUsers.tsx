@@ -5,10 +5,13 @@ import {
   Box,
   Button,
   Checkbox,
+  Chip,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControl,
+  InputLabel,
   ListItemText,
   MenuItem,
   Select,
@@ -17,16 +20,18 @@ import {
 import { useEffect, useState } from "react";
 
 
-const CreateUpdateUsers = ({ open, userId, onClose, fetchUsers, rolesList }: any) => {
+const CreateUpdateUsers = ({ open, userId, onClose, fetchUsers }: any) => {
   const { addToast } = useToast();
   const isEditMode = userId !== "new";
   const token = localStorage.getItem("token");
+  const [rolesData, setRolesData] = useState<any>([])
+  console.log(rolesData, 'rolesDatarolesDatarolesDatarolesData')
   const [form, setForm] = useState<{
     firstName: string;
     lastName: string;
     userName: string;
     email: string;
-    roles: string[];
+    roles: any[];
   }>({
     firstName: "",
     lastName: "",
@@ -34,7 +39,7 @@ const CreateUpdateUsers = ({ open, userId, onClose, fetchUsers, rolesList }: any
     email: "",
     roles: []
   });
-  console.log(JSON.stringify(form), 'form')
+  console.log(JSON.stringify(form.roles), 'form')
 
   // fetch site for edit
   useEffect(() => {
@@ -47,7 +52,7 @@ const CreateUpdateUsers = ({ open, userId, onClose, fetchUsers, rolesList }: any
           lastName: data.lastName ?? "",
           userName: data.userName ?? "",
           email: data.email ?? "",
-          roles: data.roles?.map((r: any) => r.name) || []
+          roles: data.roles?.map((r: any) => r.id) || []
         });
       })
       .catch(console.error);
@@ -101,6 +106,20 @@ const CreateUpdateUsers = ({ open, userId, onClose, fetchUsers, rolesList }: any
     }
   };
 
+  async function fetchRoles() {
+    try {
+      const rolesData = await fetchData(BACKEND_URLS.ROLES);
+      setRolesData(rolesData);
+    } catch (err) {
+      console.error('Failed to load roles data:', err);
+    }
+  }
+
+
+  useEffect(() => {
+    fetchRoles();
+  }, []);
+
   return (
     <>
       <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
@@ -115,6 +134,7 @@ const CreateUpdateUsers = ({ open, userId, onClose, fetchUsers, rolesList }: any
                 setForm({ ...form, firstName: e.target.value })
               }
             />
+
             <TextField
               label="Last Name"
               fullWidth
@@ -123,6 +143,7 @@ const CreateUpdateUsers = ({ open, userId, onClose, fetchUsers, rolesList }: any
                 setForm({ ...form, lastName: e.target.value })
               }
             />
+
             <TextField
               label="User Name"
               fullWidth
@@ -131,6 +152,7 @@ const CreateUpdateUsers = ({ open, userId, onClose, fetchUsers, rolesList }: any
                 setForm({ ...form, userName: e.target.value })
               }
             />
+
             <TextField
               label="Email"
               fullWidth
@@ -139,28 +161,44 @@ const CreateUpdateUsers = ({ open, userId, onClose, fetchUsers, rolesList }: any
                 setForm({ ...form, email: e.target.value })
               }
             />
-            <Select
-              labelId="roles-label"
-              multiple
-              value={form.roles} // array of role IDs
-              onChange={(e) => {
-                const value = e.target.value;
-                setForm({ ...form, roles: typeof value === "string" ? value.split(",") : value });
-              }}
-              renderValue={(selected) => {
-                // show role names for selected IDs
-                return (selected as string[])
-                  .map((id) => rolesList.find((r) => r.id === id)?.name)
-                  .join(", ");
-              }}
-            >
-              {rolesList.map((role) => (
-                <MenuItem key={role.id} value={role.id}>
-                  <Checkbox checked={form.roles.includes(role.id)} />
-                  <ListItemText primary={role.name} />
-                </MenuItem>
-              ))}
-            </Select>
+
+            {/* 🔥 FIXED SELECT WITH LABEL */}
+              <FormControl fullWidth variant="outlined">
+                <InputLabel id="roles-label">Roles</InputLabel>
+                <Select
+                  labelId="roles-label"
+                  label="Roles"
+                  multiple
+                  value={form.roles}
+                  onChange={(e) => {
+                    const value = e.target.value as string[];
+                    setForm({ ...form, roles: value });
+                  }}
+                  renderValue={(selected) => (
+                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                      {selected.map((id) => {
+                        const role = rolesData?.find((r) => r.id === id);
+                        return (
+                          <Chip
+                            key={id}
+                            label={role?.name || id}
+                            size="small"
+                            variant="outlined"
+                            color="primary"
+                          />
+                        );
+                      })}
+                    </Box>
+                  )}
+                >
+                  {rolesData?.map((role) => (
+                    <MenuItem key={role.name} value={role.id}>
+                      <Checkbox checked={form.roles.includes(role.id)} />
+                      <ListItemText primary={role.name} />
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
           </Box>
         </DialogContent>
         <DialogActions>

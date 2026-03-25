@@ -118,7 +118,7 @@ const SideBar = () => {
             {user?.firstName} {user?.lastName}
           </Typography>
           <Typography variant="caption" sx={{ color: "#9ca3af" }}>
-            {'user?.jobTitle'}
+            {user?.title}
           </Typography>
         </Box>
 

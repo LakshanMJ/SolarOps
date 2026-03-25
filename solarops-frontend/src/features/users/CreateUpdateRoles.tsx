@@ -102,30 +102,6 @@ const CreateUpdateRoles = ({ open, roleId, onClose, fetchRoles }: any) => {
                 setForm({ ...form, name: e.target.value })
               }
             />
-            {/* <TextField
-              label="Last Name"
-              fullWidth
-              value={form.lastName}
-              onChange={(e) =>
-                setForm({ ...form, lastName: e.target.value })
-              }
-            /> */}
-            {/* <TextField
-              label="User Name"
-              fullWidth
-              value={form.userName}
-              onChange={(e) =>
-                setForm({ ...form, userName: e.target.value })
-              }
-            /> */}
-            {/* <TextField
-              label="Email"
-              fullWidth
-              value={form.email}
-              onChange={(e) =>
-                setForm({ ...form, email: e.target.value })
-              }
-            /> */}
           </Box>
         </DialogContent>
         <DialogActions>
