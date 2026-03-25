@@ -13,6 +13,7 @@ model User {
   password        String
   roles            Role[]
 
+  title           String?
   userName        String?
   firstName       String?
   lastName        String?

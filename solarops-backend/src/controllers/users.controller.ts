@@ -14,13 +14,13 @@ export async function getUsers(req: Request, res: Response) {
 
 export async function getUsersById(req: Request, res: Response) {
   try {
-    const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id
+    const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
 
-    const data = await getUsersByIdService(id)
-    res.json(data)
+    const data = await getUsersByIdService(id);
+    res.json(data);
   } catch (error) {
-    console.error(error)
-    res.status(500).json({ message: 'Failed to fetch user' })
+    console.error(error);
+    res.status(500).json({ message: 'Failed to fetch user' });
   }
 }
 

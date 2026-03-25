@@ -49,6 +49,7 @@ export async function getUsersByIdService(id: string) {
       roles: {
         select: {
           id: true,
+          name: true,
         },
       },
     },
@@ -58,17 +59,25 @@ export async function getUsersByIdService(id: string) {
 
   return {
     ...user,
-    roles: user.roles
-      .map((r) => r?.id)
-      .filter((id): id is string => Boolean(id)),
+    // roles already has objects with id and name, so just return as-is
+    roles: user.roles || [],
   };
 }
 
 export async function updateUserService(id: string, payload: any) {
+  const { roles, ...rest } = payload;
+
   return prisma.user.update({
     where: { id },
-    data: payload,
-  })
+    data: {
+      ...rest,
+      ...(roles && {
+        roles: {
+          set: roles.map((roleId: string) => ({ id: roleId })),
+        },
+      }),
+    },
+  });
 }
 
 export async function deleteUserService(id: string) {
