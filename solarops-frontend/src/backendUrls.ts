@@ -10,6 +10,7 @@ export const BACKEND_URLS = {
   CURRENT_USER: 'http://localhost:4000/api/users/me',
   ROLES: 'http://localhost:4000/api/roles',
   METADATA: 'http://localhost:4000/api/metadata',
+  IMAGE_PATH: 'http://localhost:4000/uploads',
   
   // Reports
   REPORTS_BASE: 'http://localhost:4000/api/reports',

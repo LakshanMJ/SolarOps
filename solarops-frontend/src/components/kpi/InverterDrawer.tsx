@@ -1,3 +1,4 @@
+import { BACKEND_URLS } from '@/backendUrls';
 import LiveIndicator from '@/utils/LiveIndicator';
 import SolarStatusChip from '@/utils/SolarStatusChip';
 import { Drawer, Box, Typography, Divider } from '@mui/material';
@@ -5,13 +6,19 @@ import { Drawer, Box, Typography, Divider } from '@mui/material';
 type Status = 'Online' | 'Degraded' | 'Critical' | 'Offline';
 
 interface Inverter {
-    inverterId: string;
-    site: string;
-    status: Status;
-    currentOutput: number;
-    temp: number;
-    pr: number;
-    details: string;
+    id?: string | null;
+    name: string;
+    status: Status
+    siteId: string;
+    siteName: string;
+    manufacturerId: string;
+    manufacturerName: string;
+    serialNumber: string;
+    model: string;
+    firmwareVersion: string;
+    capacityKw: number | null;
+    installedAt: string;
+    image: File | string | null;
 }
 
 interface InverterDrawerProps {
@@ -22,7 +29,7 @@ interface InverterDrawerProps {
 
 
 const InverterDrawer = ({ open, inverter, onClose }: InverterDrawerProps) => {
-
+    console.log(inverter, 'inverterrrr')
     return (
         <Drawer anchor="right" open={open} onClose={onClose}>
             <Box sx={{ width: 340, p: 2, backgroundColor: '#273443' }}>
@@ -67,8 +74,11 @@ const InverterDrawer = ({ open, inverter, onClose }: InverterDrawerProps) => {
 
                         <Box
                             component="img"
-                            src="inverter_images/inverter.png"
-                            alt="Inverter"
+                            // src="inverter_images/inverter.png"
+                            src={inverter.image
+                                ? `${BACKEND_URLS.IMAGE_PATH}/${inverter.image}`
+                                : '/pdf.png'}  // add default fallback image !!!!!!!!
+                            alt={inverter.name || 'User'}
                             sx={{
                                 width: '100%',
                                 maxHeight: 250,
@@ -109,7 +119,7 @@ const InverterDrawer = ({ open, inverter, onClose }: InverterDrawerProps) => {
                                 Site:
                             </Typography>
                             <Typography component="span" variant="body2" sx={{ color: '#ffffff', fontWeight: 600 }}>
-                                {inverter.site}
+                                {inverter.siteName}
                             </Typography>
                         </Box>
 
@@ -118,7 +128,7 @@ const InverterDrawer = ({ open, inverter, onClose }: InverterDrawerProps) => {
                                 Manufacturer:
                             </Typography>
                             <Typography component="span" variant="body2" sx={{ color: '#ffffff', fontWeight: 600 }}>
-                                {'Manufacturer_name'}
+                                {inverter?.manufacturerName}
                             </Typography>
                         </Box>
 
@@ -127,7 +137,7 @@ const InverterDrawer = ({ open, inverter, onClose }: InverterDrawerProps) => {
                                 Serial Number:
                             </Typography>
                             <Typography component="span" variant="body2" sx={{ color: '#ffffff', fontWeight: 600 }}>
-                                {'serial_number'}
+                                {inverter?.serialNumber}
                             </Typography>
                         </Box>
 
@@ -136,7 +146,7 @@ const InverterDrawer = ({ open, inverter, onClose }: InverterDrawerProps) => {
                                 Model:
                             </Typography>
                             <Typography component="span" variant="body2" sx={{ color: '#ffffff', fontWeight: 600 }}>
-                                {'SG60CX'}
+                                {inverter?.model}
                             </Typography>
                         </Box>
 
@@ -145,7 +155,7 @@ const InverterDrawer = ({ open, inverter, onClose }: InverterDrawerProps) => {
                                 Firmware version:
                             </Typography>
                             <Typography component="span" variant="body2" sx={{ color: '#ffffff', fontWeight: 600 }}>
-                                {'v1.2.3'}
+                                {inverter?.firmwareVersion}
                             </Typography>
                         </Box>
 
@@ -154,7 +164,7 @@ const InverterDrawer = ({ open, inverter, onClose }: InverterDrawerProps) => {
                                 Capacity:
                             </Typography>
                             <Typography component="span" variant="body2" sx={{ color: '#ffffff', fontWeight: 600 }}>
-                                {'60 kW'}
+                                {inverter?.capacityKw} Kw
                             </Typography>
                         </Box>
 
@@ -182,7 +192,7 @@ const InverterDrawer = ({ open, inverter, onClose }: InverterDrawerProps) => {
                                 Output:
                             </Typography>
                             <Typography component="span" variant="body2" sx={{ color: '#ffffff', fontWeight: 600 }}>
-                                {inverter.currentOutput} kW
+                                {'inverter.currentOutput'} kW
                             </Typography>
                         </Box>
                         <Box sx={{ mb: 0.5 }}>
@@ -190,7 +200,7 @@ const InverterDrawer = ({ open, inverter, onClose }: InverterDrawerProps) => {
                                 Temp:
                             </Typography>
                             <Typography component="span" variant="body2" sx={{ color: '#ffffff', fontWeight: 600 }}>
-                                {inverter.temp} °C
+                                {'inverter.temp'} °C
                             </Typography>
                         </Box>
                         <Box sx={{ mb: 0.5 }}>
@@ -198,7 +208,7 @@ const InverterDrawer = ({ open, inverter, onClose }: InverterDrawerProps) => {
                                 PR:
                             </Typography>
                             <Typography component="span" variant="body2" sx={{ color: '#ffffff', fontWeight: 600 }}>
-                                {inverter.pr}%
+                                {'inverter.pr'}%
                             </Typography>
                         </Box>
 
@@ -218,14 +228,16 @@ const InverterDrawer = ({ open, inverter, onClose }: InverterDrawerProps) => {
                                 margin: 0
                             }}
                         >
-                            Alerts
+                            Commissioning Details
                         </Typography>
                         <Box sx={{ mb: 0.5 }}>
                             <Typography component="span" variant="body2" sx={{ color: '#cbd5e1', mr: 1 }}>
-                                Last fault:
+                                Installation Date:
                             </Typography>
                             <Typography component="span" variant="body2" sx={{ color: '#ffffff', fontWeight: 600 }}>
-                                {'Grid voltage fluctuation'}
+                                {inverter?.installedAt
+                                    ? new Date(inverter.installedAt).toLocaleString()
+                                    : 'N/A'}
                             </Typography>
                         </Box>
                     </>

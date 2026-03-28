@@ -1,18 +1,31 @@
-import { Drawer, Box, Typography, Divider, Avatar, Chip, Stack } from '@mui/material';
-
+import LiveIndicator from '@/utils/LiveIndicator';
+import SolarStatusChip from '@/utils/SolarStatusChip';
+import { Drawer, Box, Typography, Divider, Avatar } from '@mui/material';
+import type { Dayjs } from "dayjs";
+import dayjs from "dayjs";
+import { Chip } from '@mui/material';
+import { formatDistanceToNow } from "date-fns";
+import { BACKEND_URLS } from '@/backendUrls';
 interface Role {
   name: string;
 }
 
 interface User {
-  userName?: string;
-  firstName?: string;
-  lastName?: string;
+  firstName: string;
+  lastName: string;
+  userName: string;
+  designation: string;
+  employeeIdNumber: string;
+  onboardingDate: Dayjs | null;
   email: string;
-  phone?: string;
-  avatarUrl?: string;
-  roles: Role[];
-  isActive: boolean;
+  contactNumber: string;
+  assignedSites: any[];
+  roles: any[];
+  timezone: any;
+  notificationChannels: any[];
+  twoFactorEnabled: any;
+  image: any;
+  lastLoginAt?: string | Date;
 }
 
 interface UserDrawerProps {
@@ -21,18 +34,20 @@ interface UserDrawerProps {
   onClose: () => void;
 }
 
+
 const UserDrawer = ({ open, user, onClose }: UserDrawerProps) => {
   return (
     <Drawer anchor="right" open={open} onClose={onClose}>
-      <Box sx={{ width: 360, p: 3, backgroundColor: '#1F2A38', color: '#fff' }}>
+      <Box sx={{ width: 340, p: 2, backgroundColor: '#273443', minHeight: '100vh', height: '100%', boxSizing: 'border-box' }}>
         {user && (
           <>
             {/* Header: Avatar + Name */}
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
               <Avatar
-                src={user.avatarUrl || undefined}
+                // src={user.image || undefined}
+                src={user.image ? `${BACKEND_URLS.IMAGE_PATH}/${user.image}` : undefined}
                 alt={user.userName || user.firstName || 'User'}
-                sx={{ width: 64, height: 64, border: '2px solid #4caf50' }}
+                sx={{ width: 104, height: 104, border: '2px solid #4caf50' }}
               />
               <Box>
                 <Typography variant="h6">
@@ -44,63 +59,231 @@ const UserDrawer = ({ open, user, onClose }: UserDrawerProps) => {
               </Box>
             </Box>
 
-            <Divider sx={{ mb: 2, borderColor: '#37474F' }} />
+            <Divider sx={{ mt: 2, mb: 2 }} />
 
-            {/* Basic Info */}
             <Typography
               variant="subtitle2"
               gutterBottom
-              sx={{ fontWeight: 700, textTransform: 'uppercase', color: '#90A4AE', mb: 1 }}
-            >
-              Contact
-            </Typography>
-            <Typography variant="body2">Email: {user.email}</Typography>
-            {user.phone && <Typography variant="body2">Phone: {user.phone}</Typography>}
-
-            <Divider sx={{ my: 2, borderColor: '#37474F' }} />
-
-            {/* Roles */}
-            <Typography
-              variant="subtitle2"
-              gutterBottom
-              sx={{ fontWeight: 700, textTransform: 'uppercase', color: '#90A4AE', mb: 1 }}
-            >
-              Roles
-            </Typography>
-            {/* <Stack direction="row" spacing={1} flexWrap="wrap">
-              {user.roles.length > 0 ? (
-                user.roles.map((role) => (
-                  <Chip
-                    key={role.name}
-                    label={role.name}
-                    sx={{ color: '#fff', backgroundColor: '#4caf50', mb: 1 }}
-                    size="small"
-                  />
-                ))
-              ) : (
-                <Typography variant="body2" sx={{ color: '#B0BEC5' }}>
-                  No roles assigned
-                </Typography>
-              )}
-            </Stack> */}
-
-            <Divider sx={{ my: 2, borderColor: '#37474F' }} />
-
-            {/* Status */}
-            <Typography
-              variant="subtitle2"
-              gutterBottom
-              sx={{ fontWeight: 700, textTransform: 'uppercase', color: '#90A4AE', mb: 1 }}
-            >
-              Status
-            </Typography>
-            <Chip
-              label={user.isActive ? 'Active' : 'Inactive'}
               sx={{
-                color: '#fff',
-                backgroundColor: user.isActive ? '#4caf50' : '#f44336',
+                fontWeight: 900,
+                textTransform: 'uppercase',
+                // color: 'var(--text-secondary)',
+                fontSize: '12px',
+                letterSpacing: '0.05em',
+                color: '#94a3b8',
+                marginBottom: '12px',
+                margin: 0
               }}
-            />
+            >
+              Profile
+            </Typography>
+
+            <Box sx={{ mb: 0.5 }}>
+              <Typography component="span" variant="body2" sx={{ color: '#cbd5e1', mr: 1 }}>
+                Designation:
+              </Typography>
+              <Typography component="span" variant="body2" sx={{ color: '#ffffff', fontWeight: 600 }}>
+                {user.designation}
+              </Typography>
+            </Box>
+
+            <Box sx={{ mb: 0.5 }}>
+              <Typography component="span" variant="body2" sx={{ color: '#cbd5e1', mr: 1 }}>
+                Employee ID number:
+              </Typography>
+              <Typography component="span" variant="body2" sx={{ color: '#ffffff', fontWeight: 600 }}>
+                {user.employeeIdNumber}
+              </Typography>
+            </Box>
+
+            <Box sx={{ mb: 0.5 }}>
+              <Typography component="span" variant="body2" sx={{ color: '#cbd5e1', mr: 1 }}>
+                Onboarding Date:
+              </Typography>
+              <Typography component="span" variant="body2" sx={{ color: '#ffffff', fontWeight: 600 }}>
+                {user.onboardingDate
+                  ? dayjs(user.onboardingDate).format("DD MMM YYYY") // e.g., 11 Mar 2026
+                  : "Not set"}
+              </Typography>
+            </Box>
+
+            <Box sx={{ mb: 0.5 }}>
+              <Typography component="span" variant="body2" sx={{ color: '#cbd5e1', mr: 1 }}>
+                E mail:
+              </Typography>
+              <Typography component="span" variant="body2" sx={{ color: '#ffffff', fontWeight: 600 }}>
+                {user.email}
+              </Typography>
+            </Box>
+
+            <Box sx={{ mb: 0.5 }}>
+              <Typography component="span" variant="body2" sx={{ color: '#cbd5e1', mr: 1 }}>
+                Contact Number:
+              </Typography>
+              <Typography component="span" variant="body2" sx={{ color: '#ffffff', fontWeight: 600 }}>
+                {user.contactNumber}
+              </Typography>
+            </Box>
+
+            <Box sx={{ mb: 0.5, display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+              <Typography component="span" variant="body2" sx={{ color: '#cbd5e1', mr: 1 }}>
+                Assigned Sites:
+              </Typography>
+              <Box sx={{ mt:1, display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
+                {user.assignedSites && user.assignedSites.length > 0 ? (
+                  user.assignedSites.map((site) => (
+                    <Chip
+                      key={site.id}
+                      label={site.name}
+                      size="small"
+                      sx={{
+                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                        color: '#ffffff',
+                        height: '20px',
+                        fontSize: '0.75rem'
+                      }}
+                    />
+                  ))
+                ) : (
+                  <Typography component="span" variant="body2" sx={{ color: '#64748b' }}>
+                    None
+                  </Typography>
+                )}
+              </Box>
+            </Box>
+
+            <Box sx={{ mb: 0.5, display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+              <Typography component="span" variant="body2" sx={{ color: '#cbd5e1', mr: 1 }}>
+                Roles:
+              </Typography>
+              <Box sx={{ mt:1, display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
+                {user.roles && user.roles.length > 0 ? (
+                  user.roles.map((role) => (
+                    <Chip
+                      key={role.id}
+                      label={role.name}
+                      size="small"
+                      sx={{
+                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                        color: '#ffffff',
+                        height: '20px',
+                        fontSize: '0.75rem'
+                      }}
+                    />
+                  ))
+                ) : (
+                  <Typography component="span" variant="body2" sx={{ color: '#64748b' }}>
+                    None
+                  </Typography>
+                )}
+              </Box>
+            </Box>
+
+            <Divider sx={{ my: 2 }} />
+
+            <Typography
+              variant="subtitle2"
+              gutterBottom
+              sx={{
+                fontWeight: 900,
+                textTransform: 'uppercase',
+                // color: 'var(--text-secondary)',
+                fontSize: '12px',
+                letterSpacing: '0.05em',
+                color: '#94a3b8',
+                marginBottom: '12px',
+                margin: 0
+              }}
+            >
+              Localization & Preferences
+            </Typography>
+
+            <Box sx={{ mb: 0.5 }}>
+              <Typography component="span" variant="body2" sx={{ color: '#cbd5e1', mr: 1 }}>
+                Time Zone:
+              </Typography>
+              <Typography component="span" variant="body2" sx={{ color: '#ffffff', fontWeight: 600 }}>
+                {user.timezone}
+              </Typography>
+            </Box>
+
+            <Box sx={{ mb: 0.5, display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+              <Typography component="span" variant="body2" sx={{ color: '#cbd5e1', mr: 1 }}>
+                Notification Channels:
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
+                {user.notificationChannels && user.notificationChannels.length > 0 ? (
+                  user.notificationChannels.map((notificationChannel) => (
+                    <Chip
+                      key={notificationChannel}
+                      label={notificationChannel}
+                      size="small"
+                      sx={{
+                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                        color: '#ffffff',
+                        height: '20px',
+                        fontSize: '0.75rem'
+                      }}
+                    />
+                  ))
+                ) : (
+                  <Typography component="span" variant="body2" sx={{ color: '#64748b' }}>
+                    None
+                  </Typography>
+                )}
+              </Box>
+            </Box>
+
+            <Divider sx={{ my: 2 }} />
+
+            <Typography
+              variant="subtitle2"
+              gutterBottom
+              sx={{
+                fontWeight: 900,
+                textTransform: 'uppercase',
+                // color: 'var(--text-secondary)',
+                fontSize: '12px',
+                letterSpacing: '0.05em',
+                color: '#94a3b8',
+                marginBottom: '12px',
+                margin: 0
+              }}
+            >
+              Security
+            </Typography>
+
+            <Box sx={{ mb: 0.5 }}>
+              <Typography component="span" variant="body2" sx={{ color: '#cbd5e1', mr: 1 }}>
+                Two-Factor Authentication (2FA):
+              </Typography>
+              <Typography
+                component="span"
+                variant="body2"
+                sx={{
+                  fontWeight: 600,
+                  color: user.twoFactorEnabled ? '#22c55e' : '#94a3b8' // Green if true, Grey if false
+                }}
+              >
+                {user.twoFactorEnabled ? 'Active' : 'Inactive'}
+              </Typography>
+            </Box>
+
+            <Box sx={{ mb: 0.5 }}>
+              <Typography component="span" variant="body2" sx={{ color: '#cbd5e1', mr: 1 }}>
+                Last Login:
+              </Typography>
+              <Typography component="span" variant="body2" sx={{ color: '#ffffff', fontWeight: 600 }}>
+                {user.lastLoginAt ? (
+                  <>
+                    {formatDistanceToNow(new Date(user.lastLoginAt), { addSuffix: true })} (
+                    {new Date(user.lastLoginAt).toLocaleString()})
+                  </>
+                ) : (
+                  "Never"
+                )}
+              </Typography>
+            </Box>
           </>
         )}
       </Box>
