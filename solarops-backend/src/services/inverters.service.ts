@@ -35,13 +35,28 @@ export async function getInvertersService() {
     },
     select: {
       id: true,
-      siteId: true,
       name: true,
-      capacityKw: true,
       status: true,
+      siteId: true,
+      site: {
+        select: {
+          name: true
+        }
+      },
+      manufacturerId: true, // This gives you the UUID string
+      manufacturer: {       // This fetches the related object
+        select: {
+          id: true,
+          name: true,
+        }
+      },
+      serialNumber: true,
+      model: true,
+      firmwareVersion: true,
+      capacityKw: true,
       installedAt: true,
+      image: true,
       alerts: { select: { id: true, status: true } },
-      site: { select: { name: true } },
       telemetry: {
         select: { acOutputKw: true, tempC: true, timestamp: true },
       },
@@ -67,13 +82,18 @@ export async function getInvertersService() {
 
     return {
       id: inv.id,
-      siteId: inv.siteId,
       name: inv.name,
-      capacityKw: inv.capacityKw,
       status: inv.status,
+      siteId: inv.siteId,
+      siteName: inv.site?.name || "Unknown Site",
+      manufacturerName: inv.manufacturer?.name || "Unknown",
+      manufacturerId: inv.manufacturerId,
+      serialNumber: inv.serialNumber,
+      model: inv.model,
+      firmwareVersion: inv.firmwareVersion,
+      capacityKw: inv.capacityKw,
       installedAt: inv.installedAt,
       alerts: unresolvedAlerts,
-      site: inv.site.name,
       outputKw: latestTelemetry?.acOutputKw ?? 0,
       tempC: latestTelemetry?.tempC ?? 0,
       pr: +pr.toFixed(1),

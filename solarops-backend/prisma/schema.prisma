@@ -8,24 +8,30 @@ datasource db {
 }
 
 model User {
-  id              String    @id @default(uuid())
-  email           String    @unique
-  password        String
-  roles            Role[]
+  id                    String    @id @default(uuid())
+  email                 String    @unique
+  password              String
+  roles                 Role[]
 
-  title           String?
-  userName        String?
-  firstName       String?
-  lastName        String?
-  phone           String?
-  avatarUrl       String?
+  designation           String?
+  employeeIdNumber      String?
+  onboardingDate        DateTime?
+  userName              String?
+  firstName             String?
+  lastName              String?
+  contactNumber         String?
+  image             String?
+  assignedSites         Site[]
+  timezone              String?
+  notificationChannels  NotificationChannel[] @default([email])
+  twoFactorEnabled      Boolean  @default(false)
 
-  isActive        Boolean   @default(true)
+  isActive         Boolean   @default(true)
 
-  lastLoginAt     DateTime?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  deletedAt       DateTime? 
+  lastLoginAt      DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  deletedAt        DateTime? 
 }
 
 model Role {
@@ -60,25 +66,30 @@ model Site {
   createdAt      DateTime   @default(now())
   deletedAt      DateTime? 
   inverters      Inverter[]
+  users          User[]
 }
 
 model Inverter {
-  id             String              @id @default(uuid())
-  siteId         String
-  manufacturerId String?
-  serialNumber   String?
-  name           String
-  capacityKw     Float
-  image          String?
-  status         InverterStatus
-  installedAt    DateTime @default(now())
-  createdAt      DateTime  @default(now())
-  deletedAt      DateTime?
-  alerts         Alert[]
-  telemetry      Telemetry[]
+  id               String              @id @default(uuid())
+  siteId           String
+  name             String
+  manufacturerId   String?
+  serialNumber     String?
+  model            String?
+  firmwareVersion String?
+  capacityKw       Float
+  image            String?
+  status           InverterStatus
+
+  installedAt      DateTime @default(now())
+  createdAt        DateTime  @default(now())
+  deletedAt        DateTime?
+
+  alerts           Alert[]
+  telemetry        Telemetry[]
   
-  site           Site                @relation(fields: [siteId], references: [id])
-  manufacturer   InverterManufacturer? @relation(fields: [manufacturerId], references: [id])
+  site             Site                @relation(fields: [siteId], references: [id])
+  manufacturer     InverterManufacturer? @relation(fields: [manufacturerId], references: [id])
 }
 
 model Telemetry {
@@ -128,4 +139,11 @@ enum SiteHealth {
   Warning
   Critical
   Unknown
+}
+
+enum NotificationChannel {
+  email
+  sms
+  push
+  whatsapp
 }

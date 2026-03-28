@@ -17,8 +17,14 @@ import exportRoutes from './routes/reports.routes.js'
 import metaDataRoutes from './routes/metadata.routes.js'
 
 // __dirname replacement for ES modules
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
+
+// --- ADD THIS BLOCK ---
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+// Point to the same "uploads" folder relative to this file
+const uploadsFolder = path.resolve(__dirname, '../uploads');
 
 startTelemetryWorker();
 
@@ -42,5 +48,6 @@ app.use('/api/users', usersRoutes);
 app.use('/api/roles', rolesRoutes);
 app.use("/api/reports/", exportRoutes);
 app.use("/api", metaDataRoutes);
+app.use('/uploads', express.static(uploadsFolder));
 
 export default app

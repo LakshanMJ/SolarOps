@@ -1,49 +1,85 @@
 import bcrypt from "bcrypt";
 import { prisma } from "../db/prisma.js";
 
+import { PrismaClient, NotificationChannel } from "@prisma/client";
+
+const prisma = new PrismaClient();
+
 interface CreateUserPayload {
+  firstName: string;
+  lastName: string;
+  userName: string;
+  designation: string;
+  employeeIdNumber: string;
+  onboardingDate: string;   // ISO string from frontend
   email: string;
-  firstName?: string;
-  lastName?: string;
-  phone?: string;
-  avatarUrl?: string;
-  userName?: string;
-  roles?: string[];
+  contactNumber: string;
+  assignedSites: string[];  // Array of Site IDs
+  roles: string[];           // Array of Role IDs
+  timezone: string;
+  notificationChannels: NotificationChannel[]; // Use Prisma Enum
+  twoFactorEnabled: boolean;
+  image?: string;
 }
 
 export const createUser = async (payload: CreateUserPayload) => {
-  const { email, firstName, lastName, phone, avatarUrl, userName, roles } = payload;
+  const {
+    firstName,
+    lastName,
+    userName,
+    designation,
+    employeeIdNumber,
+    onboardingDate,
+    email,
+    contactNumber,
+    assignedSites,
+    roles,
+    timezone,
+    notificationChannels,
+    twoFactorEnabled,
+    image,
+  } = payload;
 
-  // Check if email already exists
+  // 1. Check if email already exists
   const existingUser = await prisma.user.findUnique({ where: { email } });
   if (existingUser) throw new Error("Email already in use");
 
-  // Auto-generate temp password
+  // 2. Hash temporary password
   const tempPassword = "solar@123";
   const hashedPassword = await bcrypt.hash(tempPassword, 10);
 
-  // Connect roles by ID directly
-  const rolesToConnect: { id: string }[] = [];
-  if (roles && roles.length > 0) {
-    for (const roleId of roles) {
-      // Optional: check if the role ID exists
-      const roleRecord = await prisma.role.findUnique({ where: { id: roleId } });
-      if (!roleRecord) throw new Error(`Role ID '${roleId}' does not exist`);
-      rolesToConnect.push({ id: roleId });
-    }
-  }
+  // 3. Validate Roles and Sites exist (Efficiency: One query instead of a loop)
+  const [validRoles, validSites] = await Promise.all([
+    prisma.role.findMany({ where: { id: { in: roles } } }),
+    prisma.site.findMany({ where: { id: { in: assignedSites } } }),
+  ]);
 
-  // Create user
+  if (validRoles.length !== roles.length) throw new Error("One or more Role IDs are invalid");
+  if (validSites.length !== assignedSites.length) throw new Error("One or more Site IDs are invalid");
+
+  // 4. Create User
   const user = await prisma.user.create({
     data: {
       email,
       password: hashedPassword,
       firstName,
       lastName,
-      phone,
-      avatarUrl,
       userName,
-      roles: { connect: rolesToConnect },
+      designation,
+      employeeIdNumber,
+      onboardingDate: onboardingDate ? new Date(onboardingDate) : null, // Convert string to Date object
+      contactNumber,
+      timezone,
+      notificationChannels,
+      twoFactorEnabled,
+      image,
+      // Many-to-Many connections
+      roles: {
+        connect: roles.map((id) => ({ id })),
+      },
+      assignedSites: {
+        connect: assignedSites.map((id) => ({ id })),
+      },
     },
     select: {
       id: true,
@@ -51,9 +87,10 @@ export const createUser = async (payload: CreateUserPayload) => {
       firstName: true,
       lastName: true,
       userName: true,
-      phone: true,
-      avatarUrl: true,
+      contactNumber: true, // Fixed: your select had 'phone' but model has 'contactNumber'
+      image: true,
       roles: { select: { name: true, id: true } },
+      assignedSites: { select: { name: true, id: true } }, // Included this for the UI
       isActive: true,
       createdAt: true,
     },
