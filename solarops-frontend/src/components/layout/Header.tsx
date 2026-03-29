@@ -66,14 +66,14 @@ export default function Header() {
           <MenuItem value="30d">Last 30 Days</MenuItem>
         </Select> */}
 
-        <Stack direction="row" alignItems="center" spacing={1}>
+        {/* <Stack direction="row" alignItems="center" spacing={1}>
           <Chip
             size="small"
             label="All systems operational"
             color="success"
             variant="outlined"
           />
-        </Stack>
+        </Stack> */}
       </Stack>
     </Box>
   )

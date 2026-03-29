@@ -5,7 +5,9 @@ import {
   DialogContentText,
   DialogActions,
   Button,
+  IconButton, // Added
 } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close"; // Added
 
 type DeleteModalProps = {
   open: boolean;
@@ -30,18 +32,39 @@ const DeleteModal = ({
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
-      <DialogTitle sx={{ fontWeight: 600 }}>
+      <DialogTitle sx={{ fontWeight: 600, pr: 6 }}> 
+        {/* Added padding-right (pr: 6) so text doesn't overlap the icon */}
         {title}
+        
+        <IconButton
+          aria-label="close"
+          onClick={onClose}
+          sx={{
+            position: 'absolute',
+            right: 8,
+            top: 8,
+            color: (theme) => theme.palette.grey[500],
+            '&:hover': {
+              color: 'white', // Brightens on hover for better visibility
+            },
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
       </DialogTitle>
 
       <DialogContent>
-        <DialogContentText>
+        <DialogContentText sx={{ color: 'text.secondary' }}>
           {message}
         </DialogContentText>
       </DialogContent>
 
       <DialogActions sx={{ padding: "16px 24px" }}>
-        <Button variant="outlined" onClick={onClose}>
+        <Button 
+          variant="outlined" 
+          onClick={onClose}
+          sx={{ color: 'white', borderColor: 'rgba(255,255,255,0.3)' }}
+        >
           Cancel
         </Button>
 
@@ -49,6 +72,7 @@ const DeleteModal = ({
           variant="contained"
           color="error"
           onClick={handleDelete}
+          sx={{ fontWeight: 600 }}
         >
           Delete
         </Button>

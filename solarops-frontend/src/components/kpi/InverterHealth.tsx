@@ -6,79 +6,36 @@ import SolarChip from '@/utils/SolarStatusChip';
 import SolarDataGrid from '@/utils/SolarDataGrid';
 import { fetchData } from '@/utils/fetch';
 import { BACKEND_URLS } from '@/backendUrls';
+import StatusChip from '@/utils/SolarStatusChip';
 
-// const inverterData = [
-//     {
-//         id: 1,
-//         inverterId: 'INV-101',
-//         site: 'Site A',
-//         status: 'Online',
-//         currentOutput: 120,
-//         temp: 45,
-//         pr: 88,
-//         details: 'Inverter operating normally',
-//     },
-//     {
-//         id: 2,
-//         inverterId: 'INV-102',
-//         site: 'Site B',
-//         status: 'Degraded',
-//         currentOutput: 95,
-//         temp: 50,
-//         pr: 82,
-//         details: 'Slight underperformance',
-//     },
-//     {
-//         id: 3,
-//         inverterId: 'INV-103',
-//         site: 'Site C',
-//         status: 'Critical',
-//         currentOutput: 40,
-//         temp: 70,
-//         pr: 60,
-//         details: 'Inverter faulty',
-//     },
-//     {
-//         id: 4,
-//         inverterId: 'INV-108',
-//         site: 'Site X',
-//         status: 'Offline',
-//         currentOutput: 70,
-//         temp: 90,
-//         pr: 25,
-//         details: 'Inverter offline',
-//     },
-// ];
+const inverterStatusConfig = {
+    online: { sx: { backgroundColor: 'rgba(34,197,94,0.2)', color: '#4ade80', border: '1px solid rgba(34,197,94,0.3)' } },
+    degraded: { sx: { backgroundColor: 'rgba(245,158,11,0.2)', color: '#fbbf24', border: '1px solid rgba(245,158,11,0.3)' } },
+    critical: { sx: { backgroundColor: 'rgba(239,68,68,0.2)', color: '#f87171', border: '1px solid rgba(239,68,68,0.3)' } },
+    offline: { sx: { backgroundColor: 'rgba(107,114,128,0.2)', color: '#9ca3af', border: '1px solid rgba(107,114,128,0.3)' } },
+};
 
 export default function InverterHealthTable() {
     const [selectedInverter, setSelectedInverter] = useState<any>(null);
     const [selectedRowIds, setSelectedRowIds] = useState<number[]>([]);
     const [inverterData, setInverterData] = useState([]);
-    console.log(inverterData, 'inverterData')
+
     const columns: GridColDef[] = [
         { field: 'name', headerName: 'Inverter ID', flex: 1.2 },
-        { field: 'site', headerName: 'Site', align: 'center', headerAlign: 'center', flex: 1.2 },
+        { field: 'siteName', headerName: 'Site', align: 'center', headerAlign: 'center', flex: 1.2 },
         {
             field: 'status',
             headerName: 'Status',
             align: 'center',
             headerAlign: 'center',
             flex: 0.9,
-            renderCell: (params: GridRenderCellParams) => (
-                <SolarChip status={params?.value} />
-            ),
+            renderCell: (params) => (
+                <StatusChip status={params.value} config={inverterStatusConfig} />
+            )
         },
-        { field: 'capacityKw', headerName: 'Capacity (kW)', flex: 1.2 },
-        // {
-        //     field: 'currentOutput',
-        //     headerName: 'Current Output (kW)',
-        //     type: 'number',
-        //     align: 'center',
-        //     headerAlign: 'center',
-        //     flex: 1.4,
-        // },
+        { field: 'capacityKw', headerName: 'Capacity (kW)', align: 'center', flex: 1.2 },
         { field: 'tempC', headerName: 'Temp (°C)', type: 'number', align: 'center', headerAlign: 'center', flex: 0.8 },
-        { field: 'pr', headerName: 'PR (%)', type: 'number', sortable: true, align: 'center', headerAlign: 'center', flex: 0.8 },
+        { field: 'capacityUtilization', headerName: 'Capacity Utilization (%)', type: 'number', sortable: true, align: 'center', headerAlign: 'center', flex: 0.8 },
         {
             field: 'actions',
             headerName: 'Actions',
@@ -118,10 +75,9 @@ export default function InverterHealthTable() {
             }
         }
         fetchInverters()
-        // then poll every 15 seconds
         const interval = setInterval(fetchInverters, 15000)
 
-        return () => clearInterval(interval) // cleanup on unmount
+        return () => clearInterval(interval)
     }, [])
 
     return (

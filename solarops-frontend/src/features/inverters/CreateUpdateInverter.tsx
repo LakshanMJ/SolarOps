@@ -2,6 +2,7 @@ import { BACKEND_URLS } from "@/backendUrls";
 import { useToast } from "@/components/toast/ToastContext";
 import { fetchData } from "@/utils/fetch";
 import ImageUploadDropzone from "@/utils/ImageUploadDropzone";
+import CloseIcon from "@mui/icons-material/Close";
 import {
    Box,
    Button,
@@ -9,6 +10,7 @@ import {
    DialogActions,
    DialogContent,
    DialogTitle,
+   IconButton,
    MenuItem,
    TextField,
 } from "@mui/material";
@@ -48,13 +50,11 @@ const CreateUpdateInverter = ({ open, inverterId, onClose, fetchInverters }: any
       image: "",
    });
 
-   // fetch options
    useEffect(() => {
       fetchData(BACKEND_URLS.MANUFACTURERS).then(setManufacturers).catch(console.error);
       fetchData(BACKEND_URLS.SITES).then(setSites).catch(console.error);
    }, []);
 
-   // fetch inverter for edit
    useEffect(() => {
       if (!isEditMode) return;
 
@@ -77,12 +77,10 @@ const CreateUpdateInverter = ({ open, inverterId, onClose, fetchInverters }: any
          .catch(console.error);
    }, [inverterId]);
 
-   // save inverter
    const saveInverter = async () => {
       try {
          let imageFilename: string | null = null;
 
-         // Upload file if new
          if (form.image instanceof File) {
             const formData = new FormData();
             formData.append("image", form.image);
@@ -98,7 +96,6 @@ const CreateUpdateInverter = ({ open, inverterId, onClose, fetchInverters }: any
             imageFilename = uploadData.filename;
          }
 
-         // Prepare payload
          const payload = {
             name: form.name,
             status: form.status,
@@ -117,7 +114,6 @@ const CreateUpdateInverter = ({ open, inverterId, onClose, fetchInverters }: any
             ? { ...payload, id: inverterId }
             : payload;
 
-         // POST or PUT
          const res = await fetch(
             isEditMode
                ? `${BACKEND_URLS.INVERTERS}/${inverterId}`
@@ -154,7 +150,24 @@ const CreateUpdateInverter = ({ open, inverterId, onClose, fetchInverters }: any
 
    return (
       <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-         <DialogTitle>{isEditMode ? "Edit Inverter" : "Add New Inverter"}</DialogTitle>
+         <DialogTitle>
+            {isEditMode ? "Edit Inverter" : "Add New Inverter"}
+            <IconButton
+               aria-label="close"
+               onClick={() => onClose(false)}
+               sx={{
+                  position: 'absolute',
+                  right: 12,
+                  top: 12,
+                  color: (theme) => theme.palette.grey[500],
+                  '&:hover': {
+                     color: 'white',
+                  },
+               }}
+            >
+               <CloseIcon />
+            </IconButton>
+         </DialogTitle>
          <DialogContent>
             <Box component="form" sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
                <TextField
@@ -195,7 +208,7 @@ const CreateUpdateInverter = ({ open, inverterId, onClose, fetchInverters }: any
                   fullWidth
                   onChange={(e) => setForm({ ...form, firmwareVersion: e.target.value })}
                />
-               
+
                <TextField
                   label="Capacity (kW)"
                   type="number"

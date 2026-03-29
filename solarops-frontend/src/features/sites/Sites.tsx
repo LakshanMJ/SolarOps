@@ -20,12 +20,12 @@ const Sites = () => {
     const [activeSiteId, setActiveSiteId] = useState<string | null>(null);
 
     const columns: GridColDef[] = [
-        { field: 'name', headerName: 'Site Name', flex: 2.5, minWidth: 200, align: 'center', headerAlign: 'center' },
+        { field: 'name', headerName: 'Site Name', flex: 2.5, minWidth: 200, align: 'left', headerAlign: 'left' },
         { field: 'location', headerName: 'Location', flex: 3, minWidth: 220, align: 'center', headerAlign: 'center' },
         { field: 'capacity', headerName: 'Capacity (MW)', type: 'number', flex: 1, minWidth: 120, align: 'center', headerAlign: 'center' },
         { field: 'activeInverters', headerName: 'Active Inverters', type: 'number', flex: 1, minWidth: 140, align: 'center', headerAlign: 'center' },
         { field: 'alerts', headerName: 'Alerts Count', type: 'number', flex: 1, minWidth: 120, align: 'center', headerAlign: 'center' },
-        { field: 'avgPR', headerName: 'Avg PR (%)', type: 'number', sortable: true, flex: 1, minWidth: 120, align: 'center', headerAlign: 'center' },
+        { field: 'avgInverterPowerKw', headerName: 'Avg Inverter Power (kW)', type: 'number', sortable: true, flex: 1, minWidth: 120, align: 'center', headerAlign: 'center' },
         {
             field: 'actions',
             headerName: 'Actions',

@@ -1,60 +1,76 @@
 import { createTheme } from '@mui/material/styles';
 
+// Defining your branding colors
+const ACCENT_AMBER = "#F59E0B"; 
+const INPUT_BG = "#0D121F";
+
 const theme = createTheme({
   typography: {
     fontFamily: "Inter",
   },
   palette: {
-    mode: "dark", // dark mode
+    mode: "dark",
+    primary: {
+      main: ACCENT_AMBER, // Sets the primary color for buttons and highlights
+    },
     text: {
-      primary: "#ffffff",   // selected date text becomes white
-      secondary: "#aaa",    // optional
+      primary: "#ffffff",
+      secondary: "#9CA3AF", // Muted grey for placeholders/secondary text
     },
     background: {
-      default: "#121212",   // dark background
-      paper: "#1e1e1e",
+      default: "#121212",
+      paper: "#1B2535", // Slightly lighter navy for Dialogs/Cards
     },
   },
   components: {
     MuiTypography: {
       styleOverrides: {
-        h1: { fontFamily: "Inter", fontWeight: 700 },
-        h2: { fontFamily: "Inter", fontWeight: 700 },
-        h3: { fontFamily: "Inter", fontWeight: 600 },
-        h4: { fontFamily: "Inter", fontWeight: 600 },
-        h5: { fontFamily: "Inter", fontWeight: 600 },
-        h6: { fontFamily: "Inter", fontWeight: 600 },
-      },
-    },
-    MuiInputBase: {
-      styleOverrides: {
-        root: {
-          color: "white",
-        },
-        input: {
-          color: "white",
-          WebkitTextFillColor: "white",
-        },
+        root: { fontFamily: "Inter" },
+        h1: { fontWeight: 700 },
+        h2: { fontWeight: 700 },
+        h3: { fontWeight: 600 },
+        h4: { fontWeight: 600 },
+        h5: { fontWeight: 600 },
+        h6: { fontWeight: 600 },
       },
     },
     MuiButton: {
       styleOverrides: {
         root: {
           textTransform: "none",
+          borderRadius: "8px",
+          fontWeight: 600,
+        },
+        containedPrimary: {
+          color: "#000000", // Dark text on the Amber button for readability
+          "&:hover": {
+            backgroundColor: "#D97706", // Deeper gold on hover
+          },
         },
       },
     },
     MuiOutlinedInput: {
       styleOverrides: {
-        notchedOutline: {
-          borderColor: "white",
-        },
         root: {
+          backgroundColor: INPUT_BG,
+          borderRadius: "8px",
+          "& .MuiOutlinedInput-notchedOutline": {
+            borderColor: "rgba(255, 255, 255, 0.2)", // Subtle border
+          },
           "&:hover .MuiOutlinedInput-notchedOutline": {
-            borderColor: "white",
+            borderColor: "rgba(255, 255, 255, 0.4)", // Slight brighten on hover
           },
           "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-            borderColor: "white",
+            borderColor: ACCENT_AMBER, // Amber/Gold focus
+            borderWidth: "2px",
+          },
+        },
+        input: {
+          color: "white",
+          WebkitTextFillColor: "white",
+          "&::placeholder": {
+            color: "#9CA3AF",
+            opacity: 1,
           },
         },
       },
@@ -62,14 +78,17 @@ const theme = createTheme({
     MuiInputLabel: {
       styleOverrides: {
         root: {
-          color: "white",
+          color: "#9CA3AF", // Muted label when not focused
+          "&.Mui-focused": {
+            color: ACCENT_AMBER, // Amber label when focused
+          },
         },
       },
     },
     MuiSvgIcon: {
       styleOverrides: {
         root: {
-          color: "white",
+          color: "inherit", // Allows icons to inherit text or primary color
         },
       },
     },

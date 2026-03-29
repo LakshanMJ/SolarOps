@@ -1,9 +1,17 @@
 import { BACKEND_URLS } from '@/backendUrls';
 import LiveIndicator from '@/utils/LiveIndicator';
+import StatusChip from '@/utils/SolarStatusChip';
 import SolarStatusChip from '@/utils/SolarStatusChip';
 import { Drawer, Box, Typography, Divider } from '@mui/material';
 
 type Status = 'Online' | 'Degraded' | 'Critical' | 'Offline';
+
+const inverterStatusConfig = {
+  online: { sx: { backgroundColor: 'rgba(34,197,94,0.2)', color: '#4ade80', border: '1px solid rgba(34,197,94,0.3)' } },
+  degraded: { sx: { backgroundColor: 'rgba(245,158,11,0.2)', color: '#fbbf24', border: '1px solid rgba(245,158,11,0.3)' } },
+  critical: { sx: { backgroundColor: 'rgba(239,68,68,0.2)', color: '#f87171', border: '1px solid rgba(239,68,68,0.3)' } },
+  offline: { sx: { backgroundColor: 'rgba(107,114,128,0.2)', color: '#9ca3af', border: '1px solid rgba(107,114,128,0.3)' } },
+};
 
 interface Inverter {
     id?: string | null;
@@ -18,6 +26,7 @@ interface Inverter {
     firmwareVersion: string;
     capacityKw: number | null;
     installedAt: string;
+    capacityUtilization: string;
     image: File | string | null;
 }
 
@@ -70,14 +79,13 @@ const InverterDrawer = ({ open, inverter, onClose }: InverterDrawerProps) => {
                             )}
                         </Box>
 
-                        <SolarStatusChip status={inverter?.status} />
+                        <StatusChip status={inverter?.status} config={inverterStatusConfig} />
 
                         <Box
                             component="img"
-                            // src="inverter_images/inverter.png"
                             src={inverter.image
                                 ? `${BACKEND_URLS.IMAGE_PATH}/${inverter.image}`
-                                : '/pdf.png'}  // add default fallback image !!!!!!!!
+                                : '/img_placeholder.png'}
                             alt={inverter.name || 'User'}
                             sx={{
                                 width: '100%',
@@ -103,7 +111,6 @@ const InverterDrawer = ({ open, inverter, onClose }: InverterDrawerProps) => {
                             sx={{
                                 fontWeight: 900,
                                 textTransform: 'uppercase',
-                                // color: 'var(--text-secondary)',
                                 fontSize: '12px',
                                 letterSpacing: '0.05em',
                                 color: '#94a3b8',
@@ -119,7 +126,7 @@ const InverterDrawer = ({ open, inverter, onClose }: InverterDrawerProps) => {
                                 Site:
                             </Typography>
                             <Typography component="span" variant="body2" sx={{ color: '#ffffff', fontWeight: 600 }}>
-                                {inverter.siteName}
+                                {inverter.siteName || 'N/A'}
                             </Typography>
                         </Box>
 
@@ -128,7 +135,7 @@ const InverterDrawer = ({ open, inverter, onClose }: InverterDrawerProps) => {
                                 Manufacturer:
                             </Typography>
                             <Typography component="span" variant="body2" sx={{ color: '#ffffff', fontWeight: 600 }}>
-                                {inverter?.manufacturerName}
+                                {inverter?.manufacturerName || 'N/A'}
                             </Typography>
                         </Box>
 
@@ -137,7 +144,7 @@ const InverterDrawer = ({ open, inverter, onClose }: InverterDrawerProps) => {
                                 Serial Number:
                             </Typography>
                             <Typography component="span" variant="body2" sx={{ color: '#ffffff', fontWeight: 600 }}>
-                                {inverter?.serialNumber}
+                                {inverter?.serialNumber || 'N/A'}
                             </Typography>
                         </Box>
 
@@ -146,7 +153,7 @@ const InverterDrawer = ({ open, inverter, onClose }: InverterDrawerProps) => {
                                 Model:
                             </Typography>
                             <Typography component="span" variant="body2" sx={{ color: '#ffffff', fontWeight: 600 }}>
-                                {inverter?.model}
+                                {inverter?.model || 'N/A'}
                             </Typography>
                         </Box>
 
@@ -155,7 +162,7 @@ const InverterDrawer = ({ open, inverter, onClose }: InverterDrawerProps) => {
                                 Firmware version:
                             </Typography>
                             <Typography component="span" variant="body2" sx={{ color: '#ffffff', fontWeight: 600 }}>
-                                {inverter?.firmwareVersion}
+                                {inverter?.firmwareVersion || 'N/A'}
                             </Typography>
                         </Box>
 
@@ -164,7 +171,7 @@ const InverterDrawer = ({ open, inverter, onClose }: InverterDrawerProps) => {
                                 Capacity:
                             </Typography>
                             <Typography component="span" variant="body2" sx={{ color: '#ffffff', fontWeight: 600 }}>
-                                {inverter?.capacityKw} Kw
+                                {inverter.capacityKw != null ? `${inverter.capacityKw} kW` : "N/A"}
                             </Typography>
                         </Box>
 
@@ -176,7 +183,6 @@ const InverterDrawer = ({ open, inverter, onClose }: InverterDrawerProps) => {
                             sx={{
                                 fontWeight: 900,
                                 textTransform: 'uppercase',
-                                // color: 'var(--text-secondary)',
                                 fontSize: '12px',
                                 letterSpacing: '0.05em',
                                 color: '#94a3b8',
@@ -192,7 +198,7 @@ const InverterDrawer = ({ open, inverter, onClose }: InverterDrawerProps) => {
                                 Output:
                             </Typography>
                             <Typography component="span" variant="body2" sx={{ color: '#ffffff', fontWeight: 600 }}>
-                                {'inverter.currentOutput'} kW
+                                {inverter.currentOutput != null ? `${inverter.currentOutput} kW` : "N/A"}
                             </Typography>
                         </Box>
                         <Box sx={{ mb: 0.5 }}>
@@ -200,15 +206,16 @@ const InverterDrawer = ({ open, inverter, onClose }: InverterDrawerProps) => {
                                 Temp:
                             </Typography>
                             <Typography component="span" variant="body2" sx={{ color: '#ffffff', fontWeight: 600 }}>
-                                {'inverter.temp'} °C
+                                {/* {'inverter.temp' || 'N/A'} °C */}
+                                {inverter.temp != null ? `${inverter.temp}°C` : "N/A"}
                             </Typography>
                         </Box>
                         <Box sx={{ mb: 0.5 }}>
                             <Typography component="span" variant="body2" sx={{ color: '#cbd5e1', mr: 1 }}>
-                                PR:
+                                Capacity Utilization:
                             </Typography>
                             <Typography component="span" variant="body2" sx={{ color: '#ffffff', fontWeight: 600 }}>
-                                {'inverter.pr'}%
+                                {inverter.capacityUtilization != null ? `${inverter.capacityUtilization}%` : "N/A"}
                             </Typography>
                         </Box>
 
@@ -220,7 +227,6 @@ const InverterDrawer = ({ open, inverter, onClose }: InverterDrawerProps) => {
                             sx={{
                                 fontWeight: 900,
                                 textTransform: 'uppercase',
-                                // color: 'var(--text-secondary)',
                                 fontSize: '12px',
                                 letterSpacing: '0.05em',
                                 color: '#94a3b8',
