@@ -67,45 +67,49 @@ export async function systemHealthStatus(): Promise<'good' | 'warning' | 'critic
     return 'good';
 }
 
-// 7 - Avg performance ratio (PR)
-export async function avgPerformanceRatio() {
-    const prResult = await prisma.$queryRaw<{ avg_pr: number }[]>`
-    SELECT AVG(pr) AS avg_pr
+// 7 - Average power output (kW)
+export async function avgPowerKw() {
+  const result = await prisma.$queryRaw<{ avg_output: number }[]>`
+    SELECT AVG(avg_output) AS avg_output
     FROM (
       SELECT
         t."inverterId",
-        SUM(t."acOutputKw") / COUNT(*) * 100 AS pr
+        SUM(t."acOutputKw") / COUNT(*) AS avg_output
       FROM "Telemetry" t
       JOIN "Inverter" i ON t."inverterId" = i."id"
       WHERE t."timestamp" >= ${startOfToday}
       GROUP BY t."inverterId"
     ) sub
-  `
-    const avgPerformanceRatio = (prResult[0]?.avg_pr ?? 0) * (MINUTES_PER_TELEMETRY / 60)
-    return avgPerformanceRatio;
+  `;
+
+  return +(result[0]?.avg_output ?? 0).toFixed(1);
 }
 
 // 8 - Weekly energy output (last 7 days including today)
 export async function weeklyEnergy() {
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6)
-    const weeklyEnergyRaw: { day: string; energy_kw: number }[] =
-        await prisma.$queryRaw`
+  // Adjust sevenDaysAgo to 6 days before today
+  const startDate = new Date(sevenDaysAgo);
+  startDate.setDate(startDate.getDate() - 6);
+
+  const weeklyEnergyRaw: { day: string; date: string; energy_kw: number }[] =
+    await prisma.$queryRaw`
       SELECT
         to_char(t."timestamp", 'Dy') AS day,
+        to_char(t."timestamp", 'MM-DD') AS date,
         SUM(t."acOutputKw") AS energy_kw
       FROM "Telemetry" t
-      WHERE t."timestamp" >= ${sevenDaysAgo}
-      GROUP BY day
+      WHERE t."timestamp" >= ${startDate}
+      GROUP BY day, date
       ORDER BY MIN(t."timestamp")
-    `
+    `;
 
-    const weeklyEnergy = weeklyEnergyRaw.map(r => ({
-        name: r.day,
-        value: parseFloat(
-            ((r.energy_kw * MINUTES_PER_TELEMETRY) / 60).toFixed(2)
-        )
-    }))
-    return weeklyEnergy;
+  // Map to frontend-friendly format
+  const weeklyEnergy = weeklyEnergyRaw.map(r => ({
+    name: `${r.day} (${r.date})`,  // e.g., "Mon (2026-03-29)"
+    value: parseFloat(((r.energy_kw * MINUTES_PER_TELEMETRY) / 60).toFixed(2))
+  }));
+
+  return weeklyEnergy;
 }
 
 // day baseline average (kWh per day) //
@@ -140,32 +144,57 @@ export async function totalEnergyStatus() {
     return totalEnergyStatus
 }
 
-// 10 - Avg Performance Ratio (PR) status (compared to 7-day baseline)
-export async function prStatus() {
-    const PR_WARNING_DROP = 0.15
-    const PR_CRITICAL_DROP = 0.25
-    const prBaselineRaw: { avg_pr: number }[] =
-        await prisma.$queryRaw`
-      SELECT AVG(pr) AS avg_pr
+// 10 - output Deviation Status
+export async function outputDeviationStatus() {
+  const WARNING_DROP = 0.15;
+  const CRITICAL_DROP = 0.25;
+
+  // 🔹 7-day baseline (excluding today)
+  const baselineRaw: { avg_output: number }[] =
+    await prisma.$queryRaw`
+      SELECT AVG(avg_output) AS avg_output
       FROM (
         SELECT
           t."inverterId",
-          SUM(t."acOutputKw") / COUNT(*) * 100 AS pr
+          SUM(t."acOutputKw") / COUNT(*) AS avg_output
         FROM "Telemetry" t
         JOIN "Inverter" i ON t."inverterId" = i."id"
-        WHERE t."timestamp" >= ${sevenDaysAgo} 
+        WHERE t."timestamp" >= ${sevenDaysAgo}
           AND t."timestamp" < ${startOfToday}
         GROUP BY t."inverterId"
       ) sub
-    `
-    const prBaseline = (prBaselineRaw[0]?.avg_pr ?? 0) * (MINUTES_PER_TELEMETRY / 60)
-    const prDeviation = prBaseline === 0 ? 0 : (await avgPerformanceRatio() - prBaseline) / prBaseline
+    `;
 
-    let prStatus: 'good' | 'warning' | 'critical' = 'good'
-    if (prDeviation <= -PR_CRITICAL_DROP) {
-        prStatus = 'critical'
-    } else if (prDeviation <= -PR_WARNING_DROP) {
-        prStatus = 'warning'
-    }
-    return prStatus;
+  const baseline = baselineRaw[0]?.avg_output ?? 0;
+
+  // 🔹 Current (today)
+  const currentRaw: { avg_output: number }[] =
+    await prisma.$queryRaw`
+      SELECT AVG(avg_output) AS avg_output
+      FROM (
+        SELECT
+          t."inverterId",
+          SUM(t."acOutputKw") / COUNT(*) AS avg_output
+        FROM "Telemetry" t
+        JOIN "Inverter" i ON t."inverterId" = i."id"
+        WHERE t."timestamp" >= ${startOfToday}
+        GROUP BY t."inverterId"
+      ) sub
+    `;
+
+  const current = currentRaw[0]?.avg_output ?? 0;
+
+  // 🔹 Deviation calculation
+  const deviation =
+    baseline === 0 ? 0 : (current - baseline) / baseline;
+
+  let status: "good" | "warning" | "critical" = "good";
+
+  if (deviation <= -CRITICAL_DROP) {
+    status = "critical";
+  } else if (deviation <= -WARNING_DROP) {
+    status = "warning";
+  }
+
+  return status;
 }

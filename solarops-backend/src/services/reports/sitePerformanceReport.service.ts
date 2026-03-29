@@ -1,6 +1,6 @@
 import type { $Enums } from "@prisma/client";
 import activeInverterCount from "../../utils/activeInverterCount.js";
-import calculateAveragePRPerSite from "../../utils/calculateAveragePRPerSite.js";
+import calculateAveragePRPerSite from "../../utils/calculateAvgInverterPowerKwPerSite.js";
 import calculateSiteHealth from "../../utils/calculateSiteHealth.js";
 import unresolvedAlertsCount from "../../utils/unresolvedAlertsCount.js";
 import { calculateAlertRate, calculateDowntime, energyProducedKwh } from "../../utils/sitePerformanceReportCalculations.js";

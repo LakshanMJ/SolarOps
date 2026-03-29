@@ -1,4 +1,4 @@
-import { activeAlerts, activeAlertsStatus, avgPerformanceRatio, energyTodayKwh, prStatus, revenueTodayUsd, systemHealthPercent, systemHealthStatus, totalEnergyStatus, weeklyEnergy } from '../utils/kpiDashboardCalculations.js'
+import { activeAlerts, activeAlertsStatus, avgPowerKw, energyTodayKwh, outputDeviationStatus, revenueTodayUsd, systemHealthPercent, systemHealthStatus, totalEnergyStatus, weeklyEnergy } from '../utils/kpiDashboardCalculations.js'
 
 export async function getDashboardKpisService() {
 
@@ -9,10 +9,10 @@ export async function getDashboardKpisService() {
     activeAlertsStatus: await activeAlertsStatus(),
     systemHealthPercent: +(await systemHealthPercent()).toFixed(1),
     systemHealthStatus: await systemHealthStatus(),
-    avgPerformanceRatio: +(await avgPerformanceRatio()).toFixed(1),
+    avgPowerKw: +(await avgPowerKw()).toFixed(1),
     weeklyEnergy: await weeklyEnergy(),
     totalEnergyStatus: await totalEnergyStatus(),
     revenueStatus: await totalEnergyStatus(),
-    prStatus: await prStatus(),
+    outputDeviationStatus: await outputDeviationStatus(),
   }
 }

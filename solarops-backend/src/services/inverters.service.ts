@@ -69,10 +69,10 @@ export async function getInvertersService() {
       (a, b) => b.timestamp.getTime() - a.timestamp.getTime()
     )[0];
 
-    // Calculate PR (%)
-    let pr = 0;
+    // Calculate Capacity Utilization (%)
+    let capacityUtilization = 0;
     if (latestTelemetry) {
-      pr = (latestTelemetry.acOutputKw / inv.capacityKw) * 100;
+      capacityUtilization = (latestTelemetry.acOutputKw / inv.capacityKw) * 100;
     }
 
     type Alert = { id: string; status: "Open" | "Acknowledged" | "Resolved" };
@@ -96,7 +96,7 @@ export async function getInvertersService() {
       alerts: unresolvedAlerts,
       outputKw: latestTelemetry?.acOutputKw ?? 0,
       tempC: latestTelemetry?.tempC ?? 0,
-      pr: +pr.toFixed(1),
+      capacityUtilization: +capacityUtilization.toFixed(1),
       lastUpdate: latestTelemetry?.timestamp ?? null,
     };
   });

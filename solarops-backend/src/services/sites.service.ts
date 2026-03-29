@@ -1,6 +1,7 @@
 import { prisma } from '../db/prisma.js'
 import activeInverterCount from '../utils/activeInverterCount.js'
-import calculateAveragePRPerSite from '../utils/calculateAveragePRPerSite.js'
+import calculateAvgInverterPowerKw from '../utils/calculateAvgInverterPowerKwPerSite.js'
+import calculateAveragePRPerSite from '../utils/calculateAvgInverterPowerKwPerSite.js'
 import calculateSiteHealth from '../utils/calculateSiteHealth.js'
 import unresolvedAlertsCount from '../utils/unresolvedAlertsCount.js'
 
@@ -109,7 +110,7 @@ export async function getSitesService() {
 
     const alertsCount = unresolvedAlertsCount(site.inverters);
 
-    const avgPR = calculateAveragePRPerSite(site.inverters);
+    const avgInverterPowerKw = calculateAvgInverterPowerKw(site.inverters);
 
     const health = calculateSiteHealth(site.inverters);
 
@@ -122,7 +123,7 @@ export async function getSitesService() {
       capacity: site.peakCapacityMw,
       activeInverters,
       alerts: alertsCount,
-      avgPR: +avgPR.toFixed(1),
+      avgInverterPowerKw: +avgInverterPowerKw.toFixed(1),
       health
     }
   })
