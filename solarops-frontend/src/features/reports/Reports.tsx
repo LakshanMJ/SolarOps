@@ -10,7 +10,6 @@ const Reports = () => {
 
     const [metaData, setMetaData] = useState([])
     const [sites, setSites] = useState([]);
-    console.log(metaData,'metaData')
 
     const fetchMetadata = async () => {
         try {
@@ -49,6 +48,7 @@ const Reports = () => {
                 color: "#fff",
                 display: "flex",
                 flexDirection: "column",
+                mb: 22,
             }}
         >
             <Typography variant="h5" gutterBottom sx={{ color: "#fff" }}>

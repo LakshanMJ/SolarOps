@@ -73,7 +73,6 @@ const CreateUpdateUsers = ({ open, userId, onClose, fetchUsers }: any) => {
       twoFactorEnabled: false,
       image: null
    });
-   console.log(JSON.stringify(form.roles), 'form')
 
    useEffect(() => {
       if (!isEditMode) return;

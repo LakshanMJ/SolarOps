@@ -2,12 +2,6 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
-// const sites = [
-//   { id: 1, name: 'Site A', lat: 6.9271, lng: 79.8612, health: 'healthy', activeInverters: 12 },
-//   { id: 2, name: 'Site B', lat: 6.9147, lng: 79.9722, health: 'warning', activeInverters: 8 },
-//   { id: 3, name: 'Site C', lat: 6.9000, lng: 79.8500, health: 'critical', activeInverters: 3 },
-// ];
-
 const healthSvg: Record<string, string> = {
     Good: '/site_map_green_pin_good.svg',
     Warning: '/site_map_yellow_pin_warning.svg',
@@ -22,6 +16,8 @@ const createSvgIcon = (url: string) =>
         iconAnchor: [15, 42],
         popupAnchor: [0, -40],
     });
+
+
 
 export default function SitesMap({ sites }: any) {
     return (

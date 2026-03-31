@@ -23,22 +23,6 @@ const severityColor = {
 
 export default function LiveAlertsFeed() {
     const [alerts, setAlerts] = useState<Alert[]>([]);
-    console.log(alerts, 'alerts')
-
-    // useEffect(() => {
-    //     const wsSimulator = setInterval(() => {
-    //         const newAlert: Alert = {
-    //             id: Math.random().toString(36).substr(2, 9),
-    //             severity: ['critical', 'warning', 'info'][Math.floor(Math.random() * 3)] as Alert['severity'],
-    //             message: `Inverter issue detected`,
-    //             timestamp: new Date().toISOString(),
-    //             inverterId: `INV-${Math.floor(Math.random() * 100)}`,
-    //         };
-    //         setAlerts(prev => [newAlert, ...prev].slice(0, 10));
-    //     }, 5000);
-
-    //     return () => clearInterval(wsSimulator);
-    // }, []);
 
     useEffect(() => {
         async function fetchAlerts() {
@@ -81,7 +65,7 @@ export default function LiveAlertsFeed() {
                     borderRadius: 2,
                     p: 2,
                     overflowY: 'auto',
-                    maxHeight: 400,
+                    maxHeight: 475,
                     boxShadow: 'var(--shadow-sm)',
                     border: '1px solid var(--border-default)',
                 }}
@@ -105,7 +89,7 @@ export default function LiveAlertsFeed() {
                                     </Typography>
                                 }
                                 secondary={
-                                    <Typography variant="caption" sx={{ color: 'var(--text-muted)' }}>
+                                    <Typography variant="caption" sx={{ color: '#94a3b8' }}>
                                         {alert.createdAt.split('T')[1].split('.')[0]} | {alert?.inverter?.name}
                                     </Typography>
                                 }

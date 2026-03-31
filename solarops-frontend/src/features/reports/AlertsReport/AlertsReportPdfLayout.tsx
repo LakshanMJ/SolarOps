@@ -51,7 +51,6 @@ const alerts = [
 ];
 
 export function AlertsReportPdfLayout({ data, isFirstPage }: any) {
-  console.log(JSON.stringify(data))
   const total = alerts.length;
   const critical = alerts.filter(a => a.severity === "Critical").length;
   const open = alerts.filter(a => a.status === "Open").length;

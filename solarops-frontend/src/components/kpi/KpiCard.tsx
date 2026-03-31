@@ -47,7 +47,7 @@ const KpiCard = ({ label, value, status }: { label: string; value: string; statu
         {label}
       </Typography>
 
-      <Typography variant="h6" sx={{ fontWeight: 600, color: '#f8fafc' }}>
+      <Typography variant="h4" sx={{ fontWeight: 700, color: '#f8fafc' }}>
         {value}
       </Typography>
 

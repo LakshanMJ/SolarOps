@@ -151,7 +151,7 @@ const CreateUpdateSites = ({ open, siteId, onClose, fetchSites }: any) => {
                   <TextField
                      label="Location"
                      fullWidth
-                     disabled={isEditMode}
+                     // disabled={isEditMode}
                      value={
                         form.latitude && form.longitude
                            ? `${form.latitude.toFixed(4)}, ${form.longitude.toFixed(4)}`

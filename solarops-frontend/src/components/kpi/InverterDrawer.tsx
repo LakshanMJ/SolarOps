@@ -38,7 +38,6 @@ interface InverterDrawerProps {
 
 
 const InverterDrawer = ({ open, inverter, onClose }: InverterDrawerProps) => {
-    console.log(inverter, 'inverterrrr')
     return (
         <Drawer anchor="right" open={open} onClose={onClose}>
             <Box sx={{ width: 340, p: 2, backgroundColor: '#273443' }}>

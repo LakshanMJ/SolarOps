@@ -18,7 +18,6 @@ const SideBar = () => {
    ];
 
    const [user, setUser] = useState<any>(null);
-   console.log(user, 'userrrrr')
 
    useEffect(() => {
       const token = localStorage.getItem("token");

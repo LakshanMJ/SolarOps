@@ -1,80 +1,64 @@
-import {
-  Box,
-  Stack,
-  Typography,
-  Chip,
-} from '@mui/material'
+import { Box, Stack, Typography } from '@mui/material';
+import { Link } from 'react-router-dom'; // Import Link
 
 export default function Header() {
-  // const [range, setRange] = useState('7d')
-
-  return (
-    <Box
-      component="header"
-      sx={{
-        width: '100%',
-        height: 56,
-        px: 3,
-        boxSizing: 'border-box',
-        borderBottom: '1px solid',
-        borderColor: 'divider',
-        bgcolor: '#0B1220',
-      }}
-    >
-      <Stack
-        direction="row"
-        alignItems="center"
-        justifyContent="space-between"
-        height="100%"
-      >
-
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 1.5,
-          }}
-        >
-
-          <Box
-            component="img"
-            src="/solarops_logo.png"
-            alt="SolarOps Logo"
-            sx={{
-              width: 36,
-              height: 36,
-              objectFit: 'contain',
-            }}
-          />
-
-          {/* <Typography variant="h6" fontWeight={600}>
-            SolarOps
-          </Typography> */}
-
-          <Typography variant="h6" sx={{ fontWeight: 800, letterSpacing: -0.5 }}>
-            SolarOps
-          </Typography>
-        </Box>
-
-        {/* <Select
-          size="small"
-          value={range}
-          onChange={(e) => setRange(e.target.value)}
-        >
-          <MenuItem value="24h">Last 24 Hours</MenuItem>
-          <MenuItem value="7d">Last 7 Days</MenuItem>
-          <MenuItem value="30d">Last 30 Days</MenuItem>
-        </Select> */}
-
-        {/* <Stack direction="row" alignItems="center" spacing={1}>
-          <Chip
-            size="small"
-            label="All systems operational"
-            color="success"
-            variant="outlined"
-          />
-        </Stack> */}
-      </Stack>
-    </Box>
-  )
+	return (
+		<Box
+			component="header"
+			sx={{
+				width: '100%',
+				height: 56,
+				px: 3,
+				boxSizing: 'border-box',
+				borderBottom: '1px solid',
+				borderColor: 'rgba(255, 255, 255, 0.1)', // Matches your dark theme better
+				bgcolor: '#0B1220',
+			}}
+		>
+			<Stack
+				direction="row"
+				alignItems="center"
+				justifyContent="space-between"
+				height="100%"
+			>
+				{/* Wrap the Logo and Text in a Link */}
+				<Box
+					component={Link}
+					to="/dashboard" // Your dashboard route
+					sx={{
+						display: 'flex',
+						alignItems: 'center',
+						gap: 1.5,
+						textDecoration: 'none', // Removes the default link underline
+						color: 'inherit',        // Keeps the text white
+						transition: 'opacity 0.2s',
+						'&:hover': {
+							opacity: 0.8,         // Subtle visual feedback
+						},
+					}}
+				>
+					<Box
+						component="img"
+						src="/solarops_logo.png"
+						alt="SolarOps Logo"
+						sx={{
+							width: 36,
+							height: 36,
+							objectFit: 'contain',
+						}}
+					/>
+					<Typography
+						variant="h5" // Bumped up slightly for a better logo feel
+						sx={{
+							fontWeight: 800,
+							letterSpacing: -0.5,
+							fontSize: '1.4rem' // Nice and bold for the brand name
+						}}
+					>
+						SolarOps
+					</Typography>
+				</Box>
+			</Stack>
+		</Box>
+	);
 }
