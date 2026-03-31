@@ -98,6 +98,7 @@ export async function getInvertersService() {
       tempC: latestTelemetry?.tempC ?? 0,
       capacityUtilization: +capacityUtilization.toFixed(1),
       lastUpdate: latestTelemetry?.timestamp ?? null,
+      image: inv.image,
     };
   });
 
