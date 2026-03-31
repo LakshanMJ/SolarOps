@@ -299,11 +299,10 @@ const users = () => {
 									autoHeight
 									getRowHeight={() => 'auto'}
 									sx={{
-										// This ensures the cell container doesn't clip the content
 										'& .MuiDataGrid-cell': {
 											display: 'flex',
 											alignItems: 'center',
-											py: 2, // Adds internal padding to the row globally
+											py: 2,
 										},
 									}}
 								/>
@@ -313,7 +312,6 @@ const users = () => {
 										userId={activeUserId}
 										onClose={() => setActiveUserId(null)}
 										fetchUsers={fetchUsers}
-									// rolesList={rolesData}
 									/>
 								)}
 							</Box>

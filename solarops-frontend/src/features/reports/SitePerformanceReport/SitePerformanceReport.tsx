@@ -19,6 +19,9 @@ import AssessmentIcon from "@mui/icons-material/Assessment";
 import { exportReportFile } from "@/utils/reports/exportCsv";
 import handleExportPdf from "@/utils/reports/exportPdf";
 import dayjs from "dayjs";
+import SolarExportCsvButton from "@/utils/SolarExportCsvButton";
+import SolarExportPdfButton from "@/utils/SolarExportPdfButton";
+
 
 export default function SitePerformanceReport({ metaData, sites }: any) {
     const [alignment, setAlignment] = useState('');
@@ -28,8 +31,6 @@ export default function SitePerformanceReport({ metaData, sites }: any) {
         fromDate: null as Dayjs | null,
         toDate: null as Dayjs | null,
     });
-
-    const reportRef = useRef<HTMLDivElement>(null);
 
     const handleFilterChange = (key: string, value: any) => {
         setFilters(prev => ({ ...prev, [key]: value }));
@@ -150,38 +151,25 @@ export default function SitePerformanceReport({ metaData, sites }: any) {
                 <Alert variant="outlined" severity="info" sx={{ mt: 2 }}>
                     Report Includes
                     <ul style={{ marginTop: 8, marginBottom: 0, paddingLeft: 20 }}>
-                        {/* <li>siteName</li>
-                        <li>region</li>
-                        <li>capacityMw</li> */}
-                        <li>totalInverters</li>
-                        <li>activeInverters</li>
-                        <li>alertsCount</li>
-                        <li>avgOutput</li>
-                        <li>avgPR</li>
-                        <li>health</li>
-                        <li>energy Produced</li>
-                        <li>downtime Percentage</li>
-                        <li>alert Rate</li>
+                        <li>Total Inverters</li>
+                        <li>Active Inverters</li>
+                        <li>Alerts Count</li>
+                        <li>Average Output</li>
+                        <li>Average PR</li>
+                        <li>Health</li>
+                        <li>Energy Produced</li>
+                        <li>Downtime Percentage</li>
+                        <li>Alert Rate</li>
                     </ul>
                 </Alert>
 
                 <Divider sx={{ my: 3 }} />
 
                 <Box display="flex" gap={2} alignItems="center">
-
-                    <Button
-                        variant="contained"
-                        startIcon={
-                            <img
-                                src="/public/csv.png"
-                                alt="CSV"
-                                style={{ width: 20, height: 20 }}
-                            />
-                        }
+                    <SolarExportCsvButton
                         onClick={() => {
                             const { fromDate, toDate, siteId } = filters;
 
-                            // Check if both dates are provided
                             if (!fromDate || !toDate) {
                                 alert("Please select both From and To dates before exporting.");
                                 return;
@@ -192,7 +180,6 @@ export default function SitePerformanceReport({ metaData, sites }: any) {
                                 return;
                             }
 
-                            // Optional: check that fromDate is before toDate
                             const from = new Date(fromDate);
                             const to = new Date(toDate);
                             if (from > to) {
@@ -200,20 +187,12 @@ export default function SitePerformanceReport({ metaData, sites }: any) {
                                 return;
                             }
 
-                            // All good → call export
                             exportReportFile("site-performance", filters);
                         }}
-                    >
-                        Export CSV
-                    </Button>
-
-                    <Button
-                        variant="outlined"
-                        startIcon={<img src="/pdf.png" alt="PDF" style={{ width: 20, height: 20 }} />}
-                        onClick={() => handleExportPdf("site-performance", filters, reportRef)}
-                    >
-                        Export PDF
-                    </Button>
+                    />
+                    <SolarExportPdfButton
+                        onClick={() => handleExportPdf("site-performance", filters)}
+                    />
                 </Box>
             </Card>
         </Box>

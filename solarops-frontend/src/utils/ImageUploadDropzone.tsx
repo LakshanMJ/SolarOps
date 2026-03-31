@@ -1,9 +1,10 @@
 import React, { useRef, useState, useEffect, useMemo } from "react";
-import { Box, Typography, IconButton } from "@mui/material";
+import { Box, Typography, IconButton, alpha } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload"; // Added for a techier look
 
 type Props = {
-  value: File | string | null; // ✅ supports edit + create
+  value: File | string | null;
   onChange: (file: File | null) => void;
 };
 
@@ -15,22 +16,18 @@ const ImageUploadDropzone = ({ value, onChange }: Props) => {
 
   const imageSrc = useMemo(() => {
     if (!value) return null;
-
     if (typeof value === "string") {
-      // existing backend image → prepend URL if needed
       return value.startsWith("http")
         ? value
         : `${BACKEND_UPLOADS}${encodeURIComponent(value)}`;
     }
-
-    // uploaded file preview
     return URL.createObjectURL(value);
   }, [value]);
 
   useEffect(() => {
     return () => {
       if (value instanceof File && imageSrc) {
-        URL.revokeObjectURL(imageSrc);
+        URL.createObjectURL(value);
       }
     };
   }, [value, imageSrc]);
@@ -54,16 +51,19 @@ const ImageUploadDropzone = ({ value, onChange }: Props) => {
       }}
       sx={{
         border: "2px dashed",
-        borderColor: dragging ? "primary.main" : "#aaa",
-        borderRadius: 2,
+        // Uses your Amber accent when dragging or active, otherwise subtle white
+        borderColor: dragging ? "#F59E0B" : "rgba(255, 255, 255, 0.2)",
+        borderRadius: "8px",
         p: 3,
         textAlign: "center",
         cursor: "pointer",
-        bgcolor: dragging ? "#e3f2fd" : "#fafafa",
-        transition: "all 0.2s ease",
+        // Matches your INPUT_BG (#0D121F)
+        bgcolor: dragging ? alpha("#F59E0B", 0.05) : "#0D121F", 
+        transition: "all 0.2s ease-in-out",
         position: "relative",
         "&:hover": {
-          bgcolor: "#f0f0f0",
+          borderColor: "rgba(255, 255, 255, 0.4)",
+          bgcolor: alpha("#FFFFFF", 0.02),
         },
       }}
     >
@@ -76,12 +76,15 @@ const ImageUploadDropzone = ({ value, onChange }: Props) => {
       />
 
       {!imageSrc ? (
-        <>
-          <Typography variant="body1">Click or Drag & Drop Image Here</Typography>
-          <Typography variant="caption" color="text.secondary">
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
+          <CloudUploadIcon sx={{ fontSize: 40, color: "rgba(255,255,255,0.3)", mb: 1 }} />
+          <Typography variant="body1" sx={{ color: "#ffffff", fontWeight: 500 }}>
+            Click or Drag & Drop Image
+          </Typography>
+          <Typography variant="caption" sx={{ color: "#9CA3AF" }}>
             PNG, JPG, WEBP supported
           </Typography>
-        </>
+        </Box>
       ) : (
         <Box
           sx={{ position: "relative", display: "inline-block" }}
@@ -90,26 +93,33 @@ const ImageUploadDropzone = ({ value, onChange }: Props) => {
           <Box
             component="img"
             src={imageSrc}
-            sx={{ maxWidth: "100%", maxHeight: 200, objectFit: "contain", borderRadius: 1 }}
+            sx={{ 
+              maxWidth: "100%", 
+              maxHeight: 200, 
+              objectFit: "contain", 
+              borderRadius: "4px",
+              border: "1px solid rgba(255,255,255,0.1)" 
+            }}
           />
 
           <IconButton
             onClick={() => onChange(null)}
             sx={{
               position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              bgcolor: "rgba(0,0,0,0.6)",
-              color: "#fff",
-              "&:hover": { bgcolor: "rgba(0,0,0,0.8)" },
+              top: -10,
+              right: -10,
+              bgcolor: "#F59E0B", // Amber delete button
+              color: "#000",
+              size: "small",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.5)",
+              "&:hover": { bgcolor: "#D97706" },
             }}
           >
-            <CloseIcon />
+            <CloseIcon sx={{ fontSize: 18 }} />
           </IconButton>
 
           {value instanceof File && (
-            <Typography variant="body2" mt={1}>
+            <Typography variant="caption" display="block" mt={1} sx={{ color: "#9CA3AF" }}>
               {value.name}
             </Typography>
           )}

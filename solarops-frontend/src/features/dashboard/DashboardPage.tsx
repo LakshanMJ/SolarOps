@@ -15,7 +15,37 @@ import InverterHealth from '@/components/kpi/InverterHealth'
 import { useEffect, useState } from 'react';
 import { fetchData } from '@/utils/fetch';
 import { BACKEND_URLS } from '@/backendUrls';
-import Toast from '@/components/toast/Toast';
+
+const weeklyEnergy = [
+   {
+      "name": "Tue (03-24)",
+      "value": 182450.42
+   },
+   {
+      "name": "Wed (03-25)",
+      "value": 294880.67
+   },
+   {
+      "name": "Thu (03-26)",
+      "value": 215320.15
+   },
+   {
+      "name": "Fri (03-27)",
+      "value": 248900.88
+   },
+   {
+      "name": "Sat (03-28)",
+      "value": 312740.33
+   },
+   {
+      "name": "Sun (03-29)",
+      "value": 298032.54
+   },
+   {
+      "name": "Mon (03-30)",
+      "value": 232110.92
+   }
+]
 
 const DashboardPage = () => {
 
@@ -72,14 +102,14 @@ const DashboardPage = () => {
             <Box sx={{ width: '100%', height: 300 }}>
                <ResponsiveContainer width="100%" height="100%">
                   <AreaChart
-                     data={dashboardData?.weeklyEnergy || []}
+                     data={weeklyEnergy}
                      margin={{
                         top: 20,
                         right: 0,
-                        left: 0,
-                        bottom: 0,
+                        left: 40, // 1. Increased from 0 to 40 to create a "gutter" for the title
+                        bottom: 20, // 2. Increased to give the X-Axis title space as well
                      }}
-                     >
+                  >
                      <CartesianGrid strokeDasharray="3 3" />
 
                      <XAxis
@@ -87,12 +117,31 @@ const DashboardPage = () => {
                         tick={{ fontFamily: 'Inter, sans-serif', fontSize: 12, fill: '#94a3b8' }}
                         tickLine={false}
                         axisLine={false}
+                        // Added Label
+                        label={{
+                           value: 'Date',
+                           position: 'insideBottom',
+                           offset: -10,
+                           fontFamily: 'Inter, sans-serif',
+                           fontSize: 12,
+                           fill: '#94a3b8'
+                        }}
                      />
 
                      <YAxis
                         tick={{ fontFamily: 'Inter, sans-serif', fontSize: 12, fill: '#94a3b8' }}
                         tickLine={false}
                         axisLine={false}
+                        // Added Label
+                        label={{
+                           value: 'Energy (kWh)',
+                           angle: -90,
+                           position: 'insideLeft',
+                           fontFamily: 'Inter, sans-serif',
+                           fontSize: 12,
+                           offset: -30,
+                           fill: '#94a3b8'
+                        }}
                      />
 
                      <Tooltip
@@ -105,6 +154,21 @@ const DashboardPage = () => {
                         }}
                         itemStyle={{ color: '#f59e0b', fontFamily: 'Inter, sans-serif' }}
                         labelStyle={{ color: '#fff', marginBottom: '4px' }}
+
+                        // 1. Add this to remove the ":" separator
+                        separator=""
+
+                        // 2. Keep the empty string in the return array to remove the "value" name
+                        formatter={(value: number | undefined) => {
+                           const formattedNumber = value !== undefined
+                              ? `${new Intl.NumberFormat('en-US', {
+                                 minimumFractionDigits: 2,
+                                 maximumFractionDigits: 2
+                              }).format(value)} kWh`
+                              : '0.00 kWh';
+
+                           return [formattedNumber, ""];
+                        }}
                      />
 
                      <Area

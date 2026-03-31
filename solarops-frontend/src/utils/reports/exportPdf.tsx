@@ -10,7 +10,6 @@ const A4_HEIGHT_PX = 297 * 4;  // ~1188px
 const handleExportPdf = async (
     reportType: any,
     filters: any,
-    reportRef: any
 ) => {
     const { fromDate, toDate } = filters;
 

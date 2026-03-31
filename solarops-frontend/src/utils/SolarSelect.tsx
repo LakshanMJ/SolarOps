@@ -15,7 +15,7 @@ const CustomSelect = ({ label, value, onChange, children, flex = 1 }: CustomSele
     <FormControl sx={{ flex }}>
       <InputLabel
         sx={{
-          color: "rgba(255, 255, 255, 255)",
+          color: "#9CA3AF",
           transform: "translate(14px, 9px) scale(1)",
           "&.Mui-focused": { color: "rgba(255, 255, 255, 0.7)" },
           "&.MuiInputLabel-shrink": {

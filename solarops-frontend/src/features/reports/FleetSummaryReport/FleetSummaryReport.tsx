@@ -17,6 +17,8 @@ import LayersIcon from '@mui/icons-material/Layers';
 import { exportReportFile } from "@/utils/reports/exportCsv";
 import handleExportPdf from "@/utils/reports/exportPdf";
 import dayjs from "dayjs";
+import SolarExportPdfButton from "@/utils/SolarExportPdfButton";
+import SolarExportCsvButton from "@/utils/SolarExportCsvButton";
 
 export default function FleetSummaryReport(metaData: any) {
     const [alignment, setAlignment] = useState('');
@@ -25,8 +27,6 @@ export default function FleetSummaryReport(metaData: any) {
         fromDate: null as Dayjs | null,
         toDate: null as Dayjs | null,
     });
-
-    const reportRef = useRef<HTMLDivElement>(null);
 
     const handleFilterChange = (key: string, value: any) => {
         setFilters(prev => ({ ...prev, [key]: value }));
@@ -56,7 +56,7 @@ export default function FleetSummaryReport(metaData: any) {
             }));
         }
     };
-    
+
     return (
         <Box sx={{ width: '100%', margin: "left", mt: 4 }}>
 
@@ -146,16 +146,7 @@ export default function FleetSummaryReport(metaData: any) {
                 <Divider sx={{ my: 3 }} />
 
                 <Box display="flex" gap={2} alignItems="center">
-
-                    <Button
-                        variant="contained"
-                        startIcon={
-                            <img
-                                src="/public/csv.png" // <-- replace with your PNG path
-                                alt="CSV"
-                                style={{ width: 20, height: 20 }} // adjust size
-                            />
-                        }
+                    <SolarExportCsvButton
                         onClick={() => {
                             const { fromDate, toDate } = filters;
 
@@ -176,17 +167,11 @@ export default function FleetSummaryReport(metaData: any) {
                             // All good → call export
                             exportReportFile("fleet-summary", filters);
                         }}
-                    >
-                        Export CSV
-                    </Button>
+                    />
 
-                    <Button
-                        variant="outlined"
-                        startIcon={<img src="/pdf.png" alt="PDF" style={{ width: 20, height: 20 }} />}
-                        onClick={() => handleExportPdf("fleet-summary", filters, reportRef)}
-                    >
-                        Export PDF
-                    </Button>
+                    <SolarExportPdfButton
+                        onClick={() => handleExportPdf("fleet-summary", filters)}
+                    />
                 </Box>
             </Card>
         </Box>

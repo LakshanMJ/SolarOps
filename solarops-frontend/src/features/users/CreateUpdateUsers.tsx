@@ -27,6 +27,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import TimezoneSelect from "react-timezone-select";
+import SolarTimezoneSelect from "@/utils/SolarTimezoneSelect";
 
 const NOTIFICATION_CHANNELS = [
    { id: 'email', name: 'Email' },
@@ -261,6 +262,7 @@ const CreateUpdateUsers = ({ open, userId, onClose, fetchUsers }: any) => {
                         label="Onboarding Date"
                         value={form.onboardingDate}
                         onChange={(date) => setForm({ ...form, onboardingDate: date })}
+                        size="medium" 
                      />
                   </LocalizationProvider>
 
@@ -356,14 +358,10 @@ const CreateUpdateUsers = ({ open, userId, onClose, fetchUsers }: any) => {
                      </Select>
                   </FormControl>
 
-                  <TimezoneSelect
+                  <SolarTimezoneSelect
+                     label=""
                      value={form.timezone}
-                     onChange={(tz: any) =>
-                        setForm((prev) => ({
-                           ...prev,
-                           timezone: tz.value
-                        }))
-                     }
+                     onChange={(tz) => setForm({ ...form, timezone: tz.value })}
                   />
 
                   <FormControl fullWidth variant="outlined">

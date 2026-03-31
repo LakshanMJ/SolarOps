@@ -18,6 +18,8 @@ import SolarDatePicker from "@/utils/SolarDatePicker";
 import dayjs from "dayjs";
 import { exportReportFile } from "@/utils/reports/exportCsv";
 import { exportMultiPagePdf } from "@/utils/reports/exportMultiPagePdf";
+import SolarExportPdfButton from "@/utils/SolarExportPdfButton";
+import SolarExportCsvButton from "@/utils/SolarExportCsvButton";
 
 export default function AlertsReport({ metaData, sites }: any) {
 
@@ -186,28 +188,12 @@ export default function AlertsReport({ metaData, sites }: any) {
                 <Divider sx={{ my: 3 }} />
 
                 <Box display="flex" gap={2} alignItems="center" sx={{ mt: 2 }}>
-
-                    <Button
-                        variant="contained"
-                        startIcon={
-                            <img
-                                src="/public/csv.png" // <-- replace with your PNG path
-                                alt="CSV"
-                                style={{ width: 20, height: 20 }} // adjust size
-                            />
-                        }
+                    <SolarExportCsvButton
                         onClick={() => exportReportFile("alerts", filters)}
-                    >
-                        Export CSV
-                    </Button>
-
-                    <Button
-                        variant="outlined"
-                        startIcon={<img src="/public/pdf.png" alt="PDF" style={{ width: 20, height: 20 }} />}
+                    />
+                    <SolarExportPdfButton
                         onClick={() => exportMultiPagePdf("alerts", filters)}
-                    >
-                        Export PDF
-                    </Button>
+                    />
                 </Box>
             </Card>
         </Box>
