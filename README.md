@@ -119,9 +119,9 @@ cd ..
 <img src="sample-images/alerts.png" alt="Login Page" width="1000">
 <img src="sample-images/report 1.png" alt="Login Page" width="1000">
 <img src="sample-images/user-profile.png" alt="Login Page" width="1000">
-<img src="sample-images/FleetSummaryReport.png" alt="Login Page" width="1000">
-<img src="sample-images/SitePerformanceReport.png" alt="Login Page" width="1000">
-<img src="sample-images/AlertsReport.png" alt="Login Page" width="1000">
+<img src="sample-images/FleetSummaryReport.png" alt="Login Page" width="800">
+<img src="sample-images/SitePerformanceReport.png" alt="Login Page" width="800">
+<img src="sample-images/AlertsReport.png" alt="Login Page" width="800">
 
 ---
 
