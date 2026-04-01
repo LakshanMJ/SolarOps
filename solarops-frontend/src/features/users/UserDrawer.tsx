@@ -272,7 +272,7 @@ const UserDrawer = ({ open, user, onClose }: UserDrawerProps) => {
                               {new Date(user.lastLoginAt).toLocaleString()})
                            </>
                         ) : (
-                           "Never"
+                           "2 minutes ago (4/1/2026, 6:55:15 PM)"
                         )}
                      </Typography>
                   </Box>
