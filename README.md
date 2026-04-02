@@ -69,9 +69,9 @@ External Data Sources (Inverters / Simulated Feeds)
 
 
 # 🔐 Security & Access
-Token-based authentication (JWT)
-Role-based access control (extensible)
-Secure API communication
+- Token-based authentication (JWT)
+- Role-based access control (extensible)
+- Secure API communication
 
 # ⚙️ Setup Guide
 
