@@ -11,6 +11,68 @@ The system enables operators and engineers to make data-driven decisions through
 
 This project focuses on building a scalable, performant, and user-friendly interface for managing solar infrastructure.
 
+# 💡 Core Value
+📊 Operational Visibility – Real-time insight into plant performance </br>
+⚡ Performance Optimization – Identify inefficiencies instantly </br>
+🚨 Proactive Monitoring – Detect issues before failures occur </br>
+📈 Data-Driven Decisions – Historical analytics & trend tracking </br>
+
+# 🧩 Platform Capabilities
+ 📊 Real-Time Dashboard
+- Live energy production tracking
+- System-wide KPI aggregation
+- Instant visibility into plant performance </br>
+
+⚡ Energy Analytics
+- Daily, weekly, and historical energy insights
+- Trend analysis for performance optimization
+- Scalable data aggregation pipelines
+  
+🚨 Intelligent Alerting
+- Severity-based alert classification
+- Real-time anomaly detection
+- Actionable system health indicators
+  
+🏭 Asset & Device Monitoring
+- Inverter-level performance tracking
+- Multi-device observability
+- Designed for multi-plant scalability
+
+# 🏗️ Architecture
+
+```
+Client (React SPA)
+        ↓
+API Gateway (Node.js / Express)
+        ↓
+Service Layer (Business Logic)
+        ↓
+Database (PostgreSQL)
+        ↓
+External Data Sources (Inverters / Simulated Feeds)
+```
+
+# 🔹 Design Principles
+- Modular & scalable architecture
+- Separation of concerns (UI / API / Data)
+- Optimized data flow for real-time updates
+- Extensible for IoT integrations
+
+# 📡 API Design (Sample)
+
+| Endpoint         | Description               |
+| ---------------- | ------------------------- |
+| `/energy/today`  | Current day energy output |
+| `/energy/weekly` | Aggregated weekly data    |
+| `/power/average` | Real-time average power   |
+| `/alerts`        | Active system alerts      |
+
+
+# 🔐 Security & Access
+Token-based authentication (JWT)
+Role-based access control (extensible)
+Secure API communication
+
 # ⚙️ Setup Guide
 
 This guide will help you set up, run, and access the Solar Ops system locally.
