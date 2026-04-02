@@ -15,7 +15,6 @@ This project focuses on building a scalable, performant, and user-friendly inter
 
 This guide will help you set up, run, and access the Solar Ops system locally.
 
----
 
 # 📚 Table of Contents
 
@@ -31,22 +30,20 @@ This guide will help you set up, run, and access the Solar Ops system locally.
 10. [Sample Product Images](#images)
 11. [Troubleshooting](#troubleshooting)
 
----
 
 ## 1. Requirements <a name="requirements"></a>
 
 - Node.js & npm
-- MySQL / PostgreSQL (or your DB)
+- PostgreSQL
 - Git
----
 
 
 ## 2. Clone the Repository <a name="clone"></a>
 ```bash
-git clone https://github.com/your-username/solar-ops.git
-cd solar-ops
+git clone https://github.com/LakshanMJ/SolarOps.git
+cd SolarOps
 ```
----
+
 
 ## 3. Install Dependencies <a name="install-deps"></a>
 - Backend
@@ -60,22 +57,39 @@ cd frontend
 npm install
 cd ..
 ```
----
 
 ## 4. Environment Setup <a name="env"></a>
+
+Create a `.env` file in the root directory and configure the following variables:
 ```bash
-PORT=5000
+PORT=4000
+Database (PostgreSQL)
+Format: postgresql://<username>:<password>@localhost:5432/solarops
+DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/solarops"
+JWT_SECRET=your_jwt_secret
 
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=yourpassword
-DB_NAME=solar_ops
-
-JWT_SECRET=your_secret_key
 ```
----
+
 ## 5. Database Setup <a name="db"></a>
----
+1. Create the PostgreSQL database:
+```bash
+   CREATE DATABASE solarops;
+```
+2. Run Prisma migrations to set up the schema:
+    - For production / fresh setup
+   ```bash
+   npx prisma migrate deploy
+   ```
+
+   - For development (if you plan to modify the schema)
+    ```bash
+   npx prisma migrate dev
+    ```
+   
+4. Generate Prisma Client:
+```bash  
+   npx prisma generate
+```
 
 ## 6. Start Backend Server <a name="start-backend-server"></a>
 ```bash
@@ -84,7 +98,7 @@ npm start
 ```
 - Server will run on: </br>
 👉
-[http://localhost:5000](http://localhost:5000)
+[http://localhost:5000](http://localhost:4000)
 ---
 ## 7. Start Frontend Server <a name="start-frontend-server"></a>
 ```bash
@@ -101,14 +115,19 @@ cd ..
 - Open in browser:
 [http://localhost:5173](http://localhost:5173)
 ---
-## 9. Admin Login (Demo Credentials) <a name="admin-login"></a>
-- Use below credentials to log into the admin account:
-    | Role  | Username |   Password  |
-    | ----- | -------- | ----------- |
-    | Admin | admin    | admin@12345 |
-  
-- Admin can create users and manage the ERP system in full rights
-- Also you can create new accounts at the login screen
+## 9. Initial Admin Setup <a name="admin-login"></a>
+
+Run the seed script to create the default admin account:
+```bash
+npx prisma db seed
+```
+### Admin Credentials
+
+| Role  | Username | Password     |
+|-------|----------|-------------|
+| Admin | admin    | admin@12345 |
+
+> It is recommended to change the password after first login.
 ---
 ## 10. Sample Product Images <a name="images"></a>
 <img src="sample-images/login.png" alt="Login Page" width="1000">
