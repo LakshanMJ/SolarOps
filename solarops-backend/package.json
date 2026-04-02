@@ -10,6 +10,9 @@
     "seedSites&Inverters": "node --loader ts-node/esm prisma/seedSites&Inverters.ts",
     "telemetry:backfill": "ts-node src/jobs/telemetryBackfill.ts"
   },
+  "prisma": {
+    "seed": "node prisma/seedAdminUser.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
