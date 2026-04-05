@@ -7,6 +7,8 @@ import { fetchData } from "@/utils/fetch";
 import { BACKEND_URLS } from "@/backendUrls";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import SiteDetailsDrawer from "@/components/kpi/SiteDetailsDrawer";
 import DeleteModal from "@/utils/deleteModal";
 import CreateUpdateSites from "./CreateUpdateSites";
 
@@ -345,6 +347,7 @@ const Sites = () => {
         id: null as string | null,
     });
     const [activeSiteId, setActiveSiteId] = useState<string | null>(null);
+    const [selectedSite, setSelectedSite] = useState<(typeof sites)[number] | null>(null);
 
     const columns: GridColDef[] = [
         { field: 'name', headerName: 'Site Name', flex: 2.5, minWidth: 200, align: 'left', headerAlign: 'left' },
@@ -363,19 +366,28 @@ const Sites = () => {
             align: 'center',
             headerAlign: 'center',
             renderCell: (params) => (
-                <Box>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5 }}>
+                    <IconButton
+                        onClick={() => setSelectedSite(params.row)}
+                        size="small"
+                        aria-label="View site details"
+                    >
+                        <VisibilityIcon sx={{ color: 'white' }} fontSize="small" />
+                    </IconButton>
                     <IconButton
                         onClick={() => setActiveSiteId(params.row.id)}
                         size="small"
+                        aria-label="Edit site"
                     >
-                        <EditIcon />
+                        <EditIcon sx={{ color: 'white' }} fontSize="small" />
                     </IconButton>
 
                     <IconButton
                         onClick={() => setSiteDeleteModal({ show: true, id: params.row.id })}
                         size="small"
+                        aria-label="Delete site"
                     >
-                        <DeleteIcon />
+                        <DeleteIcon sx={{ color: 'white' }} fontSize="small" />
                     </IconButton>
                 </Box>
             ),
@@ -437,6 +449,11 @@ const Sites = () => {
                     autoHeight
                 />
             </Box>
+            <SiteDetailsDrawer
+                open={!!selectedSite}
+                site={selectedSite}
+                onClose={() => setSelectedSite(null)}
+            />
             {activeSiteId && (
                 <CreateUpdateSites
                     open={activeSiteId !== null}
