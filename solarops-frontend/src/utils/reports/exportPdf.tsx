@@ -4,8 +4,8 @@ import { createRoot } from "react-dom/client";
 import { reportFetchMap } from "./reportFetchMap";
 import { reportRenderMap } from "./reportRenderMap";
 
-const A4_WIDTH_PX = 198 * 4;   // ~840px
-const A4_HEIGHT_PX = 297 * 4;  // ~1188px
+const A4_WIDTH_PX = 198 * 4;
+const A4_HEIGHT_PX = 297 * 4;
 
 const handleExportPdf = async (
     reportType: any,
@@ -19,7 +19,6 @@ const handleExportPdf = async (
     }
 
     try {
-        // ✅ 1. Fetch filtered data
         const fetchFn = reportFetchMap[reportType as keyof typeof reportFetchMap];
         const data = await fetchFn(filters);
 
@@ -28,27 +27,22 @@ const handleExportPdf = async (
             return;
         }
 
-        // ✅ 2. Create hidden container
         const container = document.createElement("div");
         container.style.position = "fixed";
         container.style.top = "-9999px";
         container.style.left = "-9999px";
         container.style.width = `${A4_WIDTH_PX}px`;
         container.style.minHeight = `${A4_HEIGHT_PX}px`;
-        container.style.padding = "0px"; // optional padding
-        // container.style.boxSizing = "border-box"; // ensures padding doesn't shrink content
-        container.style.background = "white"; // important for PDF
+        container.style.padding = "0px";
+        container.style.background = "white";
         document.body.appendChild(container);
 
-        // ✅ 3. Render correct report
         const root = createRoot(container);
         const ReportComponent = reportRenderMap[reportType as keyof typeof reportRenderMap];
         root.render(ReportComponent(data));
 
-        // wait for render
         await new Promise((res) => setTimeout(res, 500));
 
-        // ✅ 4. Capture
         const canvas = await html2canvas(container, { scale: 4 });
         const imgData = canvas.toDataURL("image/png");
 

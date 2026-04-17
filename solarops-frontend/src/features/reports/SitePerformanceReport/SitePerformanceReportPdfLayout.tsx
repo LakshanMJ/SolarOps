@@ -25,7 +25,6 @@ const reportData = {
     },
 };
 
-// Inline SVG Icons
 const Icons = {
     Zap: ({ color = 'currentColor', size = 24 }) => (
         <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -119,19 +118,17 @@ export function SitePerformanceReportPdfLayout(data: any) {
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                         <img
-                            src="public/solarops_logo.png"        // put your PNG in public folder
+                            src="public/solarops_logo.png"
                             alt="Sun Icon"
-                            width={52}            // same size as your <Sun size={32} />
+                            width={52}
                             height={52}
-                            style={{ display: "block" }} // optional, keeps layout clean
+                            style={{ display: "block" }}
                         />
                         <div>
                             <h1 style={{ fontSize: '24px', fontWeight: 'bold', margin: 0 }}>Solar Ops</h1>
                             <p style={{ margin: 0, fontSize: "14px", opacity: 0.9 }}>
                                 Site Performance Report
                             </p>
-                            {/* <p style={{ margin: 0, fontSize: '14px', opacity: 0.9 }}>{siteInfo.name}</p>
-                            <p style={{ margin: 0, fontSize: '12px', opacity: 0.8 }}>{siteInfo.location}</p> */}
                         </div>
                     </div>
                     <div style={{ textAlign: 'right', fontSize: '12px' }}>
@@ -141,10 +138,8 @@ export function SitePerformanceReportPdfLayout(data: any) {
                 </div>
             </div>
 
-            {/* Site Information */}
             <div style={{ padding: '20px 30px' }}>
-                {/* Site Name with Icon */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '0 0 4px 0', color:'#1f2937' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '0 0 4px 0', color: '#1f2937' }}>
                     <Building2 size={30} />
                     <p style={{
                         fontSize: '16px',
@@ -156,8 +151,7 @@ export function SitePerformanceReportPdfLayout(data: any) {
                     </p>
                 </div>
 
-                {/* Location with Icon */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: '4px', color:'#1f2937' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: '4px', color: '#1f2937' }}>
                     <MapPin size={20} />
                     <p style={{
                         fontSize: '13px',
@@ -169,10 +163,8 @@ export function SitePerformanceReportPdfLayout(data: any) {
                 </div>
             </div>
 
-            {/* Content */}
             <div style={{ padding: '25px', flex: 1 }}>
 
-                {/* Health Banner */}
                 <div
                     style={{
                         border: '1px solid #d1fae5',
@@ -207,7 +199,6 @@ export function SitePerformanceReportPdfLayout(data: any) {
                     </div>
                 </div>
 
-                {/* Primary Status Cards */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '15px', marginBottom: '20px' }}>
                     <StatCard
                         icon={<Icons.Zap color="#2563eb" size={24} />}
@@ -232,7 +223,6 @@ export function SitePerformanceReportPdfLayout(data: any) {
                     />
                 </div>
 
-                {/* Alert Rate Banner */}
                 <div style={{
                     backgroundColor: '#fff7ed',
                     border: '1px solid #fed7aa',
@@ -246,15 +236,8 @@ export function SitePerformanceReportPdfLayout(data: any) {
                             Alert Rate: {metrics.alertRate} alerts/day
                         </h2>
                     </div>
-                    {/* <p style={{ fontSize: '12px', color: '#6b7280', margin: '5px 0 0 26px' }}>
-                        Downtime: <strong>{metrics.downtimePercentage}%</strong>
-                    </p>
-                    <p style={{ fontSize: '12px', color: '#6b7280', margin: '5px 0 0 26px' }}>
-                        of total time
-                    </p> */}
                 </div>
 
-                {/* Secondary Metrics Grid */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '15px', marginBottom: '20px' }}>
                     <StatCard
                         icon={<Icons.TrendingUp color="#9333ea" size={24} />}
@@ -279,7 +262,6 @@ export function SitePerformanceReportPdfLayout(data: any) {
                     />
                 </div>
 
-                {/* KPI Section - Energy & Downtime */}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
                     <MetricCard
                         title="Energy Produced"
@@ -300,7 +282,6 @@ export function SitePerformanceReportPdfLayout(data: any) {
                 </div>
             </div>
 
-            {/* Footer */}
             <div style={{ padding: '15px', textAlign: 'center', borderTop: '1px solid #eee' }}>
                 <p style={{ fontSize: '10px', color: '#9ca3af', margin: 0 }}>
                     Generated on {siteInfo.reportDate} • Confidential
@@ -310,8 +291,6 @@ export function SitePerformanceReportPdfLayout(data: any) {
     );
 }
 
-/* Components */
-// Sub-components to keep code clean
 function StatCard({ icon, label, value, sub, color }: any) {
     return (
         <div style={{ padding: '15px', border: '1px solid #e5e7eb', borderRadius: '8px' }}>
@@ -349,7 +328,6 @@ function MetricCard({ title, value, unit, icon, bg, accent }: any) {
                 alignItems: 'flex-start'
             }}
         >
-            {/* Left content */}
             <div>
                 <p style={{ fontSize: '12px', fontWeight: 600, color: accent, margin: '0 0 10px 0' }}>
                     {title}
@@ -364,7 +342,6 @@ function MetricCard({ title, value, unit, icon, bg, accent }: any) {
                 </span>
             </div>
 
-            {/* Right icon box */}
             {icon && (
                 <div
                     style={{

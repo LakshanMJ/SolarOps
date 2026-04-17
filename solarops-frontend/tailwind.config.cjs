@@ -5,7 +5,6 @@ module.exports = {
     extend: {},
   },
   corePlugins: {
-    // Keep existing MUI-heavy app styling stable.
     preflight: false,
   },
   plugins: [],

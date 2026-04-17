@@ -38,23 +38,19 @@ export default function Toast({ type, title, message, duration = 4000, onClose }
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
       `}</style>
       
-      {/* 1. Icon Container */}
       <figure className="toast-icon">
         <Icon size={20} strokeWidth={2.5} />
       </figure>
 
-      {/* 2. Text Wrapper (Handles vertical stacking of title and message) */}
       <section className="toast-content">
         {title && <header className="toast-title">{title}</header>}
         <p className="toast-message">{message}</p>
       </section>
 
-      {/* 3. Close Button */}
       <button className="toast-close" onClick={handleClose} aria-label="Close">
         <X size={16} strokeWidth={2.5} />
       </button>
 
-      {/* Progress Bar */}
       <span className="toast-progress" style={{ animationDuration: `${duration}ms` }} />
 
       <style>{`

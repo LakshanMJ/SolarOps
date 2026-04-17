@@ -1,7 +1,6 @@
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import type { Dayjs } from "dayjs";
 
-// Use the same branding constants from your theme
 const ACCENT_AMBER = "#F59E0B";
 const INPUT_BG = "#0D121F";
 
@@ -20,7 +19,7 @@ const SolarDatePicker = ({ label, value, onChange, flex = 1, size = "small", ...
             label={label}
             value={value}
             onChange={onChange}
-            {...props} // Spreads any extra props like 'disabled' or 'minDate'
+            {...props}
             slotProps={{
                 textField: {
                     size,
@@ -31,7 +30,7 @@ const SolarDatePicker = ({ label, value, onChange, flex = 1, size = "small", ...
                             backgroundColor: INPUT_BG,
 
                             "&:hover": {
-                                backgroundColor: INPUT_BG, // 🔥 kills white hover
+                                backgroundColor: INPUT_BG,
                             },
 
                             "&.Mui-focused": {

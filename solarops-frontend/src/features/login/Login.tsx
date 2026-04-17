@@ -6,9 +6,9 @@ import {
   Button,
   InputAdornment,
   IconButton,
-  // Paper // Removed Paper, using Box for layout
+
 } from '@mui/material';
-import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react'; // Zap removed
+import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { AuthContext } from '@/app/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { login as loginAPI } from "@/services/authService";
@@ -46,7 +46,6 @@ const LoginPage = () => {
         overflow: 'hidden',
       }}
     >
-      {/* Left Side - Vertical Image Stripe */}
       <Box
   sx={{
     flex: '0 0 35%', 
@@ -57,18 +56,16 @@ const LoginPage = () => {
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     overflow: 'hidden',
-    // This creates a "fading out" effect on the right side of the image
     '&::after': {
       content: '""',
       position: 'absolute',
       top: 0,
       right: 0,
       bottom: 0,
-      width: '100%', // Cover the whole image
+      width: '100%',
       background: 'linear-gradient(to right, transparent 30%, #0f172a 1000%)',
       zIndex: 2,
     },
-    // This adds a subtle dark tint to the bottom to make the "Sign In" area pop
     '&::before': {
       content: '""',
       position: 'absolute',
@@ -79,18 +76,16 @@ const LoginPage = () => {
   }}
 />
 
-      {/* Right Side - Login Form Context */}
       <Box
         sx={{
-          flex: 1, // Takes up the remaining 70% of the width
+          flex: 1,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          position: 'relative', // For background glow positioning
+          position: 'relative',
           backgroundImage: 'radial-gradient(circle at 50% -20%, #1e293b 0%, #0f172a 100%)',
         }}
       >
-        {/* Decorative Background Glow (adjusted position) */}
         <Box
           sx={{
             position: 'absolute',
@@ -98,13 +93,12 @@ const LoginPage = () => {
             height: '400px',
             background: 'radial-gradient(circle, rgba(245, 158, 11, 0.05) 0%, transparent 70%)',
             top: '20%',
-            right: '10%', // Positioned relative to the right side box
+            right: '10%',
           }}
         />
 
-        {/* Login Form Container (replacing Paper) */}
         <Box
-          component="form" // Form functionality moved here
+          component="form"
           onSubmit={handleSubmit}
           sx={{
             p: 5,
@@ -120,7 +114,6 @@ const LoginPage = () => {
             zIndex: 1,
           }}
         >
-          {/* Logo Section */}
           <Box sx={{ mb: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
             <Box sx={{
               width: 56,
@@ -149,13 +142,12 @@ const LoginPage = () => {
             </Typography>
           </Box>
 
-          {/* Form Fields Section */}
           <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2.5 }}>
             <TextField
               fullWidth
               placeholder="User Name"
               variant="outlined"
-              value={email} // Controlled input
+              value={email}
               onChange={(e) => setEmail(e.target.value)}
               InputProps={{
                 startAdornment: <InputAdornment position="start"><Mail size={18} color="#94a3b8" /></InputAdornment>,
@@ -168,7 +160,7 @@ const LoginPage = () => {
               type={showPassword ? 'text' : 'password'}
               placeholder="Password"
               variant="outlined"
-              value={password} // Controlled input
+              value={password}
               onChange={(e) => setPassword(e.target.value)}
               InputProps={{
                 startAdornment: <InputAdornment position="start"><Lock size={18} color="#94a3b8" /></InputAdornment>,
@@ -190,7 +182,7 @@ const LoginPage = () => {
             <Button
               fullWidth
               variant="contained"
-              type="submit" // Important for form submission
+              type="submit"
               endIcon={<ArrowRight size={20} />}
               sx={{
                 py: 1.5,
@@ -220,7 +212,6 @@ const LoginPage = () => {
   );
 };
 
-// Custom styles for text fields to match the dark theme
 const inputStyles = {
   '& .MuiOutlinedInput-root': {
     color: '#fff',
@@ -230,9 +221,8 @@ const inputStyles = {
     '&:hover fieldset': { borderColor: 'rgba(245, 158, 11, 0.5)' },
     '&.Mui-focused fieldset': { borderColor: '#f59e0b' },
 
-    // 🔥 ADD THIS SECTION TO REMOVE THE BLUE BOX
     '& input:-webkit-autofill': {
-      WebkitBoxShadow: '0 0 0 1000px #0f172a inset', // Matches your card background
+      WebkitBoxShadow: '0 0 0 1000px #0f172a inset',
       WebkitTextFillColor: '#fff',
       transition: 'background-color 5000s ease-in-out 0s',
     },

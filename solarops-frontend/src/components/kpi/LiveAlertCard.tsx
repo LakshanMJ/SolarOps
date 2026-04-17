@@ -28,25 +28,19 @@ export default function LiveAlertsFeed() {
         async function fetchAlerts() {
             try {
                 const alertData = await fetchData(BACKEND_URLS.ALERTS)
-
-                // Map severity to lowercase
                 const mappedAlerts = alertData.map((a: any) => ({
                     ...a,
-                    severity: a.severity.toLowerCase(), // Warning -> warning, Critical -> critical 
+                    severity: a.severity.toLowerCase(),
                 }))
-
                 setAlerts(mappedAlerts)
             } catch (err) {
                 console.error('Failed to load alert data:', err)
             }
         }
-
         fetchAlerts()
         const interval = setInterval(fetchAlerts, 15000)
-
-        return () => clearInterval(interval) // cleanup on unmount
+        return () => clearInterval(interval)
     }, [])
-
 
     return (
         <>

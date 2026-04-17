@@ -16,7 +16,6 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
-    /* ✅ ADD THESE */
     "ignoreDeprecations": "5.0",
     "baseUrl": ".",
     "paths": {

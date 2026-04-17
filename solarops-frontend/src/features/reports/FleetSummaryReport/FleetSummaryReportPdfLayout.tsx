@@ -14,12 +14,11 @@ const chartData = [
 
 export function FleetSummaryReportPdfLayout(data: any) {
     return (
-        /* Standard A4 dimensions at 96 DPI: 794px x 1123px */
         <div
             style={{
                 width: '794px',
-                height: '1123px', // Fixed A4 height
-                overflow: 'hidden', // Clips anything that tries to go to page 2
+                height: '1123px',
+                overflow: 'hidden',
                 display: 'flex',
                 flexDirection: 'column',
                 backgroundColor: '#ffffff',
@@ -29,16 +28,15 @@ export function FleetSummaryReportPdfLayout(data: any) {
                 fontFamily: "'Inter', sans-serif"
             }}
         >
-            {/* Header - Simplified colors to reduce PDF size */}
             <div style={{ padding: '20px 30px', backgroundColor: '#1d4ed8', color: '#ffffff' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                         <img
-                            src="public/solarops_logo.png"        // put your PNG in public folder
+                            src="public/solarops_logo.png"
                             alt="Sun Icon"
-                            width={52}            // same size as your <Sun size={32} />
+                            width={52}
                             height={52}
-                            style={{ display: "block" }} // optional, keeps layout clean
+                            style={{ display: "block" }}
                         />
                         <div>
                             <h1 style={{ fontSize: '24px', fontWeight: 'bold', margin: 0 }}>Solar Ops</h1>
@@ -54,18 +52,13 @@ export function FleetSummaryReportPdfLayout(data: any) {
                 </div>
             </div>
 
-            {/* Main Content Area */}
             <div style={{ padding: '25px', flex: 1 }}>
-
-                {/* Status Row */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '15px', marginBottom: '20px' }}>
                     <StatCard icon={<Building2 color="#2563eb" />} label="Total Sites" value="24" color="#dbeafe" />
                     <StatCard icon={<Zap color="#9333ea" />} label="Inverters" value="156" color="#f3e8ff" />
                     <StatCard icon={<Power color="#16a34a" />} label="Online" value="152" sub="97.4% uptime" color="#dcfce7" />
                     <StatCard icon={<PowerOff color="#dc2626" />} label="Offline" value="4" sub="2.6% down" color="#fee2e2" />
                 </div>
-
-                {/* Alerts - Solid border instead of shadow */}
                 <div style={{ backgroundColor: '#fff7ed', border: '1px solid #fed7aa', borderRadius: '8px', padding: '15px', marginBottom: '20px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
                         <AlertTriangle size={18} color="#ea580c" style={{ marginLeft: '4px' }} />
@@ -87,7 +80,6 @@ export function FleetSummaryReportPdfLayout(data: any) {
                     </div>
                 </div>
 
-                {/* Performance Chart - Animations disabled to prevent frame bloating */}
                 <div style={{ border: '1px solid #e5e7eb', borderRadius: '8px', padding: '20px', marginBottom: '20px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
                         <ChartNoAxesCombined size={18} color="#10b981" />
@@ -110,7 +102,6 @@ export function FleetSummaryReportPdfLayout(data: any) {
                                     dy={10}
                                 />
 
-                                {/* Left Axis for Output (e.g., kWh) */}
                                 <YAxis
                                     yAxisId="left"
                                     fontSize={10}
@@ -119,14 +110,13 @@ export function FleetSummaryReportPdfLayout(data: any) {
                                     label={{ value: 'Output', angle: -90, position: 'insideLeft', fontSize: 10, fill: '#6b7280' }}
                                 />
 
-                                {/* Right Axis for PR (Percentage) */}
                                 <YAxis
                                     yAxisId="right"
                                     orientation="right"
                                     fontSize={10}
                                     tickLine={false}
                                     axisLine={false}
-                                    domain={[0, 100]} // Assuming PR is 0-100
+                                    domain={[0, 100]}
                                     label={{ value: 'PR %', angle: 90, position: 'insideRight', fontSize: 10, fill: '#6b7280' }}
                                 />
 
@@ -136,7 +126,6 @@ export function FleetSummaryReportPdfLayout(data: any) {
                                 />
                                 <Legend verticalAlign="top" align="right" iconType="circle" wrapperStyle={{ fontSize: '10px', paddingBottom: '20px' }} />
 
-                                {/* Bars use the Left Axis */}
                                 <Bar
                                     yAxisId="left"
                                     dataKey="output"
@@ -145,7 +134,6 @@ export function FleetSummaryReportPdfLayout(data: any) {
                                     barSize={30}
                                 />
 
-                                {/* Line uses the Right Axis */}
                                 <Line
                                     yAxisId="right"
                                     type="monotone"
@@ -160,7 +148,6 @@ export function FleetSummaryReportPdfLayout(data: any) {
                     </div>
                 </div>
 
-                {/* KPI Section */}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
                     <KPICard
                         title="Total Energy Output"
@@ -183,7 +170,6 @@ export function FleetSummaryReportPdfLayout(data: any) {
                 </div>
             </div>
 
-            {/* Simple Footer */}
             <div style={{ padding: '20px', textAlign: 'center', borderTop: '1px solid #f3f4f6' }}>
                 <p style={{ fontSize: '10px', color: '#9ca3af', margin: 0 }}>
                     Generated on March 17, 2026 • Confidential
@@ -193,7 +179,6 @@ export function FleetSummaryReportPdfLayout(data: any) {
     );
 }
 
-// Sub-components to keep code clean
 function StatCard({ icon, label, value, sub, color }: any) {
     return (
         <div style={{ padding: '15px', border: '1px solid #e5e7eb', borderRadius: '8px' }}>
@@ -231,7 +216,6 @@ function KPICard({ title, value, unit, trend, bg, accent, icon }: any) {
                 alignItems: 'flex-start'
             }}
         >
-            {/* Left content */}
             <div>
                 <p style={{ fontSize: '12px', fontWeight: 600, color: accent, margin: '0 0 10px 0' }}>
                     {title}
@@ -251,7 +235,6 @@ function KPICard({ title, value, unit, trend, bg, accent, icon }: any) {
                 </p>
             </div>
 
-            {/* Right icon box */}
             {icon && (
                 <div
                     style={{
@@ -261,7 +244,7 @@ function KPICard({ title, value, unit, trend, bg, accent, icon }: any) {
                         alignItems: 'center',
                         justifyContent: 'center',
                         borderRadius: '8px',
-                        backgroundColor: '#ffffff33' // subtle overlay
+                        backgroundColor: '#ffffff33'
                     }}
                 >
                     {icon}

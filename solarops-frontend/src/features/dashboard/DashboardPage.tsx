@@ -106,8 +106,8 @@ const DashboardPage = () => {
 							margin={{
 								top: 20,
 								right: 0,
-								left: 40, // 1. Increased from 0 to 40 to create a "gutter" for the title
-								bottom: 20, // 2. Increased to give the X-Axis title space as well
+								left: 40,
+								bottom: 20,
 							}}
 						>
 							<CartesianGrid strokeDasharray="3 3" />
@@ -117,7 +117,6 @@ const DashboardPage = () => {
 								tick={{ fontFamily: 'Inter, sans-serif', fontSize: 12, fill: '#94a3b8' }}
 								tickLine={false}
 								axisLine={false}
-								// Added Label
 								label={{
 									value: 'Date',
 									position: 'insideBottom',
@@ -132,7 +131,6 @@ const DashboardPage = () => {
 								tick={{ fontFamily: 'Inter, sans-serif', fontSize: 12, fill: '#94a3b8' }}
 								tickLine={false}
 								axisLine={false}
-								// Added Label
 								label={{
 									value: 'Energy (kWh)',
 									angle: -90,
@@ -155,10 +153,8 @@ const DashboardPage = () => {
 								itemStyle={{ color: '#f59e0b', fontFamily: 'Inter, sans-serif' }}
 								labelStyle={{ color: '#fff', marginBottom: '4px' }}
 
-								// 1. Add this to remove the ":" separator
 								separator=""
 
-								// 2. Keep the empty string in the return array to remove the "value" name
 								formatter={(value: number | undefined) => {
 									const formattedNumber = value !== undefined
 										? `${new Intl.NumberFormat('en-US', {
@@ -188,7 +184,6 @@ const DashboardPage = () => {
 					gap: 2,
 					flexWrap: 'wrap',
 					p: 0,
-					// 🔥 Stretch children to match the height of the tallest one
 					alignItems: 'stretch',
 				}}
 			>
@@ -196,11 +191,10 @@ const DashboardPage = () => {
 					sx={{
 						flex: '1 1 300px',
 						minWidth: 320,
-						display: 'flex', // Add this
-						flexDirection: 'column', // Add this
+						display: 'flex',
+						flexDirection: 'column',
 					}}
 				>
-					{/* Ensure the card itself takes up 100% of the parent's height */}
 					<LiveAlertCard />
 				</Box>
 
@@ -209,9 +203,8 @@ const DashboardPage = () => {
 						mb: 20,
 						flex: '5 1 600px',
 						minWidth: 800,
-						display: 'flex', // Add this
-						flexDirection: 'column', // Add this
-						// Removed mb: 20 as it might push the layout weirdly
+						display: 'flex',
+						flexDirection: 'column',
 					}}
 				>
 					<InverterHealth />

@@ -4,10 +4,6 @@ import { createRoot } from "react-dom/client";
 import { reportFetchMap } from "./reportFetchMap";
 import { reportRenderMap } from "./reportRenderMap";
 
-/**
- * Enhanced Multi-page PDF Export that avoids splitting rows
- * across page boundaries.
- */
 export const exportMultiPagePdf = async (
     reportType: string,
     filters: any
@@ -30,8 +26,6 @@ export const exportMultiPagePdf = async (
         const root = createRoot(container);
         const ReportComponent = reportRenderMap[reportType as keyof typeof reportRenderMap];
 
-        // LOGIC: Page 1 gets fewer rows because it has the Header. 
-        // Subsequent pages get more rows because they are just table.
         const rowsFirstPage = 12; 
         const rowsOtherPages = 22; 
         
@@ -44,7 +38,6 @@ export const exportMultiPagePdf = async (
             
             const chunk = allData.slice(currentIndex, currentIndex + limit);
 
-            // Pass the isFirstPage flag to the component
             root.render(ReportComponent(chunk, isFirstPage));
 
             await new Promise((res) => setTimeout(res, 600));

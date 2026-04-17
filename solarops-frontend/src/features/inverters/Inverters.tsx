@@ -1,8 +1,7 @@
 import SolarDataGrid from "@/utils/SolarDataGrid";
 import { Box, Button, Typography, IconButton } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
-import { type GridColDef, type GridRenderCellParams } from '@mui/x-data-grid';
-import SolarChip from "@/utils/SolarStatusChip";
+import { type GridColDef } from '@mui/x-data-grid';
 import InverterDrawer from "@/components/kpi/InverterDrawer";
 import { fetchData } from "@/utils/fetch";
 import { BACKEND_URLS } from "@/backendUrls";
@@ -14,8 +13,6 @@ import DeleteModal from "@/utils/deleteModal";
 import StatusChip from "@/utils/SolarStatusChip";
 import Dashtwo from "@/components/dashtwo/Dashtwo";
 import { useNavigate } from "react-router-dom";
-// import { GridValueFormatterParams } from '@mui/x-data-grid';
-// import InvtDrwer from "@/components/kpi/invtDrwer";
 
 export type Inverter = {
    id: string
@@ -37,7 +34,6 @@ const inverterStatusConfig = {
 
 const Inverters = () => {
 
-   const navigate = useNavigate();
    const [selectedInverter, setSelectedInverter] = useState<any>(null);
    const [selectedRowIds, setSelectedRowIds] = useState<number[]>([]);
    const [inverterData, setInverterData] = useState<Inverter[]>([]);
@@ -171,7 +167,7 @@ const Inverters = () => {
             { method: "DELETE" }
          );
 
-         await fetchInverters(); // refresh list
+         await fetchInverters();
       } catch (err) {
          console.error("Delete failed:", err);
       }

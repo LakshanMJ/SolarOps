@@ -1,5 +1,5 @@
 import { Box, Stack, Typography } from '@mui/material';
-import { Link } from 'react-router-dom'; // Import Link
+import { Link } from 'react-router-dom';
 
 export default function Header() {
 	return (
@@ -11,7 +11,7 @@ export default function Header() {
 				px: 3,
 				boxSizing: 'border-box',
 				borderBottom: '1px solid',
-				borderColor: 'rgba(255, 255, 255, 0.1)', // Matches your dark theme better
+				borderColor: 'rgba(255, 255, 255, 0.1)',
 				bgcolor: '#0B1220',
 			}}
 		>
@@ -21,19 +21,18 @@ export default function Header() {
 				justifyContent="space-between"
 				height="100%"
 			>
-				{/* Wrap the Logo and Text in a Link */}
 				<Box
 					component={Link}
-					to="/dashboard" // Your dashboard route
+					to="/dashboard"
 					sx={{
 						display: 'flex',
 						alignItems: 'center',
 						gap: 1.5,
-						textDecoration: 'none', // Removes the default link underline
-						color: 'inherit',        // Keeps the text white
+						textDecoration: 'none',
+						color: 'inherit',
 						transition: 'opacity 0.2s',
 						'&:hover': {
-							opacity: 0.8,         // Subtle visual feedback
+							opacity: 0.8,
 						},
 					}}
 				>
@@ -48,11 +47,11 @@ export default function Header() {
 						}}
 					/>
 					<Typography
-						variant="h5" // Bumped up slightly for a better logo feel
+						variant="h5"
 						sx={{
 							fontWeight: 800,
 							letterSpacing: -0.5,
-							fontSize: '1.4rem' // Nice and bold for the brand name
+							fontSize: '1.4rem'
 						}}
 					>
 						SolarOps

@@ -17,8 +17,6 @@ const createSvgIcon = (url: string) =>
         popupAnchor: [0, -40],
     });
 
-
-
 export default function SitesMap({ sites }: any) {
     return (
         <MapContainer
@@ -42,16 +40,16 @@ export default function SitesMap({ sites }: any) {
                             fontFamily: 'Inter, sans-serif',
                             backgroundColor: '#1e293b',
                             color: '#fff',
-                            padding: '10px 14px', // Reduced top/bottom, increased left/right
+                            padding: '10px 14px',
                             display: 'flex',
                             flexDirection: 'column',
-                            gap: '8px' // Controlled spacing between elements
+                            gap: '8px'
                         }}>
                             <h3 style={{
                                 fontSize: '14px',
                                 margin: 0,
                                 color: '#fff',
-                                whiteSpace: 'nowrap', // Forces the name onto one line
+                                whiteSpace: 'nowrap',
                                 borderBottom: '1px solid rgba(255,255,255,0.1)',
                                 paddingBottom: '6px',
                                 overflow: 'hidden',
@@ -64,7 +62,7 @@ export default function SitesMap({ sites }: any) {
                                 listStyle: 'none',
                                 padding: 0,
                                 margin: 0,
-                                display: 'flex', // Switched to flex-row to save height
+                                display: 'flex',
                                 justifyContent: 'space-between',
                                 fontSize: '12px',
                                 gap: '15px'
@@ -85,7 +83,7 @@ export default function SitesMap({ sites }: any) {
                                 onClick={() => (window.location.href = `/sites/${site.id}`)}
                                 style={{
                                     width: '100%',
-                                    padding: '6px 0', // Slimmer button height
+                                    padding: '6px 0',
                                     borderRadius: '4px',
                                     border: 'none',
                                     backgroundColor: '#f59e0b',

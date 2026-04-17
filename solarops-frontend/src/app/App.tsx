@@ -16,7 +16,6 @@ function App() {
             }}
         >
             <Header />
-
             <GlobalStyles
                 styles={{
                     /* Webkit browsers (Chrome, Edge, Opera) */
@@ -42,7 +41,6 @@ function App() {
                     },
                 }}
             />
-
             <Box
                 sx={{
                     display: 'flex',
@@ -50,9 +48,7 @@ function App() {
                     minHeight: 0,
                 }}
             >
-
                 <SideBar />
-
                 <Box
                     component="main"
                     sx={{

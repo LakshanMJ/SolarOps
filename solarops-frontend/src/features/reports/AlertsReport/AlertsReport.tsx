@@ -3,7 +3,6 @@ import {
     Box,
     Card,
     Typography,
-    Button,
     Divider,
     MenuItem,
     ToggleButtonGroup,
@@ -32,8 +31,6 @@ export default function AlertsReport({ metaData, sites }: any) {
         fromDate: null as Dayjs | null,
         toDate: null as Dayjs | null,
     });
-
-    const reportRef = useRef<HTMLDivElement>(null);
 
     const handleFilterChange = (field: string, value: any) => {
         setFilters((prev) => ({
@@ -69,14 +66,9 @@ export default function AlertsReport({ metaData, sites }: any) {
 
     return (
         <Box sx={{ width: '100%', margin: "left", mt: 4 }}>
-
             <Card sx={{ p: 3, borderRadius: 3, bgcolor: "#334155" }}>
-
-                {/* Header */}
-
                 <Box display="flex" alignItems="center" gap={2}>
                     <WarningIcon sx={{ fontSize: 40 }} />
-
                     <Box>
                         <Typography
                             variant="h6"
@@ -85,7 +77,6 @@ export default function AlertsReport({ metaData, sites }: any) {
                         >
                             Alerts Report
                         </Typography>
-
                         <Typography
                             variant="body2"
                             sx={{ color: "var(--text-secondary)", mt: 0 }}
@@ -163,17 +154,17 @@ export default function AlertsReport({ metaData, sites }: any) {
                             aria-label="Platform"
                             sx={{
                                 display: "flex",
-                                gap: 2, // spacing between buttons
+                                gap: 2,
                                 "& .MuiToggleButton-root": {
                                     minWidth: 80,
                                     height: 35,
                                     borderRadius: 1,
-                                    border: "1px solid",          // ✅ add border
-                                    borderColor: "primary.main",  // optional: border color
+                                    border: "1px solid",
+                                    borderColor: "primary.main",
                                     textTransform: "none",
                                 },
                                 "& .MuiToggleButton-root.Mui-selected": {
-                                    backgroundColor: "primary.dark", // selected color
+                                    backgroundColor: "primary.dark",
                                     color: "white",
                                 },
                             }}

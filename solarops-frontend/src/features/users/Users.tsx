@@ -1,7 +1,7 @@
 import { BACKEND_URLS } from "@/backendUrls";
 import { fetchData } from "@/utils/fetch";
 import SolarDataGrid from "@/utils/SolarDataGrid";
-import { Box, Button, IconButton, Tab, Tabs, Typography } from "@mui/material";
+import { Box, Button, IconButton, Tab, Typography } from "@mui/material";
 import type { GridColDef } from "@mui/x-data-grid";
 import { useEffect, useMemo, useState } from "react";
 import TabContext from '@mui/lab/TabContext';
@@ -106,7 +106,7 @@ const users = () => {
 					<IconButton
 						size="small"
 						onClick={() => {
-							setSelectedUser(params.row);    // use drawerrrrr
+							setSelectedUser(params.row);
 							setSelectedRowIds([params.id as number]);
 						}}
 					>

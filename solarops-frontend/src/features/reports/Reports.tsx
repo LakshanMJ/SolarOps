@@ -17,9 +17,7 @@ const Reports = () => {
                 `${BACKEND_URLS.METADATA}`,
                 { method: "GET" }
             );
-
             setMetaData(res)
-            
         } catch (error) {
             console.error("Metadata fetch error:", error);
             throw error;

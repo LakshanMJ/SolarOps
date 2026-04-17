@@ -1,5 +1,4 @@
 @import "tailwindcss";
 
-/* Ensure Tailwind v4 scans this app for classnames */
 @source "../../**/*.{js,ts,jsx,tsx}";
 

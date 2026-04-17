@@ -11,7 +11,7 @@ export const exportReportFile = (
     reportType: ReportType,
     filters: Record<string, any> = {}
 ) => {
-    // alert('in')
+
     try {
         const params = new URLSearchParams(
             Object.entries(filters).reduce((acc, [key, val]) => {
@@ -36,8 +36,6 @@ export const exportReportFile = (
             }, {} as Record<string, string>)
         ).toString();
 
-        // ✅ Hardcoded format=csv
-        // const url = `${BACKEND_URLS.REPORTS_BASE}/${reportType}/export?format=csv&${params}`;
         const url = `${BACKEND_URLS.REPORTS_BASE}/${reportType}/export${params ? `?${params}` : ""}`;
 
         fetch(url)
@@ -52,7 +50,7 @@ export const exportReportFile = (
             .then((blob) => {
                 const link = document.createElement("a");
                 link.href = window.URL.createObjectURL(blob);
-                link.download = getTimestampedFilename(`${reportType}_report`, "csv"); // ✅ always csv
+                link.download = getTimestampedFilename(`${reportType}_report`, "csv");
                 link.click();
                 window.URL.revokeObjectURL(link.href);
             })

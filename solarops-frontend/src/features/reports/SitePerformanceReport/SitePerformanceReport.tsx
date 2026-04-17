@@ -126,17 +126,17 @@ export default function SitePerformanceReport({ metaData, sites }: any) {
                             aria-label="Platform"
                             sx={{
                                 display: "flex",
-                                gap: 2, // spacing between buttons
+                                gap: 2,
                                 "& .MuiToggleButton-root": {
                                     minWidth: 80,
                                     height: 35,
                                     borderRadius: 1,
-                                    border: "1px solid",          // ✅ add border
-                                    borderColor: "primary.main",  // optional: border color
+                                    border: "1px solid",
+                                    borderColor: "primary.main",
                                     textTransform: "none",
                                 },
                                 "& .MuiToggleButton-root.Mui-selected": {
-                                    backgroundColor: "primary.dark", // selected color
+                                    backgroundColor: "primary.dark",
                                     color: "white",
                                 },
                             }}

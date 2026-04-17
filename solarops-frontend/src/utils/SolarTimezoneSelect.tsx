@@ -1,4 +1,3 @@
-// import TimezoneSelect, { type ITimezoneOption } from 'react-timezone-select';
 import { useTheme } from '@mui/material/styles';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import TimezoneSelect, { type ITimezoneOption } from 'react-timezone-select';
@@ -14,7 +13,6 @@ interface Props {
 const SolarTimezoneSelect = ({ value, onChange, label }: Props) => {
     const theme = useTheme();
 
-    // Map your MUI theme values to the react-select style object
     const customStyles = {
         control: (base: any, state: any) => ({
             ...base,
@@ -57,12 +55,12 @@ const SolarTimezoneSelect = ({ value, onChange, label }: Props) => {
         }),
         menuPortal: (base: any) => ({
             ...base,
-            zIndex: 9999, // 🔥 ensures it sits above everything
+            zIndex: 9999,
         }),
 
         menu: (base: any) => ({
             ...base,
-            backgroundColor: "#1B2535", // solid like your 2nd image
+            backgroundColor: "#1B2535",
             borderRadius: "8px",
             marginTop: "6px",
             overflow: "hidden",
@@ -87,7 +85,7 @@ const SolarTimezoneSelect = ({ value, onChange, label }: Props) => {
                     : "#1B2535",
             color: state.isSelected ? "#000000" : "#ffffff",
             cursor: "pointer",
-            fontFamily: theme.typography.fontFamily, // 👈 Inter
+            fontFamily: theme.typography.fontFamily,
         }),
         menuList: (base: any) => ({
             ...base,

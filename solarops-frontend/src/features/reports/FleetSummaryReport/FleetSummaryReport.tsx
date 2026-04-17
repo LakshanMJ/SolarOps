@@ -3,7 +3,6 @@ import {
     Box,
     Card,
     Typography,
-    Button,
     Divider,
     Alert,
     ToggleButtonGroup,
@@ -109,17 +108,17 @@ export default function FleetSummaryReport(metaData: any) {
                             aria-label="Platform"
                             sx={{
                                 display: "flex",
-                                gap: 2, // spacing between buttons
+                                gap: 2,
                                 "& .MuiToggleButton-root": {
                                     minWidth: 80,
                                     height: 35,
                                     borderRadius: 1,
-                                    border: "1px solid",          // ✅ add border
-                                    borderColor: "primary.main",  // optional: border color
+                                    border: "1px solid",
+                                    borderColor: "primary.main",
                                     textTransform: "none",
                                 },
                                 "& .MuiToggleButton-root.Mui-selected": {
-                                    backgroundColor: "primary.dark", // selected color
+                                    backgroundColor: "primary.dark",
                                     color: "white",
                                 },
                             }}
@@ -149,26 +148,19 @@ export default function FleetSummaryReport(metaData: any) {
                     <SolarExportCsvButton
                         onClick={() => {
                             const { fromDate, toDate } = filters;
-
-                            // Check if both dates are provided
                             if (!fromDate || !toDate) {
                                 alert("Please select both From and To dates before exporting.");
                                 return;
                             }
-
-                            // Optional: check that fromDate is before toDate
                             const from = new Date(fromDate);
                             const to = new Date(toDate);
                             if (from > to) {
                                 alert("From Date cannot be after To Date.");
                                 return;
                             }
-
-                            // All good → call export
                             exportReportFile("fleet-summary", filters);
                         }}
                     />
-
                     <SolarExportPdfButton
                         onClick={() => handleExportPdf("fleet-summary", filters)}
                     />
