@@ -7,15 +7,13 @@ function randomBetween(min: number, max: number) {
 }
 
 function simulateAcOutput(capacityKw: number, irradiance: number) {
-  const noise = randomBetween(-0.05, 0.05); // ±5%
+  const noise = randomBetween(-0.05, 0.05);
   return Math.max(0, capacityKw * (irradiance / 1000) * (1 + noise));
 }
 
 async function main() {
-  console.log("📦 Backfilling telemetry (last 7 days)...");
-
+  console.log("Backfilling telemetry (last 7 days)...");
   const inverters = await prisma.inverter.findMany();
-
   const now = new Date();
   const startDate = new Date(now);
   startDate.setDate(now.getDate() - 7);
@@ -23,7 +21,6 @@ async function main() {
   for (const inverter of inverters) {
     const telemetryBatch: any[] = [];
     const capacity = inverter.capacityKw;
-
     for (
       let d = new Date(startDate);
       d <= now;
@@ -35,9 +32,8 @@ async function main() {
       let acOutput = 0;
       let tempC = randomBetween(24, 32);
 
-      // Daytime: 6 AM – 6 PM
       if (hour >= 6 && hour <= 18) {
-        irradiance = randomBetween(400, 1000); // W/m²
+        irradiance = randomBetween(400, 1000);
         acOutput = simulateAcOutput(capacity, irradiance);
         tempC += (irradiance / 1000) * 6;
       }
@@ -50,7 +46,6 @@ async function main() {
         irradiance: Number(irradiance.toFixed(1)),
       });
 
-      // Insert in chunks to avoid memory bloat
       if (telemetryBatch.length >= 500) {
         await prisma.telemetry.createMany({
           data: telemetryBatch,
@@ -60,7 +55,6 @@ async function main() {
       }
     }
 
-    // Insert any remaining rows
     if (telemetryBatch.length > 0) {
       await prisma.telemetry.createMany({
         data: telemetryBatch,
@@ -68,15 +62,14 @@ async function main() {
       });
     }
 
-    console.log(`✅ Backfilled inverter ${inverter.modelType}`);
+    console.log(`Backfilled inverter ${inverter.modelType}`);
   }
-
-  console.log("🎉 Backfill complete.");
+  console.log("Backfill complete.");
 }
 
 main()
   .catch((e) => {
-    console.error("❌ Backfill failed:", e);
+    console.error("Backfill failed:", e);
     process.exit(1);
   })
   .finally(async () => {

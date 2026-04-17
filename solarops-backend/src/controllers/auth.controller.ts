@@ -19,7 +19,7 @@ export const login = async (req: Request, res: Response) => {
     const roles = user.roles.map(r => r.name);
 
     const token = jwt.sign(
-      { userId: user.id, roles }, // note plural
+      { userId: user.id, roles },
       process.env.JWT_SECRET!,
       { expiresIn: "7d" }
     );

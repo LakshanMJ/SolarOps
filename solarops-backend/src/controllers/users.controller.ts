@@ -15,7 +15,6 @@ export async function getUsers(req: Request, res: Response) {
 export async function getUsersById(req: Request, res: Response) {
   try {
     const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
-
     const data = await getUsersByIdService(id);
     res.json(data);
   } catch (error) {
@@ -48,7 +47,6 @@ export async function deleteUser(req: Request<{ id: string }>, res: Response) {
 
 export async function getCurrentUser(req: Request, res: Response) {
   try {
-    // Assuming your auth middleware adds the user ID to req.user.id
     const userId = req.user.id;
     const data = await getUsersByIdService(userId);
     res.json(data);

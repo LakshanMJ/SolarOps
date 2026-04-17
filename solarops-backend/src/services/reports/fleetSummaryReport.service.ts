@@ -6,17 +6,17 @@ export async function getFleetSummaryData(query: any) {
     const fromDate = query.fromDate ? new Date(query.fromDate) : new Date();
     const toDate = query.toDate ? new Date(query.toDate) : new Date();
 
-    // 1️⃣ Total Sites
+    // Total Sites
     const totalSites = await prisma.site.count({
         where: { deletedAt: null }
     });
 
-    // 2️⃣ Total Inverters
+    // Total Inverters
     const totalInverters = await prisma.inverter.count({
         where: { deletedAt: null }
     });
 
-    // 3️⃣ Active Alerts (time-bound + open)
+    // Active Alerts (time-bound + open)
     const activeAlerts = await prisma.alert.count({
         where: {
             status: AlertStatus.Open,
@@ -27,7 +27,7 @@ export async function getFleetSummaryData(query: any) {
         }
     });
 
-    // 4️⃣ Online / Offline Inverters (use inverter.status)
+    // Online / Offline Inverters
     const online = await prisma.inverter.count({
         where: {
             status: InverterStatus.Online,
@@ -42,7 +42,7 @@ export async function getFleetSummaryData(query: any) {
         }
     });
 
-    // 5️⃣ Total Output (time-based)
+    // Total Output (time-based)
     const outputAgg = await prisma.telemetry.aggregate({
         where: {
             timestamp: { gte: fromDate, lte: toDate }
@@ -51,7 +51,7 @@ export async function getFleetSummaryData(query: any) {
     });
     const totalOutput = outputAgg._sum.acOutputKw ?? 0;
 
-    // 6️⃣ Average PR (time-based)
+    // Average PR (time-based)
     // Simplified PR = Total Output / Total Capacity of all inverters
     const inverterCapacity = await prisma.inverter.aggregate({
         _sum: { capacityKw: true }

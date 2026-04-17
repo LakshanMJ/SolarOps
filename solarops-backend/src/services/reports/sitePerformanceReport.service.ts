@@ -7,90 +7,90 @@ import { calculateAlertRate, calculateDowntime, energyProducedKwh } from "../../
 import { prisma } from "../../db/prisma.js";
 
 export async function getSitePerformanceData(query: any) {
-  const { siteId, fromDate, toDate } = query;
+    const { siteId, fromDate, toDate } = query;
 
-  if (!siteId) throw new Error("SITE_ID_REQUIRED");
+    if (!siteId) throw new Error("SITE_ID_REQUIRED");
 
-  const site = await prisma.site.findUnique({
-    where: { id: siteId },
-    select: {
-      id: true,
-      name: true,
-      region: true,
-      peakCapacityMw: true,
-
-      inverters: {
+    const site = await prisma.site.findUnique({
+        where: { id: siteId },
         select: {
-          id: true,
-          status: true,
+            id: true,
+            name: true,
+            region: true,
+            peakCapacityMw: true,
 
-          telemetry: {
-            where: {
-              timestamp: {
-                gte: fromDate ? new Date(fromDate) : undefined,
-                lte: toDate ? new Date(toDate) : undefined,
-              },
-            },
-            select: {
-              acOutputKw: true,
-              irradiance: true,
-            },
-          },
+            inverters: {
+                select: {
+                    id: true,
+                    status: true,
 
-          alerts: {
-            where: {
-              createdAt: {
-                gte: fromDate ? new Date(fromDate) : undefined,
-                lte: toDate ? new Date(toDate) : undefined,
-              },
+                    telemetry: {
+                        where: {
+                            timestamp: {
+                                gte: fromDate ? new Date(fromDate) : undefined,
+                                lte: toDate ? new Date(toDate) : undefined,
+                            },
+                        },
+                        select: {
+                            acOutputKw: true,
+                            irradiance: true,
+                        },
+                    },
+
+                    alerts: {
+                        where: {
+                            createdAt: {
+                                gte: fromDate ? new Date(fromDate) : undefined,
+                                lte: toDate ? new Date(toDate) : undefined,
+                            },
+                        },
+                        select: {
+                            id: true,
+                            status: true,
+                        },
+                    },
+                },
             },
-            select: {
-              id: true,
-              status: true,
-            },
-          },
         },
-      },
-    },
-  });
+    });
 
-  if (!site) throw new Error("SITE_NOT_FOUND");
+    if (!site) throw new Error("SITE_NOT_FOUND");
 
-  const activeInverters = activeInverterCount(site.inverters);
-  const alertsCount = unresolvedAlertsCount(site.inverters);
-  const avgPR = calculateAveragePRPerSite(site.inverters);
-  const health = calculateSiteHealth(site.inverters);
+    const activeInverters = activeInverterCount(site.inverters);
+    const alertsCount = unresolvedAlertsCount(site.inverters);
+    const avgPR = calculateAveragePRPerSite(site.inverters);
+    const health = calculateSiteHealth(site.inverters);
 
-  const avgOutput =
-    site.inverters
-      .flatMap((inv) => inv.telemetry)
-      .reduce((sum, t) => sum + (t.acOutputKw || 0), 0) /
-    (site.inverters.flatMap((inv) => inv.telemetry).length || 1);
+    const avgOutput =
+        site.inverters
+            .flatMap((inv) => inv.telemetry)
+            .reduce((sum, t) => sum + (t.acOutputKw || 0), 0) /
+        (site.inverters.flatMap((inv) => inv.telemetry).length || 1);
 
-  const energyProduced = await energyProducedKwh(
-    siteId,
-    new Date(fromDate),
-    new Date(toDate)
-  );
+    const energyProduced = await energyProducedKwh(
+        siteId,
+        new Date(fromDate),
+        new Date(toDate)
+    );
 
-  const downtime = await calculateDowntime(site.inverters);
+    const downtime = await calculateDowntime(site.inverters);
 
-  const alertRate = await calculateAlertRate(alertsCount, activeInverters);
+    const alertRate = await calculateAlertRate(alertsCount, activeInverters);
 
-  return {
-    siteName: site.name,
-    region: site.region,
-    capacityMw: site.peakCapacityMw,
-    totalInverters: site.inverters.length,
+    return {
+        siteName: site.name,
+        region: site.region,
+        capacityMw: site.peakCapacityMw,
+        totalInverters: site.inverters.length,
 
-    activeInverters,
-    alertsCount,
-    avgOutputKw: +avgOutput.toFixed(2),
-    avgPR: +avgPR.toFixed(1),
-    health,
+        activeInverters,
+        alertsCount,
+        avgOutputKw: +avgOutput.toFixed(2),
+        avgPR: +avgPR.toFixed(1),
+        health,
 
-    energyProducedKwh: +energyProduced.toFixed(2),
-    downtimePercent: +downtime.toFixed(2),
-    alertRate: Number(alertRate.toFixed(2)),
-  };
+        energyProducedKwh: +energyProduced.toFixed(2),
+        downtimePercent: +downtime.toFixed(2),
+        alertRate: Number(alertRate.toFixed(2)),
+    };
 }

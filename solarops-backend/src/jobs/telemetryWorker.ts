@@ -1,4 +1,3 @@
-// src/jobs/telemetryWorker.ts
 
 import { PrismaClient, InverterStatus, AlertSeverity } from '@prisma/client'
 import cron from 'node-cron'
@@ -6,22 +5,20 @@ import { evaluateTelemetry, TelemetryInput } from '../services/ruleEngine.servic
 
 const prisma = new PrismaClient()
 
-/* =========================================================
-   UTILITIES
-========================================================= */
+
+// UTILITIES
 
 function randomBetween(min: number, max: number) {
   return Math.random() * (max - min) + min
 }
 
 function simulateAcOutput(capacityKw: number, irradiance: number) {
-  const noise = randomBetween(-0.05, 0.05) // ±5%
+  const noise = randomBetween(-0.05, 0.05)
   return Math.max(0, capacityKw * (irradiance / 1000) * (1 + noise))
 }
 
-/* =========================================================
-   STATUS RANKING
-========================================================= */
+
+// STATUS RANKING
 
 const statusRank: Record<InverterStatus, number> = {
   [InverterStatus.Online]: 0,
@@ -34,17 +31,15 @@ function isWorse(newStatus: InverterStatus, oldStatus: InverterStatus) {
   return statusRank[newStatus] > statusRank[oldStatus]
 }
 
-/* =========================================================
-   RANDOM STATUS TRANSITIONS (SIMULATION)
-========================================================= */
+// RANDOM STATUS TRANSITIONS (SIMULATION)
 
 function randomStatusTransition(current: InverterStatus): InverterStatus {
   const roll = Math.random()
 
   switch (current) {
     case InverterStatus.Online:
-      if (roll < 0.01) return InverterStatus.Critical   // 1%
-      if (roll < 0.04) return InverterStatus.Degraded   // 3%
+      if (roll < 0.01) return InverterStatus.Critical
+      if (roll < 0.04) return InverterStatus.Degraded
       return InverterStatus.Online
 
     case InverterStatus.Degraded:
@@ -66,21 +61,18 @@ function randomStatusTransition(current: InverterStatus): InverterStatus {
   }
 }
 
-/* =========================================================
-   TELEMETRY INGESTION
-========================================================= */
+// TELEMETRY INGESTION
 
 async function ingestOnce() {
-  console.log('⚡ Live telemetry tick:', new Date().toISOString())
+  console.log('Live telemetry tick:', new Date().toISOString())
 
   const inverters = await prisma.inverter.findMany()
 
   if (inverters.length === 0) {
-    console.log('⚠️ No inverters found, skipping telemetry tick')
+    console.log('No inverters found, skipping telemetry tick')
     return
   }
 
-  // Align to 10-minute bucket
   const now = new Date()
   now.setSeconds(0, 0)
   now.setMilliseconds(0)
@@ -113,7 +105,7 @@ async function ingestOnce() {
     }
   })
 
-  /* ---------------- INSERT TELEMETRY ---------------- */
+// INSERT TELEMETRY
 
   await prisma.telemetry.createMany({
     data: rows,
@@ -122,7 +114,7 @@ async function ingestOnce() {
 
   console.log(`✅ Inserted live telemetry for ${rows.length} inverters`)
 
-  /* ---------------- STATUS UPDATE + ALERTS ---------------- */
+  // STATUS UPDATE + ALERTS
 
   for (const telemetry of rows) {
     const current = inverters.find(i => i.id === telemetry.inverterId)
@@ -145,29 +137,23 @@ async function ingestOnce() {
         })
       }
 
-      // Update inverter snapshot status
       await prisma.inverter.update({
         where: { id: current.id },
         data: { status: telemetry.status },
       })
     }
 
-    // Optional rule engine logic
     await evaluateTelemetry(telemetry)
   }
 }
 
-/* =========================================================
-   CRON WORKER
-========================================================= */
+// CRON WORKER
 
 export default function startTelemetryWorker() {
   console.log('🚀 Starting telemetry worker (every 10 minutes)')
 
-  // Run immediately
   ingestOnce().catch(console.error)
 
-  // Then run every 10 minutes
   cron.schedule('*/10 * * * *', () => {
     ingestOnce().catch(console.error)
   })

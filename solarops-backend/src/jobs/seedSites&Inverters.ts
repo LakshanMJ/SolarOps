@@ -46,9 +46,9 @@ async function main() {
     for (let i = 1; i <= 5; i++) {
       invertersData.push({
         siteId: site.id,
-        name: `INV-${i} ${site.name}`,         // Added name field
-        capacityKw: Math.floor(Math.random() * 1000) + 500, // 500-1500 kW
-        status: InverterStatus.Online,         // Use the enum
+        name: `INV-${i} ${site.name}`,
+        capacityKw: Math.floor(Math.random() * 1000) + 500,
+        status: InverterStatus.Online,
         installedAt: new Date(`2023-01-${i + 10}`),
       });
     }

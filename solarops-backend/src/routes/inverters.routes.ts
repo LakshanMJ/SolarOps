@@ -7,7 +7,7 @@ const router = Router()
 router.post('/', authMiddleware,createInverter)
 router.get('/', authMiddleware, getInverters)
 router.get("/:id", authMiddleware, getInverterById);
-router.put('/:id', authMiddleware, createInverter) // reuse create for updates (upsert)
+router.put('/:id', authMiddleware, createInverter)
 router.delete('/:id', authMiddleware, deleteInverter);
 
 export default router

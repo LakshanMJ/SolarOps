@@ -16,14 +16,8 @@ import rolesRoutes from './routes/roles.routes.js'
 import exportRoutes from './routes/reports.routes.js'
 import metaDataRoutes from './routes/metadata.routes.js'
 
-// __dirname replacement for ES modules
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = path.dirname(__filename);
-
-// --- ADD THIS BLOCK ---
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-// Point to the same "uploads" folder relative to this file
 const uploadsFolder = path.resolve(__dirname, '../uploads');
 
 startTelemetryWorker();

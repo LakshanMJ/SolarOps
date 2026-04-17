@@ -9,7 +9,6 @@ const startOfToday = new Date()
 const sevenDaysAgo = new Date(startOfToday)
 startOfToday.setHours(0, 0, 0, 0)
 
-
 // 1 - Total energy today (kWh)
 export async function energyTodayKwh() {
     const telemetrySum = await prisma.telemetry.aggregate({
@@ -24,12 +23,10 @@ export async function energyTodayKwh() {
     return (telemetrySum._sum.acOutputKw ?? 0) * (MINUTES_PER_TELEMETRY / 60)
 }
 
-
 // 2 - Revenue today
 export async function revenueTodayUsd() {
     return (await energyTodayKwh()) * TARIFF_PER_KWH
 }
-
 
 // 3 - Active alerts
 export async function activeAlerts() {
@@ -69,7 +66,7 @@ export async function systemHealthStatus(): Promise<'good' | 'warning' | 'critic
 
 // 7 - Average power output (kW)
 export async function avgPowerKw() {
-  const result = await prisma.$queryRaw<{ avg_output: number }[]>`
+    const result = await prisma.$queryRaw<{ avg_output: number }[]>`
     SELECT AVG(avg_output) AS avg_output
     FROM (
       SELECT
@@ -82,17 +79,17 @@ export async function avgPowerKw() {
     ) sub
   `;
 
-  return +(result[0]?.avg_output ?? 0).toFixed(1);
+    return +(result[0]?.avg_output ?? 0).toFixed(1);
 }
 
 // 8 - Weekly energy output (last 7 days including today)
 export async function weeklyEnergy() {
-  // Adjust sevenDaysAgo to 6 days before today
-  const startDate = new Date(sevenDaysAgo);
-  startDate.setDate(startDate.getDate() - 6);
+    // Adjust sevenDaysAgo to 6 days before today
+    const startDate = new Date(sevenDaysAgo);
+    startDate.setDate(startDate.getDate() - 6);
 
-  const weeklyEnergyRaw: { day: string; date: string; energy_kw: number }[] =
-    await prisma.$queryRaw`
+    const weeklyEnergyRaw: { day: string; date: string; energy_kw: number }[] =
+        await prisma.$queryRaw`
       SELECT
         to_char(t."timestamp", 'Dy') AS day,
         to_char(t."timestamp", 'MM-DD') AS date,
@@ -103,16 +100,15 @@ export async function weeklyEnergy() {
       ORDER BY MIN(t."timestamp")
     `;
 
-  // Map to frontend-friendly format
-  const weeklyEnergy = weeklyEnergyRaw.map(r => ({
-    name: `${r.day} (${r.date})`,  // e.g., "Mon (2026-03-29)"
-    value: parseFloat(((r.energy_kw * MINUTES_PER_TELEMETRY) / 60).toFixed(2))
-  }));
+    const weeklyEnergy = weeklyEnergyRaw.map(r => ({
+        name: `${r.day} (${r.date})`,
+        value: parseFloat(((r.energy_kw * MINUTES_PER_TELEMETRY) / 60).toFixed(2))
+    }));
 
-  return weeklyEnergy;
+    return weeklyEnergy;
 }
 
-// day baseline average (kWh per day) //
+// day baseline average (kWh per day)
 export async function sevenDaybaselineEnergyKwh() {
     const baselineRaw: { total_kw: number }[] =
         await prisma.$queryRaw`
@@ -121,7 +117,6 @@ export async function sevenDaybaselineEnergyKwh() {
       FROM "Telemetry" t
       WHERE t."timestamp" >= ${sevenDaysAgo}
     `
-
     const baselineEnergyKwh =
         ((baselineRaw[0]?.total_kw ?? 0) *
             (MINUTES_PER_TELEMETRY / 60)) / 7
@@ -146,12 +141,12 @@ export async function totalEnergyStatus() {
 
 // 10 - output Deviation Status
 export async function outputDeviationStatus() {
-  const WARNING_DROP = 0.15;
-  const CRITICAL_DROP = 0.25;
+    const WARNING_DROP = 0.15;
+    const CRITICAL_DROP = 0.25;
 
-  // 🔹 7-day baseline (excluding today)
-  const baselineRaw: { avg_output: number }[] =
-    await prisma.$queryRaw`
+    // 7-day baseline (excluding today)
+    const baselineRaw: { avg_output: number }[] =
+        await prisma.$queryRaw`
       SELECT AVG(avg_output) AS avg_output
       FROM (
         SELECT
@@ -165,11 +160,11 @@ export async function outputDeviationStatus() {
       ) sub
     `;
 
-  const baseline = baselineRaw[0]?.avg_output ?? 0;
+    const baseline = baselineRaw[0]?.avg_output ?? 0;
 
-  // 🔹 Current (today)
-  const currentRaw: { avg_output: number }[] =
-    await prisma.$queryRaw`
+    // Current (today)
+    const currentRaw: { avg_output: number }[] =
+        await prisma.$queryRaw`
       SELECT AVG(avg_output) AS avg_output
       FROM (
         SELECT
@@ -182,19 +177,19 @@ export async function outputDeviationStatus() {
       ) sub
     `;
 
-  const current = currentRaw[0]?.avg_output ?? 0;
+    const current = currentRaw[0]?.avg_output ?? 0;
 
-  // 🔹 Deviation calculation
-  const deviation =
-    baseline === 0 ? 0 : (current - baseline) / baseline;
+    // Deviation calculation
+    const deviation =
+        baseline === 0 ? 0 : (current - baseline) / baseline;
 
-  let status: "good" | "warning" | "critical" = "good";
+    let status: "good" | "warning" | "critical" = "good";
 
-  if (deviation <= -CRITICAL_DROP) {
-    status = "critical";
-  } else if (deviation <= -WARNING_DROP) {
-    status = "warning";
-  }
+    if (deviation <= -CRITICAL_DROP) {
+        status = "critical";
+    } else if (deviation <= -WARNING_DROP) {
+        status = "warning";
+    }
 
-  return status;
+    return status;
 }

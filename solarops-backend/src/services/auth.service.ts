@@ -11,13 +11,13 @@ interface CreateUserPayload {
   userName: string;
   designation: string;
   employeeIdNumber: string;
-  onboardingDate: string;   // ISO string from frontend
+  onboardingDate: string;
   email: string;
   contactNumber: string;
-  assignedSites: string[];  // Array of Site IDs
-  roles: string[];           // Array of Role IDs
+  assignedSites: string[];
+  roles: string[];
   timezone: string;
-  notificationChannels: NotificationChannel[]; // Use Prisma Enum
+  notificationChannels: NotificationChannel[];
   twoFactorEnabled: boolean;
   image?: string;
 }
@@ -48,7 +48,7 @@ export const createUser = async (payload: CreateUserPayload) => {
   const tempPassword = "solar@123";
   const hashedPassword = await bcrypt.hash(tempPassword, 10);
 
-  // 3. Validate Roles and Sites exist (Efficiency: One query instead of a loop)
+  // 3. Validate Roles and Sites exist
   const [validRoles, validSites] = await Promise.all([
     prisma.role.findMany({ where: { id: { in: roles } } }),
     prisma.site.findMany({ where: { id: { in: assignedSites } } }),
@@ -67,13 +67,12 @@ export const createUser = async (payload: CreateUserPayload) => {
       userName,
       designation,
       employeeIdNumber,
-      onboardingDate: onboardingDate ? new Date(onboardingDate) : null, // Convert string to Date object
+      onboardingDate: onboardingDate ? new Date(onboardingDate) : null,
       contactNumber,
       timezone,
       notificationChannels,
       twoFactorEnabled,
       image,
-      // Many-to-Many connections
       roles: {
         connect: roles.map((id) => ({ id })),
       },
@@ -87,10 +86,10 @@ export const createUser = async (payload: CreateUserPayload) => {
       firstName: true,
       lastName: true,
       userName: true,
-      contactNumber: true, // Fixed: your select had 'phone' but model has 'contactNumber'
+      contactNumber: true,
       image: true,
       roles: { select: { name: true, id: true } },
-      assignedSites: { select: { name: true, id: true } }, // Included this for the UI
+      assignedSites: { select: { name: true, id: true } },
       isActive: true,
       createdAt: true,
     },

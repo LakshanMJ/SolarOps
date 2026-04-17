@@ -31,8 +31,7 @@ export async function calculateDowntime(inverters: any[]): number {
 
     inverters.forEach((inv) => {
         inv.telemetry.forEach((t: any) => {
-            // Only consider periods when sun is present
-            if (t.irradiance > 50) { // adjust threshold if needed
+            if (t.irradiance > 50) {
                 total++;
                 if (t.acOutputKw === 0) {
                     downtime++;
@@ -41,7 +40,7 @@ export async function calculateDowntime(inverters: any[]): number {
         });
     });
 
-    if (total === 0) return 0; // avoid division by zero
+    if (total === 0) return 0;
 
     return (downtime / total) * 100;
 }
