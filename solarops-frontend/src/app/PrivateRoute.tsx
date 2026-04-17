@@ -9,14 +9,13 @@ export default function PrivateRoute({ children }: { children: JSX.Element }) {
   useEffect(() => {
     if (!token) return setIsValid(false);
 
-    // Optional: call backend to validate token/user
     fetch("/api/auth/validate", {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(res => {
         if (res.status === 200) setIsValid(true);
         else {
-          setToken(null); // clear context
+          setToken(null);
           localStorage.removeItem("token");
           setIsValid(false);
         }
@@ -24,7 +23,7 @@ export default function PrivateRoute({ children }: { children: JSX.Element }) {
       .catch(() => setIsValid(false));
   }, [token]);
 
-  if (isValid === null) return null; // or loader
+  if (isValid === null) return null;
   if (!isValid) return <Navigate to="/login" replace />;
 
   return children;

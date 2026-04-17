@@ -9,6 +9,7 @@ import Login from '@/features/login/Login'
 import Register from '@/features/register/Register'
 import Users from '@/features/users/Users'
 import Reports from '@/features/reports/Reports'
+import ApexLogixLandingPage from '@/features/apexlogix/ApexLogixLandingPage'
 
 export const router = createBrowserRouter([
   {
@@ -17,6 +18,14 @@ export const router = createBrowserRouter([
   },
   { path: 'register',
     element: <Register />
+  },
+  {
+    path: '/apexlogix',
+    element: (
+      <PrivateRoute>
+        <ApexLogixLandingPage />
+      </PrivateRoute>
+    ),
   },
   {
     path: '/',

@@ -12,6 +12,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CreateUpdateInverter from "./CreateUpdateInverter";
 import DeleteModal from "@/utils/deleteModal";
 import StatusChip from "@/utils/SolarStatusChip";
+import Dashtwo from "@/components/dashtwo/Dashtwo";
+import { useNavigate } from "react-router-dom";
 // import { GridValueFormatterParams } from '@mui/x-data-grid';
 // import InvtDrwer from "@/components/kpi/invtDrwer";
 
@@ -35,6 +37,7 @@ const inverterStatusConfig = {
 
 const Inverters = () => {
 
+   const navigate = useNavigate();
    const [selectedInverter, setSelectedInverter] = useState<any>(null);
    const [selectedRowIds, setSelectedRowIds] = useState<number[]>([]);
    const [inverterData, setInverterData] = useState<Inverter[]>([]);
@@ -43,6 +46,7 @@ const Inverters = () => {
       show: false,
       id: null as string | null,
    });
+   const [dashtwoOpen, setDashtwoOpen] = useState(false);
 
    const columns = useMemo<GridColDef[]>(() => [
       { field: 'name', headerName: 'Inverter ID', flex: 1 },
@@ -178,17 +182,64 @@ const Inverters = () => {
    }, []);
 
    return (
-
+      <>
+      {dashtwoOpen && (
+         <Box
+            sx={{
+               position: 'fixed',
+               inset: 0,
+               zIndex: (t) => t.zIndex.modal + 2,
+               overflow: 'auto',
+            }}
+         >
+            <Dashtwo onClose={() => setDashtwoOpen(false)} />
+         </Box>
+      )}
       <Box sx={{ height: 600, width: '100%', color: '#fff' }}>
          <Typography variant="h5" gutterBottom sx={{ color: '#fff' }}>
             Inverters
          </Typography>
 
-         <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+         <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1.5, flexWrap: 'wrap', mt: 2 }}>
+            {/* <Button
+               variant="outlined"
+               onClick={() => navigate('/apexlogix')}
+               sx={{
+                  borderColor: 'rgba(0,163,255,0.7)',
+                  color: '#00A3FF',
+                  textTransform: 'none',
+                  fontWeight: 700,
+                  borderRadius: '12px',
+                  px: 2,
+                  '&:hover': {
+                     borderColor: '#00A3FF',
+                     bgcolor: 'rgba(0,163,255,0.08)',
+                  },
+               }}
+            >
+               Landing Page
+            </Button> */}
+            {/* <Button
+               variant="outlined"
+               onClick={() => setDashtwoOpen(true)}
+               sx={{
+                  borderColor: '#5D46B6',
+                  color: '#5D46B6',
+                  textTransform: 'none',
+                  fontWeight: 600,
+                  borderRadius: '12px',
+                  px: 2,
+                  '&:hover': {
+                     borderColor: '#4a3899',
+                     bgcolor: 'rgba(93, 70, 182, 0.06)',
+                  },
+               }}
+            >
+               ForShop dashboard
+            </Button> */}
             <Button
                variant="contained"
                color="primary"
-               sx={{ mt: 2 }}
                onClick={() => setActiveInverterId('new')}
             >
                Add Inverter
@@ -233,6 +284,7 @@ const Inverters = () => {
             onConfirm={handleDeleteInverter}
          />
       </Box>
+      </>
    );
 }
 
