@@ -1,4 +1,4 @@
-### Solar Ops System
+### ☀️Solar Ops System
 
 **Role:** Full Stack / Frontend Software Developer </br>
 **Stack:** React, Node.js (Express), MySQL/PostgreSQL
