@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import {
     Box,
     Card,
@@ -19,19 +19,31 @@ import dayjs from "dayjs";
 import SolarExportPdfButton from "@/utils/SolarExportPdfButton";
 import SolarExportCsvButton from "@/utils/SolarExportCsvButton";
 
-export default function FleetSummaryReport(metaData: any) {
-    const [alignment, setAlignment] = useState('');
-    const [filters, setFilters] = useState({
+type Filters = {
+    reportType: string;
+    fromDate: Dayjs | null;
+    toDate: Dayjs | null;
+};
+
+export default function FleetSummaryReport() {
+    const [alignment, setAlignment] = useState<string>("");
+    const [filters, setFilters] = useState<Filters>({
         reportType: "",
-        fromDate: null as Dayjs | null,
-        toDate: null as Dayjs | null,
+        fromDate: null,
+        toDate: null,
     });
 
-    const handleFilterChange = (key: string, value: any) => {
+    const handleFilterChange = <K extends keyof Filters>(
+        key: K,
+        value: Filters[K]
+    ) => {
         setFilters(prev => ({ ...prev, [key]: value }));
     };
 
-    const handleToggleButtonChange = (_: any, newAlignment: string | null) => {
+    const handleToggleButtonChange = (
+        _: React.MouseEvent<HTMLElement>,
+        newAlignment: string | null
+    ) => {
         if (newAlignment) setAlignment(newAlignment);
 
         const today = dayjs();
@@ -152,9 +164,18 @@ export default function FleetSummaryReport(metaData: any) {
                                 alert("Please select both From and To dates before exporting.");
                                 return;
                             }
-                            const from = new Date(fromDate);
-                            const to = new Date(toDate);
-                            if (from > to) {
+                            // const from = new Date(fromDate);
+                            // const to = new Date(toDate);
+
+                            const from = filters.fromDate ? filters.fromDate.toDate() : null;
+                            const to = filters.toDate ? filters.toDate.toDate() : null;
+
+                            // if (from > to) {
+                            //     alert("From Date cannot be after To Date.");
+                            //     return;
+                            // }
+
+                            if (from && to && from > to) {
                                 alert("From Date cannot be after To Date.");
                                 return;
                             }

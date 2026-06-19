@@ -1,10 +1,10 @@
 import { Box, Typography } from '@mui/material';
-import { type GridColDef, type GridRenderCellParams } from '@mui/x-data-grid';
+import { type GridColDef } from '@mui/x-data-grid';
 import SolarDataGrid from '@/utils/SolarDataGrid';
 import { useEffect, useState } from 'react';
 import { BACKEND_URLS } from '@/backendUrls';
-import { fetchData } from '@/utils/fetch';
 import StatusChip from '@/utils/SolarStatusChip';
+import { fetchData } from '@/utils/Fetch';
 
 
 // const updatedAlerts = alertsData.map(alert => ({
@@ -32,14 +32,19 @@ const alertSeverityStatusConfig = {
    critical: { sx: { backgroundColor: 'rgba(239,68,68,0.2)', color: '#f87171', border: '1px solid rgba(239,68,68,0.3)' } },
 };
 
+// const alertStatusConfig = {
+//    resolved: { sx: { backgroundColor: 'rgba(34,197,94,0.2)', color: '#4ade80', border: '1px solid rgba(34,197,94,0.3)' } },
+//    open: { sx: { backgroundColor: 'rgba(239,68,68,0.2)', color: '#f87171', border: '1px solid rgba(239,68,68,0.3)' } },
+// };
+
 const alertStatusConfig = {
-   resolved: { sx: { backgroundColor: 'rgba(34,197,94,0.2)', color: '#4ade80', border: '1px solid rgba(34,197,94,0.3)' } },
    open: { sx: { backgroundColor: 'rgba(239,68,68,0.2)', color: '#f87171', border: '1px solid rgba(239,68,68,0.3)' } },
+   closed: { sx: { backgroundColor: 'rgba(34,197,94,0.2)', color: '#4ade80', border: '1px solid rgba(34,197,94,0.3)' } },
 };
 
 export default function AlertsPage() {
 
-   const [alertsData, setAlertsData] = useState([])
+   const [alertsData, setAlertsData] = useState<AlertRow[]>([]);
 
    const columns: GridColDef<AlertRow>[] = [
       {
@@ -49,7 +54,7 @@ export default function AlertsPage() {
          align: 'left',
          headerAlign: 'left',
          renderCell: (params) => (
-            <StatusChip status={params.value} config={alertSeverityStatusConfig} />
+            <StatusChip status={params.value?.toLowerCase()} config={alertSeverityStatusConfig} />
          )
       },
       {
@@ -142,7 +147,7 @@ export default function AlertsPage() {
    useEffect(() => {
       async function fetchAlerts() {
          try {
-            const alertsData = await fetchData(BACKEND_URLS.ALERTS);
+            const alertsData = await fetchData<AlertRow[]>(BACKEND_URLS.ALERTS);
             setAlertsData(alertsData);
          } catch (err) {
             console.error('Failed to load alerts data:', err);

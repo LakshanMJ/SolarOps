@@ -3,7 +3,31 @@ import {
 } from 'lucide-react';
 import { Bar, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis, ComposedChart, Line } from 'recharts';
 
-const chartData = [
+type ChartItem = {
+    name: string;
+    output: number;
+    pr: number;
+};
+
+type StatCardProps = {
+    icon: React.ReactNode;
+    label: string;
+    value: string | number;
+    sub?: string;
+    color: string;
+};
+
+type KPICardProps = {
+    title: string;
+    value: string | number;
+    unit: string;
+    trend: string;
+    bg: string;
+    accent: string;
+    icon?: React.ReactNode;
+};
+
+const chartData: ChartItem[]  = [
     { name: 'Site A', output: 450, pr: 85 },
     { name: 'Site B', output: 380, pr: 92 },
     { name: 'Site C', output: 520, pr: 88 },
@@ -12,7 +36,7 @@ const chartData = [
     { name: 'Site F', output: 360, pr: 86 },
 ];
 
-export function FleetSummaryReportPdfLayout(data: any) {
+export function FleetSummaryReportPdfLayout() {
     return (
         <div
             style={{
@@ -179,7 +203,7 @@ export function FleetSummaryReportPdfLayout(data: any) {
     );
 }
 
-function StatCard({ icon, label, value, sub, color }: any) {
+function StatCard({ icon, label, value, sub, color }: StatCardProps) {
     return (
         <div style={{ padding: '15px', border: '1px solid #e5e7eb', borderRadius: '8px' }}>
             <div
@@ -203,7 +227,7 @@ function StatCard({ icon, label, value, sub, color }: any) {
     );
 }
 
-function KPICard({ title, value, unit, trend, bg, accent, icon }: any) {
+function KPICard({ title, value, unit, trend, bg, accent, icon }: KPICardProps) {
     return (
         <div
             style={{

@@ -1,9 +1,8 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import {
     Box,
     Card,
     Typography,
-    Button,
     Divider,
     MenuItem,
     Alert,
@@ -22,17 +21,36 @@ import dayjs from "dayjs";
 import SolarExportCsvButton from "@/utils/SolarExportCsvButton";
 import SolarExportPdfButton from "@/utils/SolarExportPdfButton";
 
+type Site = {
+    id: string;
+    name: string;
+};
 
-export default function SitePerformanceReport({ metaData, sites }: any) {
-    const [alignment, setAlignment] = useState('');
-    const [filters, setFilters] = useState({
+type Filters = {
+    reportType: string;
+    siteId: string;
+    fromDate: Dayjs | null;
+    toDate: Dayjs | null;
+};
+
+type Props = {
+    metaData?: unknown;
+    sites?: Site[];
+};
+
+export default function SitePerformanceReport({ metaData, sites }: Props) {
+    const [alignment, setAlignment] = useState<string>("");
+    const [filters, setFilters] = useState<Filters>({
         reportType: "",
         siteId: "",
-        fromDate: null as Dayjs | null,
-        toDate: null as Dayjs | null,
+        fromDate: null,
+        toDate: null,
     });
 
-    const handleFilterChange = (key: string, value: any) => {
+    const handleFilterChange = <K extends keyof Filters>(
+        key: K,
+        value: Filters[K]
+    ) => {
         setFilters(prev => ({ ...prev, [key]: value }));
     };
 

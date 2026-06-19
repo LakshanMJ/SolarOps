@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material';
 
-const KpiCard = ({ label, value, status }: { label: string; value: string; status?: 'good' | 'warning' | 'critical' }) => {
+const KpiCard = ({ label, value, status }: { label: string; value: string|number; status?: 'good' | 'warning' | 'critical' }) => {
     const isAlert = status === 'critical' || status === 'warning';
 
     const statusColor =

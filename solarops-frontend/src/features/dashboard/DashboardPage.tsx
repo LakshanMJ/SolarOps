@@ -13,10 +13,34 @@ import {
 import LiveAlertCard from '@/components/kpi/LiveAlertCard'
 import InverterHealth from '@/components/kpi/InverterHealth'
 import { useEffect, useState } from 'react';
-import { fetchData } from '@/utils/fetch';
+import { fetchData } from '@/utils/Fetch';
 import { BACKEND_URLS } from '@/backendUrls';
 
-const weeklyEnergy = [
+type Status = "good" | "warning" | "critical" | undefined;
+
+interface DashboardData {
+	totalEnergyTodayMWh: number;
+	totalEnergyStatus: Status;
+
+	revenueTodayUsd: number;
+	revenueStatus: Status;
+
+	activeAlerts: string | number;
+	activeAlertsStatus: Status;
+
+	systemHealthPercent: number;
+	systemHealthStatus: Status;
+
+	avgPowerKw: number;
+	outputDeviationStatus: Status;
+}
+
+interface WeeklyEnergy {
+	name: string;
+	value: number;
+}
+
+const weeklyEnergy: WeeklyEnergy[] = [
 	{
 		"name": "Tue (03-24)",
 		"value": 182450.42
@@ -49,12 +73,12 @@ const weeklyEnergy = [
 
 const DashboardPage = () => {
 
-	const [dashboardData, setDashboardData] = useState<any>(null)
+	const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
 
 	useEffect(() => {
 		async function fetchDashboardData() {
 			try {
-				const dashboardData = await fetchData(BACKEND_URLS.DASHBOARD)
+				const dashboardData = await fetchData<DashboardData>(BACKEND_URLS.DASHBOARD)
 				setDashboardData(dashboardData)
 			} catch (err) {
 				console.error('Failed to load dashboard data:', err)

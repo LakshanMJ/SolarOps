@@ -1,6 +1,12 @@
-import { Card } from '@mui/material';
+import { Card, type SxProps, type Theme } from '@mui/material';
+import type { ReactNode } from 'react';
 
-export default function ThemedCard({ children, sx }) {
+interface ThemedCardProps {
+    children: ReactNode;
+    sx?: SxProps<Theme>;
+}
+
+export default function ThemedCard({ children, sx }:ThemedCardProps) {
     return (
         <Card
             sx={{

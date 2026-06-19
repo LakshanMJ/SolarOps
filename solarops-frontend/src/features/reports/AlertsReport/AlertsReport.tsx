@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import {
     Box,
     Card,
@@ -20,26 +20,59 @@ import { exportMultiPagePdf } from "@/utils/reports/exportMultiPagePdf";
 import SolarExportPdfButton from "@/utils/SolarExportPdfButton";
 import SolarExportCsvButton from "@/utils/SolarExportCsvButton";
 
-export default function AlertsReport({ metaData, sites }: any) {
+type AlertStatus = string;
+type AlertSeverity = string;
 
-    const [alignment, setAlignment] = useState('');
-    const [filters, setFilters] = useState({
+type Site = {
+    id: string;
+    name: string;
+};
+
+type MetaData = {
+    alertStatus: AlertStatus[];
+    alertSeverity: AlertSeverity[];
+};
+
+interface AlertsReportProps {
+    metaData: MetaData;
+    sites: Site[];
+}
+
+type Filters = {
+    reportType: string;
+    status: string;
+    siteId: string;
+    severity: string;
+    fromDate: Dayjs | null;
+    toDate: Dayjs | null;
+};
+
+export default function AlertsReport({ metaData, sites }: AlertsReportProps) {
+
+    const [alignment, setAlignment] = useState<string>('');
+    const [filters, setFilters] = useState<Filters>({
         reportType: "",
         status: "",
         siteId: "",
         severity: "",
-        fromDate: null as Dayjs | null,
-        toDate: null as Dayjs | null,
+        fromDate: null,
+        toDate: null,
     });
 
-    const handleFilterChange = (field: string, value: any) => {
+    const handleFilterChange = <K extends keyof Filters>(
+        field: K,
+        value: Filters[K]
+    ) => {
         setFilters((prev) => ({
             ...prev,
             [field]: value
         }));
     };
 
-    const handleToggleButtonChange = (_: any, newAlignment: string | null) => {
+    const handleToggleButtonChange = (
+        _: React.MouseEvent<HTMLElement>,
+        newAlignment: string | null
+    ) => {
         if (newAlignment) setAlignment(newAlignment);
 
         const today = dayjs();
@@ -109,7 +142,7 @@ export default function AlertsReport({ metaData, sites }: any) {
                         onChange={(e) => handleFilterChange("siteId", e.target.value)}
                     >
                         {sites?.map((site) => (
-                            <MenuItem key={site.name} value={site.id}>
+                            <MenuItem key={site.id} value={site.id}>
                                 {site?.name}
                             </MenuItem>
                         ))}

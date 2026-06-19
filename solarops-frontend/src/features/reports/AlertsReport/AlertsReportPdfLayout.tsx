@@ -49,7 +49,25 @@ const alerts = [
     },
 ];
 
-export function AlertsReportPdfLayout({ data, isFirstPage }: any) {
+type Severity = "Critical" | "Warning" | "Info";
+type Status = "Open" | "Resolved";
+
+type AlertRow = {
+    id: string | number;
+    severity: Severity;
+    message: string;
+    inverterName: string;
+    siteName: string;
+    createdAt: string;
+    status: Status;
+};
+
+interface AlertsReportPdfLayoutProps {
+    data: AlertRow[];
+    isFirstPage: boolean;
+}
+
+export function AlertsReportPdfLayout({ data, isFirstPage }: AlertsReportPdfLayoutProps) {
     const total = alerts.length;
     const critical = alerts.filter(a => a.severity === "Critical").length;
     const open = alerts.filter(a => a.status === "Open").length;
@@ -133,7 +151,7 @@ export function AlertsReportPdfLayout({ data, isFirstPage }: any) {
                         <span>Status</span>
                     </div>
 
-                    {data.map((alert, i) => (
+                    {data.map((alert) => (
                         <div
                             key={alert.id}
                             style={{
@@ -191,7 +209,19 @@ export function AlertsReportPdfLayout({ data, isFirstPage }: any) {
     );
 }
 
-function StatCard({ label, value, icon, color, text = "#111827" }) {
+function StatCard({
+    label,
+    value,
+    icon,
+    color,
+    text = "#111827",
+}: {
+    label: string;
+    value: number;
+    icon: React.ReactNode;
+    color: string;
+    text?: string;
+}) {
     return (
         <div style={{
             padding: "15px",
@@ -220,7 +250,7 @@ function StatCard({ label, value, icon, color, text = "#111827" }) {
     );
 }
 
-function SeverityBadge({ severity }) {
+function SeverityBadge({ severity }: { severity: Severity }) {
     const isCritical = severity === "Critical";
 
     return (
@@ -242,7 +272,7 @@ function SeverityBadge({ severity }) {
     );
 }
 
-function StatusBadge({ status }) {
+function StatusBadge({ status }: { status: Status }) {
     const isOpen = status === "Open";
 
     return (

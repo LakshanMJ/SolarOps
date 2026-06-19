@@ -15,6 +15,17 @@ interface Alert {
     }
 }
 
+interface AlertResponse {
+    id: string;
+    severity: string;
+    message: string;
+    createdAt: string;
+    inverterId: string;
+    inverter: {
+        name: string;
+    };
+}
+
 const severityColor = {
     critical: 'var(--danger)',
     warning: 'var(--warning)',
@@ -27,10 +38,10 @@ export default function LiveAlertsFeed() {
     useEffect(() => {
         async function fetchAlerts() {
             try {
-                const alertData = await fetchData(BACKEND_URLS.ALERTS)
-                const mappedAlerts = alertData.map((a: any) => ({
+                const alertData = await fetchData(BACKEND_URLS.ALERTS) as AlertResponse[];
+                const mappedAlerts: Alert[] = alertData.map((a: any) => ({
                     ...a,
-                    severity: a.severity.toLowerCase(),
+                    severity: a.severity.toLowerCase() as Alert['severity'],
                 }))
                 setAlerts(mappedAlerts)
             } catch (err) {

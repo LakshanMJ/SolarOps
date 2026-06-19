@@ -14,6 +14,12 @@ export type SiteDetails = {
     health: string;
 };
 
+interface SiteDetailsDrawerProps {
+    open: boolean;
+    site: SiteDetails | null;
+    onClose: () => void;
+}
+
 const siteHealthConfig = {
     good: {
         sx: {
@@ -44,12 +50,6 @@ const siteHealthConfig = {
         },
     },
 };
-
-interface SiteDetailsDrawerProps {
-    open: boolean;
-    site: SiteDetails | null;
-    onClose: () => void;
-}
 
 const sectionTitleSx = {
     fontWeight: 900,

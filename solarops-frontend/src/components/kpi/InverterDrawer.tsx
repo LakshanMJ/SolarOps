@@ -1,7 +1,5 @@
 import { BACKEND_URLS } from '@/backendUrls';
-import LiveIndicator from '@/utils/LiveIndicator';
 import StatusChip from '@/utils/SolarStatusChip';
-import SolarStatusChip from '@/utils/SolarStatusChip';
 import { Drawer, Box, Typography, Divider } from '@mui/material';
 
 type Status = 'Online' | 'Degraded' | 'Critical' | 'Offline';
@@ -28,6 +26,8 @@ interface Inverter {
     installedAt: string;
     capacityUtilization: string;
     image: File | string | null;
+    tempC: number;
+    outputKw: number;
 }
 
 interface InverterDrawerProps {
@@ -35,7 +35,6 @@ interface InverterDrawerProps {
     inverter: Inverter | null;
     onClose: () => void;
 }
-
 
 const InverterDrawer = ({ open, inverter, onClose }: InverterDrawerProps) => {
     return (
@@ -197,7 +196,7 @@ const InverterDrawer = ({ open, inverter, onClose }: InverterDrawerProps) => {
                                 Output:
                             </Typography>
                             <Typography component="span" variant="body2" sx={{ color: '#ffffff', fontWeight: 600 }}>
-                                {inverter.currentOutput != null ? `${inverter.currentOutput} kW` : "N/A"}
+                                {inverter.outputKw != null ? `${inverter.outputKw} kW` : "N/A"}
                             </Typography>
                         </Box>
                         <Box sx={{ mb: 0.5 }}>
@@ -206,7 +205,7 @@ const InverterDrawer = ({ open, inverter, onClose }: InverterDrawerProps) => {
                             </Typography>
                             <Typography component="span" variant="body2" sx={{ color: '#ffffff', fontWeight: 600 }}>
                                 {/* {'inverter.temp' || 'N/A'} °C */}
-                                {inverter.temp != null ? `${inverter.temp}°C` : "N/A"}
+                                {inverter.tempC != null ? `${inverter.tempC}°C` : "N/A"}
                             </Typography>
                         </Box>
                         <Box sx={{ mb: 0.5 }}>

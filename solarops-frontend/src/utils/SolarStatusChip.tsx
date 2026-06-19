@@ -7,7 +7,7 @@ type StatusConfig = {
 };
 
 type StatusChipProps = {
-    status: string;
+    status?: string;
     size?: 'small' | 'medium';
     config?: Record<string, StatusConfig>;
 };
@@ -48,7 +48,7 @@ export default function StatusChip({
     size = 'small',
     config = DEFAULT_STATUS_STYLES,
 }: StatusChipProps) {
-    const key = status?.toLowerCase();
+    const key = status?.toLowerCase() ?? 'neutral';
 
     const style =
         config[key] ||
@@ -57,7 +57,7 @@ export default function StatusChip({
 
     return (
         <Chip
-            label={style?.label || status}
+            label={style?.label || status || 'Unknown'}
             size={size}
             sx={style?.sx}
         />

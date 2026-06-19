@@ -1,6 +1,6 @@
 import { FormControl, InputLabel, Select } from "@mui/material";
 import type { SelectChangeEvent } from "@mui/material";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 interface CustomSelectProps {
     label: string;

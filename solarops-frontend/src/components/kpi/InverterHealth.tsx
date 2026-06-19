@@ -2,11 +2,59 @@ import { useEffect, useState } from 'react';
 import { Box, Typography, } from '@mui/material';
 import { type GridColDef, type GridRenderCellParams } from '@mui/x-data-grid';
 import InverterDrawer from './InverterDrawer';
-import SolarChip from '@/utils/SolarStatusChip';
 import SolarDataGrid from '@/utils/SolarDataGrid';
 import { fetchData } from '@/utils/fetch';
 import { BACKEND_URLS } from '@/backendUrls';
 import StatusChip from '@/utils/SolarStatusChip';
+
+type Status = 'Online' | 'Degraded' | 'Critical' | 'Offline';
+
+// interface Inverter {
+//     id: number;
+//     name: string;
+
+//     status: Status;
+
+//     siteId: string;
+//     siteName: string;
+
+//     manufacturerId: string;
+//     manufacturerName: string;
+
+//     serialNumber: string;
+//     model: string;
+//     firmwareVersion: string;
+
+//     capacityKw: number | null;
+//     capacityUtilization: number | null;
+
+//     currentOutput: number | null;
+//     temp: number | null;
+
+//     installedAt: string;
+
+//     image: File | string | null;
+// }
+
+interface Inverter {
+    id?: string | null;
+    name: string;
+    status: Status
+    siteId: string;
+    siteName: string;
+    manufacturerId: string;
+    manufacturerName: string;
+    serialNumber: string;
+    model: string;
+    firmwareVersion: string;
+    capacityKw: number | null;
+    installedAt: string;
+    capacityUtilization: string;
+    image: File | string | null;
+    tempC: number;
+    outputKw: number;
+}
+
 
 const inverterStatusConfig = {
     online: { sx: { backgroundColor: 'rgba(34,197,94,0.2)', color: '#4ade80', border: '1px solid rgba(34,197,94,0.3)' } },
@@ -16,11 +64,11 @@ const inverterStatusConfig = {
 };
 
 export default function InverterHealthTable() {
-    const [selectedInverter, setSelectedInverter] = useState<any>(null);
+    const [selectedInverter, setSelectedInverter] = useState<Inverter | null>(null);
     const [selectedRowIds, setSelectedRowIds] = useState<number[]>([]);
-    const [inverterData, setInverterData] = useState([]);
+    const [inverterData, setInverterData] = useState<Inverter[]>([]);
 
-    const columns: GridColDef[] = [
+    const columns: GridColDef<Inverter>[] = [
         { field: 'name', headerName: 'Inverter ID', flex: 1.2 },
         { field: 'siteName', headerName: 'Site', align: 'center', headerAlign: 'center', flex: 1.2 },
         {
@@ -29,7 +77,7 @@ export default function InverterHealthTable() {
             align: 'center',
             headerAlign: 'center',
             flex: 0.9,
-            renderCell: (params) => (
+            renderCell: (params: GridRenderCellParams<Inverter, Status>) => (
                 <StatusChip status={params.value} config={inverterStatusConfig} />
             )
         },
@@ -40,7 +88,7 @@ export default function InverterHealthTable() {
             field: 'actions',
             headerName: 'Actions',
             flex: 0.9,
-            renderCell: (params) => (
+            renderCell: (params: GridRenderCellParams<Inverter>) => (
                 <Box
                     sx={{
                         width: '100%',
@@ -68,7 +116,7 @@ export default function InverterHealthTable() {
     useEffect(() => {
         async function fetchInverters() {
             try {
-                const inverterData = await fetchData(BACKEND_URLS.INVERTERS)
+                const inverterData = await fetchData<Inverter[]>(BACKEND_URLS.INVERTERS)
                 setInverterData(inverterData)
             } catch (err) {
                 console.error('Failed to load inverter data:', err)
