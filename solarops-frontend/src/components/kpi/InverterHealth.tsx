@@ -3,9 +3,10 @@ import { Box, Typography, } from '@mui/material';
 import { type GridColDef, type GridRenderCellParams } from '@mui/x-data-grid';
 import InverterDrawer from './InverterDrawer';
 import SolarDataGrid from '@/utils/SolarDataGrid';
-import { fetchData } from '@/utils/fetch';
+import { fetchData } from '@/utils/Fetch';
 import { BACKEND_URLS } from '@/backendUrls';
 import StatusChip from '@/utils/SolarStatusChip';
+import type { GridRowSelectionModel } from "@mui/x-data-grid";
 
 type Status = 'Online' | 'Degraded' | 'Critical' | 'Offline';
 
@@ -65,7 +66,11 @@ const inverterStatusConfig = {
 
 export default function InverterHealthTable() {
     const [selectedInverter, setSelectedInverter] = useState<Inverter | null>(null);
-    const [selectedRowIds, setSelectedRowIds] = useState<number[]>([]);
+    // const [selectedRowIds, setSelectedRowIds] = useState<number[]>([]);
+    const [selectedRowIds, setSelectedRowIds] = useState<GridRowSelectionModel>({
+        type: "include",
+        ids: new Set(),
+    });
     const [inverterData, setInverterData] = useState<Inverter[]>([]);
 
     const columns: GridColDef<Inverter>[] = [
@@ -100,7 +105,10 @@ export default function InverterHealthTable() {
                     }}
                     onClick={() => {
                         setSelectedInverter(params.row);
-                        setSelectedRowIds([params.id as number]);
+                        setSelectedRowIds({
+                            type: "include",
+                            ids: new Set([params.id as number]),
+                        });
                     }}
                 >
                     <Typography variant="body2" color="primary">
@@ -142,12 +150,18 @@ export default function InverterHealthTable() {
             <SolarDataGrid
                 rows={inverterData}
                 columns={columns}
-                pageSize={5}
-                rowsPerPageOptions={[5]}
-                disableSelectionOnClick
+                initialState={{
+                    pagination: {
+                        paginationModel: { pageSize: 5 },
+                    },
+                }}
+                pageSizeOptions={[5]}
+                disableRowSelectionOnClick
                 disableColumnSorting
-                selectionModel={selectedRowIds}
-                onSelectionModelChange={(newSelection) => setSelectedRowIds(newSelection)}
+                rowSelectionModel={selectedRowIds}
+                onRowSelectionModelChange={(newSelection) => {
+                    setSelectedRowIds(newSelection);
+                }}
             />
 
             <InverterDrawer

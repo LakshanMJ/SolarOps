@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Box, Typography, List, ListItem, ListItemText, ListItemIcon } from '@mui/material';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
-import { fetchData } from '@/utils/fetch';
+import { fetchData } from '@/utils/Fetch';
 import { BACKEND_URLS } from '@/backendUrls';
 
 interface Alert {

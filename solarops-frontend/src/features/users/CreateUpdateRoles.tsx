@@ -1,5 +1,5 @@
 import { BACKEND_URLS } from "@/backendUrls";
-import { fetchData } from "@/utils/fetch";
+import { fetchData } from "@/utils/Fetch";
 import {
    Box,
    Button,

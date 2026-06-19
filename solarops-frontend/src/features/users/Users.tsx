@@ -1,5 +1,5 @@
 import { BACKEND_URLS } from "@/backendUrls";
-import { fetchData } from "@/utils/fetch";
+import { fetchData } from "@/utils/Fetch";
 import SolarDataGrid from "@/utils/SolarDataGrid";
 import { Box, Button, IconButton, Tab, Typography } from "@mui/material";
 import type { GridColDef } from "@mui/x-data-grid";
@@ -14,6 +14,7 @@ import CreateUpdateUsers from "./CreateUpdateUsers";
 import DeleteModal from "@/utils/deleteModal";
 import UserDrawer from "./UserDrawer";
 import CreateUpdateRoles from "./CreateUpdateRoles";
+import type { GridRowSelectionModel } from "@mui/x-data-grid";
 
 const users = () => {
 	const [usersData, setUsersData] = useState([])
@@ -25,7 +26,10 @@ const users = () => {
 		id: null as string | null,
 	});
 	const [selectedUser, setSelectedUser] = useState<any>(null);
-	const [selectedRowIds, setSelectedRowIds] = useState<number[]>([]);
+	const [selectedRowIds, setSelectedRowIds] = useState<GridRowSelectionModel>({
+		type: "include",
+		ids: new Set(),
+	});
 
 	const [activeRoleId, setActiveRoleId] = useState<string | null>(null);
 	const [roleDeleteModal, setRoleDeleteModal] = useState({
@@ -107,7 +111,10 @@ const users = () => {
 						size="small"
 						onClick={() => {
 							setSelectedUser(params.row);
-							setSelectedRowIds([params.id as number]);
+							setSelectedRowIds({
+								type: "include",
+								ids: new Set([params.id as number]),
+							});
 						}}
 					>
 						<VisibilityIcon sx={{ color: 'white' }} fontSize="small" />
@@ -290,12 +297,15 @@ const users = () => {
 								<SolarDataGrid
 									rows={usersData}
 									columns={userColumns}
-									pageSizeOptions={[5, 10]}
-									rowsPerPageOptions={[5]}
-									selectionModel={selectedRowIds}
-									disableSelectionOnClick
+									initialState={{
+										pagination: {
+											paginationModel: { pageSize: 5 },
+										},
+									}}
+									pageSizeOptions={[5]}
+									disableRowSelectionOnClick
 									disableColumnSorting
-									initialState={{ pagination: { paginationModel: { pageSize: 5, page: 0 } } }}
+									rowSelectionModel={selectedRowIds}
 									autoHeight
 									getRowHeight={() => 'auto'}
 									sx={{
@@ -331,12 +341,15 @@ const users = () => {
 								<SolarDataGrid
 									rows={rolesData}
 									columns={roleColumns}
-									pageSizeOptions={[5, 10]}
-									rowsPerPageOptions={[5]}
-									selectionModel={selectedRowIds}
-									disableSelectionOnClick
+									initialState={{
+										pagination: {
+											paginationModel: { pageSize: 5 },
+										},
+									}}
+									pageSizeOptions={[5]}
+									disableRowSelectionOnClick
 									disableColumnSorting
-									initialState={{ pagination: { paginationModel: { pageSize: 5, page: 0 } } }}
+									rowSelectionModel={selectedRowIds}
 									autoHeight
 								/>
 								{activeRoleId && (

@@ -167,13 +167,15 @@ export default function AlertsPage() {
             <SolarDataGrid
                rows={alertsData}
                columns={columns}
-               getRowId={(row) => row.id}
-               pageSizeOptions={[5, 10]}
-               rowsPerPageOptions={[5]}
-               disableSelectionOnClick
+               initialState={{
+                    pagination: {
+                        paginationModel: { pageSize: 5 },
+                    },
+                }}
+               pageSizeOptions={[5]}
+               disableRowSelectionOnClick
                disableColumnSorting
-               initialState={{ pagination: { paginationModel: { pageSize: 5, page: 0 } } }}
-               autoHeight
+               getRowId={(row) => row.id}
             />
          </Box>
       </Box>

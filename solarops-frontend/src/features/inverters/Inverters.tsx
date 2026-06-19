@@ -11,6 +11,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CreateUpdateInverter from "./CreateUpdateInverter";
 import DeleteModal from "@/utils/deleteModal";
 import StatusChip from "@/utils/SolarStatusChip";
+import type { GridRowSelectionModel } from "@mui/x-data-grid";
 
 type Status = 'Online' | 'Degraded' | 'Critical' | 'Offline';
 
@@ -49,7 +50,10 @@ const statusMap = {
 const Inverters = () => {
 
    const [selectedInverter, setSelectedInverter] = useState<Inverter | null>(null);
-   const [selectedRowIds, setSelectedRowIds] = useState<(string | number)[]>([]);
+   const [selectedRowIds, setSelectedRowIds] = useState<GridRowSelectionModel>({
+      type: "include",
+      ids: new Set(),
+   });
    const [inverterData, setInverterData] = useState<Inverter[]>([]);
    const [activeInverterId, setActiveInverterId] = useState<string | null>(null);
    const [inverterDeleteModal, setInverterDeleteModal] = useState({
@@ -129,7 +133,10 @@ const Inverters = () => {
                   size="small"
                   onClick={() => {
                      setSelectedInverter(params.row);
-                     setSelectedRowIds([params.id as number]);
+                     setSelectedRowIds({
+                        type: "include",
+                        ids: new Set([params.id as number]),
+                     });
                   }}
                >
                   <VisibilityIcon sx={{ color: 'white' }} fontSize="small" />
@@ -212,14 +219,18 @@ const Inverters = () => {
                <SolarDataGrid
                   rows={inverterData}
                   columns={columns}
-                  pageSizeOptions={[5, 10]}
-                  rowsPerPageOptions={[5]}
-                  disableSelectionOnClick
+                  initialState={{
+                     pagination: {
+                        paginationModel: { pageSize: 5 },
+                     },
+                  }}
+                  pageSizeOptions={[5]}
+                  disableRowSelectionOnClick
                   disableColumnSorting
-                  initialState={{ pagination: { paginationModel: { pageSize: 5, page: 0 } } }}
-                  selectionModel={selectedRowIds}
-                  onSelectionModelChange={(newSelection) => setSelectedRowIds(newSelection)}
-                  autoHeight
+                  rowSelectionModel={selectedRowIds}
+                  onRowSelectionModelChange={(newSelection) => {
+                     setSelectedRowIds(newSelection);
+                  }}
                />
             </Box>
             <InverterDrawer

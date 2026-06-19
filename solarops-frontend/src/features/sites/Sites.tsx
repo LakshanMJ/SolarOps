@@ -3,7 +3,7 @@ import SitesMap from "./SitesMap";
 import { type GridColDef } from "@mui/x-data-grid";
 import SolarDataGrid from "@/utils/SolarDataGrid";
 import { useEffect, useState } from "react";
-import { fetchData } from "@/utils/fetch";
+import { fetchData } from "@/utils/Fetch";
 import { BACKEND_URLS } from "@/backendUrls";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -440,12 +440,15 @@ const Sites = () => {
                 <SolarDataGrid
                     rows={sites}
                     columns={columns}
-                    columnHeaderHeight={80}
-                    pageSizeOptions={[5, 10]}
-                    rowsPerPageOptions={[5]}
-                    disableSelectionOnClick
+                    initialState={{
+                        pagination: {
+                            paginationModel: { pageSize: 5 },
+                        },
+                    }}
+                    pageSizeOptions={[5]}
+                    disableRowSelectionOnClick
                     disableColumnSorting
-                    initialState={{ pagination: { paginationModel: { pageSize: 5, page: 0 } } }}
+                    columnHeaderHeight={80}
                     autoHeight
                 />
             </Box>

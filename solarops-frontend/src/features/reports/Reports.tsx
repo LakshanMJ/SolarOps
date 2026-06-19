@@ -3,7 +3,7 @@ import FleetSummaryReport from "./FleetSummaryReport/FleetSummaryReport";
 import SitePerformanceReport from "./SitePerformanceReport/SitePerformanceReport";
 import AlertsReport from "./AlertsReport/AlertsReport";
 import { useEffect, useState } from "react";
-import { fetchData } from "@/utils/fetch";
+import { fetchData } from "@/utils/Fetch";
 import { BACKEND_URLS } from "@/backendUrls";
 
 const Reports = () => {
