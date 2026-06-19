@@ -15,17 +15,42 @@ import DeleteModal from "@/utils/deleteModal";
 import UserDrawer from "./UserDrawer";
 import CreateUpdateRoles from "./CreateUpdateRoles";
 import type { GridRowSelectionModel } from "@mui/x-data-grid";
+import type { Dayjs } from "dayjs";
+
+interface Role {
+  id: string;
+  name: string;
+}
+
+interface User {
+	id: string;
+    firstName: string;
+    lastName: string;
+    userName: string;
+    designation: string;
+    employeeIdNumber: string;
+    onboardingDate: Dayjs | null;
+    email: string;
+    contactNumber: string;
+    assignedSites: any[];
+    roles: any[];
+    timezone: any;
+    notificationChannels: any[];
+    twoFactorEnabled: any;
+    image: any;
+    lastLoginAt?: string | Date;
+}
 
 const users = () => {
-	const [usersData, setUsersData] = useState([])
-	const [rolesData, setRolesData] = useState([])
+	const [usersData, setUsersData] = useState<User[]>([])
+	const [rolesData, setRolesData] = useState<Role[]>([])
 	const [tabValue, setTabValue] = useState('1');
 	const [activeUserId, setActiveUserId] = useState<string | null>(null);
 	const [userDeleteModal, setUserDeleteModal] = useState({
 		show: false,
 		id: null as string | null,
 	});
-	const [selectedUser, setSelectedUser] = useState<any>(null);
+	const [selectedUser, setSelectedUser] = useState<User | null>(null);
 	const [selectedRowIds, setSelectedRowIds] = useState<GridRowSelectionModel>({
 		type: "include",
 		ids: new Set(),
@@ -37,7 +62,7 @@ const users = () => {
 		id: null as string | null,
 	});
 
-	const userColumns = useMemo<GridColDef[]>(() => [
+	const userColumns = useMemo<GridColDef<User>[]>(() => [
 		{
 			field: 'userName',
 			headerName: 'User',
@@ -66,7 +91,7 @@ const users = () => {
 			field: 'roles',
 			headerName: 'Roles',
 			renderCell: (params) => {
-				const rolesArray = params.value as { id: string; name: string }[] | undefined;
+				const rolesArray = params.value as Role[] | undefined;
 				const roleNames = rolesArray?.map((r) => r.name).join(', ');
 
 				return (
@@ -147,7 +172,7 @@ const users = () => {
 		}
 	], []);
 
-	const roleColumns = useMemo<GridColDef[]>(() => [
+	const roleColumns = useMemo<GridColDef<Role>[]>(() => [
 		{
 			field: 'name',
 			headerName: 'Name',
@@ -201,7 +226,7 @@ const users = () => {
 		}
 	], []);
 
-	const handleTabValueChange = (event: React.SyntheticEvent, newValue: string) => {
+	const handleTabValueChange = (_event:any, newValue: string) => {
 		setTabValue(newValue);
 	};
 
@@ -233,7 +258,7 @@ const users = () => {
 
 	async function fetchUsers() {
 		try {
-			const usersData = await fetchData(BACKEND_URLS.USERS);
+			const usersData = await fetchData<User[]>(BACKEND_URLS.USERS);
 			setUsersData(usersData);
 		} catch (err) {
 			console.error('Failed to load users data:', err);
@@ -242,7 +267,7 @@ const users = () => {
 
 	async function fetchRoles() {
 		try {
-			const rolesData = await fetchData(BACKEND_URLS.ROLES);
+			const rolesData = await fetchData<Role[]>(BACKEND_URLS.ROLES);
 			setRolesData(rolesData);
 		} catch (err) {
 			console.error('Failed to load roles data:', err);

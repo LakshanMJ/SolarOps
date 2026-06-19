@@ -100,7 +100,7 @@ export default function AlertsPage() {
          minWidth: 150,
          align: 'left',
          headerAlign: 'center',
-         valueGetter: (value, row: AlertRow) => row?.createdAt || '',
+         valueGetter: (_, row: AlertRow) => row?.createdAt || '',
          valueFormatter: (value: string) => {
             if (!value) return '';
             const date = new Date(value);

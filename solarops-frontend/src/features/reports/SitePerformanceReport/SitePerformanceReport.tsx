@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
     Box,
     Card,
@@ -39,6 +39,8 @@ type Props = {
 };
 
 export default function SitePerformanceReport({ metaData, sites }: Props) {
+
+    metaData && console.log(metaData)
     const [alignment, setAlignment] = useState<string>("");
     const [filters, setFilters] = useState<Filters>({
         reportType: "",
@@ -198,8 +200,10 @@ export default function SitePerformanceReport({ metaData, sites }: Props) {
                                 return;
                             }
 
-                            const from = new Date(fromDate);
-                            const to = new Date(toDate);
+                            // const from = new Date(fromDate);
+                            // const to = new Date(toDate);
+                            const from = fromDate.toDate();
+                            const to = toDate.toDate();
                             if (from > to) {
                                 alert("From Date cannot be after To Date.");
                                 return;

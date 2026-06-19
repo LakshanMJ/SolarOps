@@ -97,7 +97,8 @@ const Icons = {
     ),
 };
 
-export function SitePerformanceReportPdfLayout(data: any) {
+export function SitePerformanceReportPdfLayout(data:any) {
+    data && console.log(data)
     const { siteInfo, metrics } = reportData;
     const inverterEfficiency = ((metrics.activeInverters / metrics.totalInverters) * 100).toFixed(1);
     const healthStatus = metrics.health;

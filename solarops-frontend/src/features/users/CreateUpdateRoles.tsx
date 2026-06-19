@@ -14,23 +14,36 @@ import { useEffect, useState } from "react";
 import { useToast } from "@/components/toast/ToastContext";
 import CloseIcon from "@mui/icons-material/Close";
 
+interface Role {
+   id: string | null;
+   name: string;
+}
 
-const CreateUpdateRoles = ({ open, roleId, onClose, fetchRoles }: any) => {
+interface CreateUpdateRolesProps {
+   open: boolean;
+   roleId: string;
+   onClose: (open: boolean) => void;
+   fetchRoles: () => Promise<void> | void;
+}
+
+const CreateUpdateRoles = ({
+   open,
+   roleId,
+   onClose,
+   fetchRoles,
+}: CreateUpdateRolesProps) => {
    const { addToast } = useToast();
    const isEditMode = roleId !== "new";
    const token = localStorage.getItem("token");
-   const [form, setForm] = useState<{
-      id: null;
-      name: string;
-   }>({
+   const [form, setForm] = useState<Role>({
       id: null,
-      name: ""
+      name: "",
    });
 
    useEffect(() => {
       if (!isEditMode) return;
 
-      fetchData(`${BACKEND_URLS.ROLES}/${roleId}`)
+      fetchData<Role>(`${BACKEND_URLS.ROLES}/${roleId}`)
          .then((data) => {
             setForm({
                id: data.id,

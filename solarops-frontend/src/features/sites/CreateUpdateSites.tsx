@@ -12,11 +12,46 @@ import {
     MenuItem,
     TextField,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { MapContainer, Marker, TileLayer, useMapEvents } from "react-leaflet";
 import CloseIcon from "@mui/icons-material/Close";
 
-const CreateUpdateSites = ({ open, siteId, onClose, fetchSites }: any) => {
+interface SiteForm {
+    id: string | null;
+    name: string;
+    region: string;
+    peakCapacityMw: string;
+    latitude: number | null;
+    longitude: number | null;
+}
+
+interface CreateUpdateSitesProps {
+    open: boolean;
+    siteId: string;
+    onClose: (open: boolean) => void;
+    fetchSites: () => Promise<void> | void;
+}
+
+interface MapClickHandlerProps {
+    form: SiteForm;
+    setForm: Dispatch<SetStateAction<SiteForm>>;
+}
+
+interface SiteResponse {
+    id: string;
+    name: string;
+    region: string;
+    peakCapacityMw: number;
+    latitude: number | null;
+    longitude: number | null;
+}
+
+const CreateUpdateSites = ({
+    open,
+    siteId,
+    onClose,
+    fetchSites,
+}: CreateUpdateSitesProps) => {
     const token = localStorage.getItem("token");
     const { addToast } = useToast();
     const isEditMode = siteId !== "new";
@@ -37,7 +72,7 @@ const CreateUpdateSites = ({ open, siteId, onClose, fetchSites }: any) => {
         longitude: null,
     });
 
-    const MapClickHandler = ({ setForm, form }) => {
+    const MapClickHandler = ({ setForm, form }:MapClickHandlerProps) => {
         useMapEvents({
             click(e) {
                 setForm({
@@ -54,7 +89,7 @@ const CreateUpdateSites = ({ open, siteId, onClose, fetchSites }: any) => {
     useEffect(() => {
         if (!isEditMode) return;
 
-        fetchData(`${BACKEND_URLS.SITES}/${siteId}`)
+        fetchData<SiteResponse>(`${BACKEND_URLS.SITES}/${siteId}`)
             .then((data) => {
                 setForm({
                     id: data.id,

@@ -28,35 +28,80 @@ import {
 import { useEffect, useState } from "react";
 import SolarTimezoneSelect from "@/utils/SolarTimezoneSelect";
 
-const NOTIFICATION_CHANNELS = [
-    { id: 'email', name: 'Email' },
-    { id: 'sms', name: 'SMS' },
-    { id: 'push', name: 'Push Notification' },
-    { id: 'whatsapp', name: 'WhatsApp' },
-];
+const NOTIFICATION_CHANNELS: {
+    id: NotificationChannel;
+    name: string;
+}[] = [
+        { id: "email", name: "Email" },
+        { id: "sms", name: "SMS" },
+        { id: "push", name: "Push Notification" },
+        { id: "whatsapp", name: "WhatsApp" },
+    ];
 
-const CreateUpdateUsers = ({ open, userId, onClose, fetchUsers }: any) => {
+interface CreateUpdateUsersProps {
+    open: boolean;
+    userId: string;
+    onClose: (open: boolean) => void;
+    fetchUsers: () => Promise<void> | void;
+}
+
+interface Role {
+    id: string;
+    name: string;
+}
+
+interface Site {
+    id: string;
+    name: string;
+}
+
+type NotificationChannel =
+    | "email"
+    | "sms"
+    | "push"
+    | "whatsapp";
+
+interface UserForm {
+    firstName: string;
+    lastName: string;
+    userName: string;
+    designation: string;
+    employeeIdNumber: string;
+    onboardingDate: Dayjs | null;
+    email: string;
+    contactNumber: string;
+    assignedSites: string[];
+    roles: string[];
+    timezone: string;
+    notificationChannels: NotificationChannel[];
+    twoFactorEnabled: boolean;
+    image: File | string | null;
+}
+
+interface UserFormResponse {
+    firstName: string;
+    lastName: string;
+    userName: string;
+    designation: string;
+    employeeIdNumber: string;
+    onboardingDate: string | null;
+    email: string;
+    contactNumber: string;
+    assignedSites: Site[];
+    roles: Role[];
+    timezone: string;
+    notificationChannels: NotificationChannel[];
+    twoFactorEnabled: boolean;
+    image: string | null;
+}
+
+const CreateUpdateUsers = ({ open, userId, onClose, fetchUsers }: CreateUpdateUsersProps) => {
     const { addToast } = useToast();
     const isEditMode = userId !== "new";
     const token = localStorage.getItem("token");
-    const [rolesData, setRolesData] = useState<any>([])
-    const [sites, setSites] = useState<any[]>([]);
-    const [form, setForm] = useState<{
-        firstName: string;
-        lastName: string;
-        userName: string;
-        designation: string;
-        employeeIdNumber: string;
-        onboardingDate: Dayjs | null;
-        email: string;
-        contactNumber: string;
-        assignedSites: any[];
-        roles: any[];
-        timezone: any;
-        notificationChannels: any[];
-        twoFactorEnabled: any;
-        image: any;
-    }>({
+    const [rolesData, setRolesData] = useState<Role[]>([]);
+    const [sites, setSites] = useState<Site[]>([]);
+    const [form, setForm] = useState<UserForm>({
         firstName: "",
         lastName: "",
         userName: "",
@@ -76,7 +121,7 @@ const CreateUpdateUsers = ({ open, userId, onClose, fetchUsers }: any) => {
     useEffect(() => {
         if (!isEditMode) return;
 
-        fetchData(`${BACKEND_URLS.USERS}/${userId}`)
+        fetchData<UserFormResponse>(`${BACKEND_URLS.USERS}/${userId}`)
             .then((data) => {
                 setForm({
                     firstName: data.firstName ?? "",
@@ -87,8 +132,8 @@ const CreateUpdateUsers = ({ open, userId, onClose, fetchUsers }: any) => {
                     onboardingDate: data.onboardingDate ? dayjs(data.onboardingDate) : null,
                     email: data.email ?? "",
                     contactNumber: data.contactNumber ?? "",
-                    assignedSites: data.assignedSites?.map((s: any) => s.id) ?? [],
-                    roles: data.roles?.map((r: any) => r.id) || [],
+                    assignedSites: data.assignedSites?.map((s) => s.id) ?? [],
+                    roles: data.roles?.map((r) => r.id) || [],
                     timezone: data.timezone ?? "",
                     notificationChannels: data.notificationChannels ?? [],
                     twoFactorEnabled: data.twoFactorEnabled ?? false,
@@ -173,7 +218,7 @@ const CreateUpdateUsers = ({ open, userId, onClose, fetchUsers }: any) => {
 
     async function fetchRoles() {
         try {
-            const rolesData = await fetchData(BACKEND_URLS.ROLES);
+            const rolesData = await fetchData<Role[]>(BACKEND_URLS.ROLES);
             setRolesData(rolesData);
         } catch (err) {
             console.error('Failed to load roles data:', err);
@@ -182,7 +227,7 @@ const CreateUpdateUsers = ({ open, userId, onClose, fetchUsers }: any) => {
 
     useEffect(() => {
         fetchRoles();
-        fetchData(BACKEND_URLS.SITES).then(setSites).catch(console.error);
+        fetchData<Site[]>(BACKEND_URLS.SITES).then(setSites).catch(console.error);
     }, []);
 
     return (
@@ -369,8 +414,15 @@ const CreateUpdateUsers = ({ open, userId, onClose, fetchUsers }: any) => {
                                 multiple
                                 value={form.notificationChannels}
                                 onChange={(e) => {
-                                    const value = typeof e.target.value === 'string' ? e.target.value.split(',') : e.target.value;
-                                    setForm({ ...form, notificationChannels: value });
+                                    const value =
+                                        typeof e.target.value === "string"
+                                            ? e.target.value.split(",")
+                                            : e.target.value;
+
+                                    setForm({
+                                        ...form,
+                                        notificationChannels: value as NotificationChannel[],
+                                    });
                                 }}
                                 renderValue={(selected) => (
                                     <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>

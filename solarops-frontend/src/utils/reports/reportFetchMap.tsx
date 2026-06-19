@@ -1,6 +1,11 @@
 import { BACKEND_URLS } from "@/backendUrls";
-import { fetchData } from "../fetch";
 import buildQueryParams from "./buildQueryParams";
+import { fetchData } from "../Fetch";
+
+export type ReportType =
+  | "alerts"
+  | "fleet-summary"
+  | "site-performance";
 
 export const reportFetchMap: Record<
   ReportType,

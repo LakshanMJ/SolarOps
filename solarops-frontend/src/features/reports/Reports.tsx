@@ -6,10 +6,12 @@ import { useEffect, useState } from "react";
 import { fetchData } from "@/utils/Fetch";
 import { BACKEND_URLS } from "@/backendUrls";
 
+type Site = Record<string, any>;
+
 const Reports = () => {
 
-    const [metaData, setMetaData] = useState([])
-    const [sites, setSites] = useState([]);
+    const [metaData, setMetaData] = useState<any>([])
+    const [sites, setSites] = useState<any>([]);
 
     const fetchMetadata = async () => {
         try {
@@ -26,7 +28,7 @@ const Reports = () => {
 
     const fetchSites = async () => {
         try {
-            const siteData = await fetchData(BACKEND_URLS.SITES);
+            const siteData = await fetchData<Site>(BACKEND_URLS.SITES);
             setSites(siteData);
         } catch (err) {
             console.error("Failed to load site data:", err);
@@ -54,7 +56,8 @@ const Reports = () => {
             </Typography>
 
             <Box>
-                <FleetSummaryReport metaData={metaData}/>
+                {/* <FleetSummaryReport metaData={metaData}/> */}
+                <FleetSummaryReport />
             </Box>
 
             <Box>

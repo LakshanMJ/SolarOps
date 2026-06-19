@@ -17,7 +17,25 @@ const createSvgIcon = (url: string) =>
         popupAnchor: [0, -40],
     });
 
-export default function SitesMap({ sites }: any) {
+export interface Site {
+    location:any;
+    id: string;
+    name: string;
+    region: string;
+    peakCapacityMw: number;
+    latitude: number;
+    longitude: number;
+    activeInverters: number;
+    alerts: number;
+    avgInverterPowerMw: number;
+    health: "Good" | "Warning" | "Critical" | "Unknown";
+}
+
+interface SitesMapProps {
+    sites: Site[];
+}
+
+export default function SitesMap({ sites }:SitesMapProps) {
     return (
         <MapContainer
             center={[6.9271, 79.8612]}
@@ -32,7 +50,7 @@ export default function SitesMap({ sites }: any) {
             {sites.map((site) => (
                 <Marker
                     key={site.id}
-                    position={[site.lat, site.lng]}
+                    position={[site.latitude, site.longitude]}
                     icon={createSvgIcon(healthSvg[site.health])}
                 >
                     <Popup minWidth={320} maxWidth={400} closeButton={false}>

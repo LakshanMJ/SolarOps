@@ -36,7 +36,10 @@ const chartData: ChartItem[]  = [
     { name: 'Site F', output: 360, pr: 86 },
 ];
 
-export function FleetSummaryReportPdfLayout() {
+export function FleetSummaryReportPdfLayout(data:any) {
+    
+    data && console.log('data')
+
     return (
         <div
             style={{

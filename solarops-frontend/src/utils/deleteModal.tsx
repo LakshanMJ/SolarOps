@@ -8,7 +8,6 @@ import {
     IconButton,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever'; // Added for a visual cue
 
 type DeleteModalProps = {
     open: boolean;

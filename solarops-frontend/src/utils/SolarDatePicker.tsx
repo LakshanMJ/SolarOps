@@ -9,7 +9,7 @@ interface SolarDatePickerProps {
     value: Dayjs | null;
     onChange: (value: Dayjs | null) => void;
     flex?: number;
-    size?: "small" | "medium"; // 👈 add this
+    size?: "small" | "medium";
     [key: string]: any;
 }
 

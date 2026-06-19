@@ -9,9 +9,9 @@ interface AuthContextType {
 
 export const AuthContext = createContext<AuthContextType>({
     token: null,
-    setToken: () => { },
-    login: () => { },
-    logout: () => { },
+    setToken: () => {},
+    login: () => {},
+    logout: () => {},
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -30,7 +30,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     return (
-        <AuthContext.Provider value={{ token, login, logout }}>
+        <AuthContext.Provider
+            value={{
+                token,
+                setToken,
+                login,
+                logout,
+            }}
+        >
             {children}
         </AuthContext.Provider>
     );
