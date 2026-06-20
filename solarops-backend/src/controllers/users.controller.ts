@@ -47,7 +47,7 @@ export async function deleteUser(req: Request<{ id: string }>, res: Response) {
 
 export async function getCurrentUser(req: Request, res: Response) {
   try {
-    const userId = req.user.id;
+    const userId = (req as any).user.id;
     const data = await getUsersByIdService(userId);
     res.json(data);
   } catch (error) {

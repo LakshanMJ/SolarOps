@@ -62,7 +62,7 @@ async function main() {
       });
     }
 
-    console.log(`Backfilled inverter ${inverter.modelType}`);
+    // console.log(`Backfilled inverter ${inverter.modelType}`);
   }
   console.log("Backfill complete.");
 }
