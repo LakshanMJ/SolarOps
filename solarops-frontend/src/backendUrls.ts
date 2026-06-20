@@ -3,8 +3,10 @@ const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 export const BACKEND_URLS = {
   // DASHBOARD: 'http://localhost:4000/api/dashboard',
   DASHBOARD: `${BASE_URL}/api/dashboard`,
-  INVERTERS: 'http://localhost:4000/api/inverters',
-  SITES: 'http://localhost:4000/api/sites',
+  INVERTERS: `${BASE_URL}/api/inverters`,
+  SITES: `${BASE_URL}/api/sites`,
+  // INVERTERS: 'http://localhost:4000/api/inverters',
+  // SITES: 'http://localhost:4000/api/sites',
   ALERTS: 'http://localhost:4000/api/alerts',
   MANUFACTURERS: 'http://localhost:4000/api/manufacturers',
   UPLOAD_IMAGE: "http://localhost:4000/api/upload-image/",
