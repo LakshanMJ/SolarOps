@@ -16,7 +16,7 @@ export default function PrivateRoute({ children }: { children: JSX.Element }) {
     if (!token) return setIsValid(false);
 
     // 2. Wrap it in a template literal using BASE_URL
-    fetch(`${BASE_URL}/api/auth/validate`, {
+    fetch(`${BASE_URL}/auth/validate`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(res => {
