@@ -17,6 +17,7 @@ export default function PrivateRoute({ children }: { children: JSX.Element }) {
 
     // 2. Wrap it in a template literal using BASE_URL
     fetch(`${BASE_URL}/auth/validate`, {
+      method: "POST",
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(res => {
