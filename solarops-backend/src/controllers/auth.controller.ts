@@ -29,3 +29,7 @@ export const login = async (req: Request, res: Response) => {
     res.status(401).json({ message: err.message });
   }
 };
+
+export const validate = (req, res) => {
+  res.sendStatus(200);
+};
