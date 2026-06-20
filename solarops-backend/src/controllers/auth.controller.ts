@@ -30,6 +30,6 @@ export const login = async (req: Request, res: Response) => {
   }
 };
 
-export const validate = (req, res) => {
+export const validate = (req:any, res:any) => {
   res.sendStatus(200);
 };
