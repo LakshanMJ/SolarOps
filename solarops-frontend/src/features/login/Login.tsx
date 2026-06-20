@@ -38,177 +38,195 @@ const LoginPage = () => {
 
   return (
     <Box
+  sx={{
+    height: '100vh',
+    width: '100vw',
+    display: 'flex',
+    flexDirection: { xs: 'column', md: 'row' },
+    backgroundColor: '#0f172a',
+    overflow: 'hidden',
+  }}
+>
+  {/* LEFT IMAGE */}
+  <Box
+    sx={{
+      flex: { xs: '0 0 200px', md: '0 0 35%' },
+      width: { xs: '100%', md: 'auto' },
+      height: { xs: 200, md: '100%' },
+      ml: { xs: 0, md: '10%' },
+      position: 'relative',
+      backgroundImage: 'url(login_img2.png)',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      overflow: 'hidden',
+      display: { xs: 'none', sm: 'block' }, // optional: hide on very small screens
+      '&::after': {
+        content: '""',
+        position: 'absolute',
+        inset: 0,
+        background:
+          'linear-gradient(to right, transparent 30%, #0f172a 100%), linear-gradient(to bottom, rgba(15,23,42,0) 50%, #0f172a 100%)',
+      },
+    }}
+  />
+
+  {/* RIGHT SECTION */}
+  <Box
+    sx={{
+      flex: 1,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      position: 'relative',
+      px: { xs: 2, sm: 3, md: 0 },
+      py: { xs: 4, md: 0 },
+      backgroundImage:
+        'radial-gradient(circle at 50% -20%, #1e293b 0%, #0f172a 100%)',
+    }}
+  >
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
       sx={{
-        height: '100vh',
-        width: '100vw',
+        p: { xs: 3, sm: 4, md: 5 },
+        width: '100%',
+        maxWidth: 400,
+        backgroundColor: 'rgba(30, 41, 59, 0.7)',
+        backdropFilter: 'blur(10px)',
+        borderRadius: 4,
+        border: '1px solid rgba(255, 255, 255, 0.1)',
         display: 'flex',
-        backgroundColor: '#0f172a',
-        overflow: 'hidden',
+        flexDirection: 'column',
+        alignItems: 'center',
+        zIndex: 1,
       }}
     >
-      <Box
-  sx={{
-    flex: '0 0 35%', 
-    height: '100%',
-    ml:'10%',
-    position: 'relative',
-    backgroundImage: 'url(login_img2.png)',
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    overflow: 'hidden',
-    '&::after': {
-      content: '""',
-      position: 'absolute',
-      top: 0,
-      right: 0,
-      bottom: 0,
-      width: '100%',
-      background: 'linear-gradient(to right, transparent 30%, #0f172a 1000%)',
-      zIndex: 2,
-    },
-    '&::before': {
-      content: '""',
-      position: 'absolute',
-      inset: 0,
-      background: 'linear-gradient(to bottom, rgba(15,23,42,0) 50%, #0f172a 100%)',
-      zIndex: 1,
-    }
-  }}
-/>
-
+      {/* LOGO */}
       <Box
         sx={{
-          flex: 1,
+          mb: 3,
           display: 'flex',
+          flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'center',
-          position: 'relative',
-          backgroundImage: 'radial-gradient(circle at 50% -20%, #1e293b 0%, #0f172a 100%)',
+          gap: 1,
         }}
       >
         <Box
           sx={{
-            position: 'absolute',
-            width: '400px',
-            height: '400px',
-            background: 'radial-gradient(circle, rgba(245, 158, 11, 0.05) 0%, transparent 70%)',
-            top: '20%',
-            right: '10%',
-          }}
-        />
-
-        <Box
-          component="form"
-          onSubmit={handleSubmit}
-          sx={{
-            p: 5,
-            width: '100%',
-            maxWidth: 400,
-            backgroundColor: 'rgba(30, 41, 59, 0.7)',
-            backdropFilter: 'blur(10px)',
-            borderRadius: 4,
-            border: '1px solid rgba(255, 255, 255, 0.1)',
+            width: 52,
+            height: 52,
             display: 'flex',
-            flexDirection: 'column',
             alignItems: 'center',
-            zIndex: 1,
+            justifyContent: 'center',
+            borderRadius: '12px',
           }}
         >
-          <Box sx={{ mb: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
-            <Box sx={{
-              width: 56,
-              height: 56,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderRadius: '12px',
-              backgroundColor: 'rgba(245, 158, 11, 0.1)',
-              border: '1px solid rgba(245, 158, 11, 0.3)',
-              boxShadow: '0 0 20px rgba(245, 158, 11, 0.2)'
-            }}>
-              <Box
-                component="img"
-                src="/solarops_logo.png"
-                alt="SolarOps Logo"
-                sx={{
-                  width: 42,
-                  height: 42,
-                  objectFit: 'contain',
-                }}
-              />
-            </Box>
-            <Typography variant="h5" sx={{ color: '#fff', fontWeight: 900, letterSpacing: -1 }}>
-              SolarOps
-            </Typography>
-          </Box>
-
-          <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2.5 }}>
-            <TextField
-              fullWidth
-              placeholder="User Name"
-              variant="outlined"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              InputProps={{
-                startAdornment: <InputAdornment position="start"><Mail size={18} color="#94a3b8" /></InputAdornment>,
-              }}
-              sx={inputStyles}
-            />
-
-            <TextField
-              fullWidth
-              type={showPassword ? 'text' : 'password'}
-              placeholder="Password"
-              variant="outlined"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              InputProps={{
-                startAdornment: <InputAdornment position="start"><Lock size={18} color="#94a3b8" /></InputAdornment>,
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end" sx={{ color: '#94a3b8' }}>
-                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-              sx={inputStyles}
-            />
-            {error && <Typography variant="body2" style={{ color: "red", textAlign: 'center' }}>{error}</Typography>}
-            <Typography variant="caption" sx={{ color: '#f59e0b', alignSelf: 'flex-end', cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}>
-              Forgot password?
-            </Typography>
-
-            <Button
-              fullWidth
-              variant="contained"
-              type="submit"
-              endIcon={<ArrowRight size={20} />}
-              sx={{
-                py: 1.5,
-                backgroundColor: '#f59e0b',
-                color: '#0f172a',
-                fontWeight: 700,
-                borderRadius: 2,
-                textTransform: 'none',
-                fontSize: '1rem',
-                '&:hover': {
-                  backgroundColor: '#d97706',
-                  boxShadow: '0 0 20px rgba(245, 158, 11, 0.4)',
-                },
-                transition: 'all 0.3s ease',
-              }}
-            >
-              Sign In
-            </Button>
-          </Box>
-
-          <Typography variant="body2" sx={{ mt: 4, color: '#94a3b8' }}>
-            Don't have an account? <span style={{ color: '#f59e0b', cursor: 'pointer', fontWeight: 600 }}>Contact Admin</span>
-          </Typography>
+          <Box
+            component="img"
+            src="/solarops_logo.png"
+            alt="SolarOps Logo"
+            sx={{ width: 40, height: 40 }}
+          />
         </Box>
+
+        <Typography
+          variant="h5"
+          sx={{
+            color: '#fff',
+            fontWeight: 800,
+            fontSize: { xs: '1.3rem', md: '1.5rem' },
+          }}
+        >
+          SolarOps
+        </Typography>
       </Box>
+
+      {/* FORM */}
+      <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <TextField
+          fullWidth
+          placeholder="User Name"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <Mail size={18} color="#94a3b8" />
+              </InputAdornment>
+            ),
+          }}
+          sx={inputStyles}
+        />
+
+        <TextField
+          fullWidth
+          type={showPassword ? 'text' : 'password'}
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <Lock size={18} color="#94a3b8" />
+              </InputAdornment>
+            ),
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={() => setShowPassword(!showPassword)}
+                  sx={{ color: '#94a3b8' }}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+          sx={inputStyles}
+        />
+
+        {error && (
+          <Typography sx={{ color: 'red', textAlign: 'center' }}>
+            {error}
+          </Typography>
+        )}
+
+        <Typography
+          variant="caption"
+          sx={{
+            color: '#f59e0b',
+            alignSelf: 'flex-end',
+          }}
+        >
+          Forgot password?
+        </Typography>
+
+        <Button
+          fullWidth
+          type="submit"
+          endIcon={<ArrowRight size={20} />}
+          sx={{
+            py: 1.3,
+            backgroundColor: '#f59e0b',
+            color: '#0f172a',
+            fontWeight: 700,
+            borderRadius: 2,
+            textTransform: 'none',
+            '&:hover': {
+              backgroundColor: '#d97706',
+            },
+          }}
+        >
+          Sign In
+        </Button>
+      </Box>
+
+      <Typography sx={{ mt: 3, color: '#94a3b8', fontSize: '0.85rem' }}>
+        Don't have an account?{' '}
+        <span style={{ color: '#f59e0b' }}>Contact Admin</span>
+      </Typography>
     </Box>
+  </Box>
+</Box>
   );
 };
 
