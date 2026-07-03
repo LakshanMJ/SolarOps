@@ -23,8 +23,8 @@ export interface Site {
     name: string;
     region: string;
     peakCapacityMw: number;
-    latitude: number;
-    longitude: number;
+    lat: number;
+    lng: number;
     activeInverters: number;
     alerts: number;
     avgInverterPowerMw: number;
@@ -36,6 +36,7 @@ interface SitesMapProps {
 }
 
 export default function SitesMap({ sites }:SitesMapProps) {
+    console.log(sites,'sites')
     return (
         <MapContainer
             center={[6.9271, 79.8612]}
@@ -50,7 +51,7 @@ export default function SitesMap({ sites }:SitesMapProps) {
             {sites.map((site) => (
                 <Marker
                     key={site.id}
-                    position={[site.latitude, site.longitude]}
+                    position={[site.lat, site.lng]}
                     icon={createSvgIcon(healthSvg[site.health])}
                 >
                     <Popup minWidth={320} maxWidth={400} closeButton={false}>
