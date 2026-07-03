@@ -12,9 +12,9 @@ import SiteDetailsDrawer from "@/components/kpi/SiteDetailsDrawer";
 import DeleteModal from "@/utils/deleteModal";
 import CreateUpdateSites from "./CreateUpdateSites";
 
-type Props = {
-    sites: any[];
-};
+// type Props = {
+//     sites: any[];
+// };
 
 export interface Site {
     location:any;
