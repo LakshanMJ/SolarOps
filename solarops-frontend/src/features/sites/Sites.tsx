@@ -386,9 +386,9 @@ const sites2:Site[] = [
 
 
 
-const Sites = ({sites}:Props) => {
+const Sites = () => {
 
-    // const [sites, setSites] = useState<Site[]>([]);
+    const [sites, setSites] = useState<Site[]>([]);
     const [siteDeleteModal, setSiteDeleteModal] = useState({
         show: false,
         id: null as string | null,
@@ -445,7 +445,7 @@ const Sites = ({sites}:Props) => {
         try {
             const siteData = await fetchData<any[]>(BACKEND_URLS.SITES);
             console.log(siteData)
-            // setSites(siteData);    //remove the mock data and set the api before deploying
+            setSites(siteData);
         } catch (err) {
             console.error("Failed to load site data:", err);
         }
@@ -458,14 +458,14 @@ const Sites = ({sites}:Props) => {
                 `${BACKEND_URLS.SITES}/${siteDeleteModal.id}`,
                 { method: "DELETE" }
             );
-            // await fetchSites();
+            await fetchSites();
         } catch (err) {
             console.error("Delete failed:", err);
         }
     };
 
     useEffect(() => {
-        // fetchSites();
+        fetchSites();
     }, []);
 
     return (
