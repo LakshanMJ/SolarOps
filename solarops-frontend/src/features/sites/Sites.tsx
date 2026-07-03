@@ -483,7 +483,7 @@ const Sites = () => {
                     Add Site
                 </Button>
             </Box>
-            <SitesMap sites={sites2} />
+            <SitesMap sites={sites} />
             <Box sx={{ height: 400, width: '100%', mt: 2 }}>
                 <SolarDataGrid
                     rows={sites}
