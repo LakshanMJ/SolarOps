@@ -22,8 +22,8 @@ export interface Site {
     name: string;
     region: string;
     peakCapacityMw: number;
-    latitude: number;
-    longitude: number;
+    lat: number;
+    lng: number;
     activeInverters: number;
     alerts: number;
     avgInverterPowerMw: number;
