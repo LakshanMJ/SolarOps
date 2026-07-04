@@ -15,6 +15,7 @@ import {
 import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { MapContainer, Marker, TileLayer, useMapEvents } from "react-leaflet";
 import CloseIcon from "@mui/icons-material/Close";
+import ImageUploadDropzone from "@/utils/ImageUploadDropzone";
 
 interface SiteForm {
     id: string | null;
@@ -23,6 +24,7 @@ interface SiteForm {
     peakCapacityMw: string;
     latitude: number | null;
     longitude: number | null;
+    image: File | string | null;
 }
 
 interface CreateUpdateSitesProps {
@@ -44,6 +46,7 @@ interface SiteResponse {
     peakCapacityMw: number;
     latitude: number | null;
     longitude: number | null;
+    image: File | string | null;
 }
 
 const CreateUpdateSites = ({
@@ -63,6 +66,7 @@ const CreateUpdateSites = ({
         peakCapacityMw: string;
         latitude: number | null;
         longitude: number | null;
+        image: File | string | null;
     }>({
         id: null,
         name: "",
@@ -70,9 +74,10 @@ const CreateUpdateSites = ({
         peakCapacityMw: "",
         latitude: null,
         longitude: null,
+        image: null,
     });
 
-    const MapClickHandler = ({ setForm, form }:MapClickHandlerProps) => {
+    const MapClickHandler = ({ setForm, form }: MapClickHandlerProps) => {
         useMapEvents({
             click(e) {
                 setForm({
@@ -98,19 +103,91 @@ const CreateUpdateSites = ({
                     peakCapacityMw: data.peakCapacityMw?.toString() ?? "",
                     latitude: data.latitude ?? null,
                     longitude: data.longitude ?? null,
+                    image: data.image ?? null,
                 });
             })
             .catch(console.error);
     }, [siteId]);
 
+    // const saveSite = async () => {
+    //     try {
+    //         const payload = {
+    //             name: form.name,
+    //             region: form.region,
+    //             peakCapacityMw: parseFloat(form.peakCapacityMw) || 0,
+    //             latitude: form.latitude || undefined,
+    //             longitude: form.longitude || undefined,
+    //             image:form.image
+    //         };
+
+    //         const payloadToSend = isEditMode
+    //             ? { ...payload, id: siteId }
+    //             : payload;
+
+    //         const res = await fetch(
+    //             isEditMode
+    //                 ? `${BACKEND_URLS.SITES}/${siteId}`
+    //                 : BACKEND_URLS.SITES,
+    //             {
+    //                 method: isEditMode ? "PUT" : "POST",
+    //                 headers: {
+    //                     "Content-Type": "application/json",
+    //                     "Authorization": `Bearer ${token}`
+    //                 },
+    //                 body: JSON.stringify(payloadToSend),
+    //             }
+    //         );
+
+    //         if (!res.ok) throw new Error("Failed to save site");
+
+    //         await res.json();
+
+    //         addToast({
+    //             type: "success",
+    //             title: "Success",
+    //             message: "Site saved successfully!"
+    //         });
+    //         onClose(false);
+    //         fetchSites();
+    //     } catch (err: any) {
+    //         console.error(err);
+    //         addToast({
+    //             type: "error",
+    //             title: "Error",
+    //             message: err.message || "Error saving site"
+    //         });
+    //     }
+    // };
+
     const saveSite = async () => {
         try {
+            let imageFilename: string | null = null;
+
+            // Upload image if a new file was selected
+            if (form.image instanceof File) {
+                const formData = new FormData();
+                formData.append("image", form.image);
+
+                const uploadRes = await fetch(BACKEND_URLS.UPLOAD_IMAGE, {
+                    method: "POST",
+                    body: formData,
+                });
+
+                if (!uploadRes.ok) throw new Error("Image upload failed");
+
+                const uploadData: { filename: string } = await uploadRes.json();
+                imageFilename = uploadData.filename;
+            }
+
             const payload = {
                 name: form.name,
                 region: form.region,
                 peakCapacityMw: parseFloat(form.peakCapacityMw) || 0,
                 latitude: form.latitude || undefined,
                 longitude: form.longitude || undefined,
+                image:
+                    imageFilename ||
+                    (typeof form.image === "string" ? form.image : null),
             };
 
             const payloadToSend = isEditMode
@@ -125,7 +202,7 @@ const CreateUpdateSites = ({
                     method: isEditMode ? "PUT" : "POST",
                     headers: {
                         "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
+                        Authorization: `Bearer ${token}`,
                     },
                     body: JSON.stringify(payloadToSend),
                 }
@@ -138,16 +215,21 @@ const CreateUpdateSites = ({
             addToast({
                 type: "success",
                 title: "Success",
-                message: "Site saved successfully!"
+                message: "Site saved successfully!",
             });
+
             onClose(false);
             fetchSites();
-        } catch (err: any) {
+        } catch (err) {
+            const message =
+                err instanceof Error ? err.message : "Error saving site";
+
             console.error(err);
+
             addToast({
                 type: "error",
                 title: "Error",
-                message: err.message || "Error saving site"
+                message,
             });
         }
     };
@@ -221,6 +303,12 @@ const CreateUpdateSites = ({
                             value={form.peakCapacityMw}
                             onChange={(e) =>
                                 setForm({ ...form, peakCapacityMw: e.target.value })
+                            }
+                        />
+                        <ImageUploadDropzone
+                            value={form.image}
+                            onChange={(file) =>
+                                setForm({ ...form, image: file })
                             }
                         />
                     </Box>

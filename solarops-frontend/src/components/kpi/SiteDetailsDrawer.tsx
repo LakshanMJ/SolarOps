@@ -62,6 +62,7 @@ const sectionTitleSx = {
 };
 
 const SiteDetailsDrawer = ({ open, site, onClose }: SiteDetailsDrawerProps) => {
+    console.log(site,'site')
     return (
         <Drawer anchor="right" open={open} onClose={onClose}>
             <Box sx={{ width: 340, p: 2, backgroundColor: '#273443' }}>

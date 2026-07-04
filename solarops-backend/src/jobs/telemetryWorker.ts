@@ -33,31 +33,58 @@ function isWorse(newStatus: InverterStatus, oldStatus: InverterStatus) {
 
 // RANDOM STATUS TRANSITIONS (SIMULATION)
 
-function randomStatusTransition(current: InverterStatus): InverterStatus {
-  const roll = Math.random()
+function randomStatusTransition(
+  current: InverterStatus,
+  inverterName: string
+): InverterStatus {
+  const roll = Math.random();
+  const isDemo = inverterName.toLowerCase().includes("Solar Ops – Zenith - 2,Solar Ops – Nova Plains,Kosgama 5, Athurugiriya");
 
   switch (current) {
     case InverterStatus.Online:
-      if (roll < 0.01) return InverterStatus.Critical
-      if (roll < 0.04) return InverterStatus.Degraded
-      return InverterStatus.Online
+      if (isDemo) {
+        if (roll < 0.10) return InverterStatus.Critical;
+        if (roll < 0.30) return InverterStatus.Degraded;
+        return InverterStatus.Online;
+      }
+
+      if (roll < 0.01) return InverterStatus.Critical;
+      if (roll < 0.04) return InverterStatus.Degraded;
+      return InverterStatus.Online;
 
     case InverterStatus.Degraded:
-      if (roll < 0.05) return InverterStatus.Critical
-      if (roll < 0.20) return InverterStatus.Online
-      return InverterStatus.Degraded
+      if (isDemo) {
+        if (roll < 0.20) return InverterStatus.Critical;
+        if (roll < 0.30) return InverterStatus.Online;
+        return InverterStatus.Degraded;
+      }
+
+      if (roll < 0.05) return InverterStatus.Critical;
+      if (roll < 0.20) return InverterStatus.Online;
+      return InverterStatus.Degraded;
 
     case InverterStatus.Critical:
-      if (roll < 0.05) return InverterStatus.Offline
-      if (roll < 0.20) return InverterStatus.Degraded
-      return InverterStatus.Critical
+      if (isDemo) {
+        if (roll < 0.15) return InverterStatus.Offline;
+        if (roll < 0.25) return InverterStatus.Degraded;
+        return InverterStatus.Critical;
+      }
+
+      if (roll < 0.05) return InverterStatus.Offline;
+      if (roll < 0.20) return InverterStatus.Degraded;
+      return InverterStatus.Critical;
 
     case InverterStatus.Offline:
-      if (roll < 0.20) return InverterStatus.Online
-      return InverterStatus.Offline
+      if (isDemo) {
+        if (roll < 0.10) return InverterStatus.Online;
+        return InverterStatus.Offline;
+      }
+
+      if (roll < 0.20) return InverterStatus.Online;
+      return InverterStatus.Offline;
 
     default:
-      return InverterStatus.Online
+      return InverterStatus.Online;
   }
 }
 
@@ -92,7 +119,8 @@ async function ingestOnce() {
     }
 
     const newStatus = randomStatusTransition(
-      inverter.status || InverterStatus.Online
+      inverter.status || InverterStatus.Online,
+      inverter.name
     )
 
     return {
@@ -105,14 +133,14 @@ async function ingestOnce() {
     }
   })
 
-// INSERT TELEMETRY
+  // INSERT TELEMETRY
 
   await prisma.telemetry.createMany({
     data: rows,
     skipDuplicates: true,
   })
 
-  console.log(`✅ Inserted live telemetry for ${rows.length} inverters`)
+  console.log(`Inserted live telemetry for ${rows.length} inverters`)
 
   // STATUS UPDATE + ALERTS
 
