@@ -18,8 +18,13 @@ import { BACKEND_URLS } from '@/backendUrls';
 
 type Status = "good" | "warning" | "critical" | undefined;
 
+interface WeeklyEnergy {
+	name: string;
+	value: number;
+}
+
 interface DashboardData {
-	weeklyEnergy: WeeklyEnergy;
+	weeklyEnergy: WeeklyEnergy[];
 
 	totalEnergyTodayMWh: number;
 	totalEnergyStatus: Status;
@@ -35,11 +40,6 @@ interface DashboardData {
 
 	avgPowerKw: number;
 	outputDeviationStatus: Status;
-}
-
-interface WeeklyEnergy {
-	name: string;
-	value: number;
 }
 
 const DashboardPage = () => {
