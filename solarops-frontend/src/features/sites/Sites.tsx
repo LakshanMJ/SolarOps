@@ -1,4 +1,4 @@
-import { Box, Button, IconButton, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, IconButton, Typography } from "@mui/material";
 import SitesMap from "./SitesMap";
 import { type GridColDef, type GridRenderCellParams } from "@mui/x-data-grid";
 import SolarDataGrid from "@/utils/SolarDataGrid";
@@ -17,7 +17,7 @@ import CreateUpdateSites from "./CreateUpdateSites";
 // };
 
 export interface Site {
-    location:any;
+    location: any;
     id: string;
     name: string;
     region: string;
@@ -32,6 +32,7 @@ export interface Site {
 
 const Sites = () => {
 
+    const [loading, setLoading] = useState(true);
     const [sites, setSites] = useState<Site[]>([]);
     const [siteDeleteModal, setSiteDeleteModal] = useState({
         show: false,
@@ -86,12 +87,16 @@ const Sites = () => {
     ];
 
     const fetchSites = async (): Promise<void> => {
+        setLoading(true);
+
         try {
-            const siteData = await fetchData<any[]>(BACKEND_URLS.SITES);
-            console.log(siteData)
+            const siteData = await fetchData<Site[]>(BACKEND_URLS.SITES);
+            console.log(siteData);
             setSites(siteData);
         } catch (err) {
             console.error("Failed to load site data:", err);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -112,8 +117,29 @@ const Sites = () => {
         fetchSites();
     }, []);
 
+    // if (loading) {
+    //     return <CircularProgress />;
+    // }
+
+    if (loading) {
+        return (
+            <Box
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '100vh',
+                    width: '100%',
+                }}
+            >
+                <CircularProgress />
+            </Box>
+        );
+    }
+
     return (
         <>
+
             <Typography variant="h5" gutterBottom sx={{ color: '#fff' }}>
                 Sites
             </Typography>

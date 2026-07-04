@@ -18,30 +18,31 @@ import type { GridRowSelectionModel } from "@mui/x-data-grid";
 import type { Dayjs } from "dayjs";
 
 interface Role {
-  id: string;
-  name: string;
+	id: string;
+	name: string;
 }
 
 interface User {
 	id: string;
-    firstName: string;
-    lastName: string;
-    userName: string;
-    designation: string;
-    employeeIdNumber: string;
-    onboardingDate: Dayjs | null;
-    email: string;
-    contactNumber: string;
-    assignedSites: any[];
-    roles: any[];
-    timezone: any;
-    notificationChannels: any[];
-    twoFactorEnabled: any;
-    image: any;
-    lastLoginAt?: string | Date;
+	firstName: string;
+	lastName: string;
+	userName: string;
+	designation: string;
+	employeeIdNumber: string;
+	onboardingDate: Dayjs | null;
+	email: string;
+	contactNumber: string;
+	assignedSites: any[];
+	roles: any[];
+	timezone: any;
+	notificationChannels: any[];
+	twoFactorEnabled: any;
+	image: any;
+	lastLoginAt?: string | Date;
 }
 
 const users = () => {
+	const [loading, setLoading] = useState(true);
 	const [usersData, setUsersData] = useState<User[]>([])
 	const [rolesData, setRolesData] = useState<Role[]>([])
 	const [tabValue, setTabValue] = useState('1');
@@ -226,7 +227,7 @@ const users = () => {
 		}
 	], []);
 
-	const handleTabValueChange = (_event:any, newValue: string) => {
+	const handleTabValueChange = (_event: any, newValue: string) => {
 		setTabValue(newValue);
 	};
 
@@ -257,20 +258,27 @@ const users = () => {
 	};
 
 	async function fetchUsers() {
+		setLoading(true);
+
 		try {
 			const usersData = await fetchData<User[]>(BACKEND_URLS.USERS);
 			setUsersData(usersData);
 		} catch (err) {
 			console.error('Failed to load users data:', err);
+		} finally {
+			setLoading(false);
 		}
 	}
 
 	async function fetchRoles() {
+		setLoading(true);
 		try {
 			const rolesData = await fetchData<Role[]>(BACKEND_URLS.ROLES);
 			setRolesData(rolesData);
 		} catch (err) {
 			console.error('Failed to load roles data:', err);
+		} finally {
+			setLoading(false);
 		}
 	}
 
@@ -322,6 +330,7 @@ const users = () => {
 								<SolarDataGrid
 									rows={usersData}
 									columns={userColumns}
+									loading={loading}
 									initialState={{
 										pagination: {
 											paginationModel: { pageSize: 5 },
@@ -366,6 +375,7 @@ const users = () => {
 								<SolarDataGrid
 									rows={rolesData}
 									columns={roleColumns}
+									loading={loading}
 									initialState={{
 										pagination: {
 											paginationModel: { pageSize: 5 },

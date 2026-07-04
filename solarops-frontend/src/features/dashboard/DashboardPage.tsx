@@ -73,15 +73,19 @@ const weeklyEnergy: WeeklyEnergy[] = [
 
 const DashboardPage = () => {
 
+	const [loading, setLoading] = useState(true);
 	const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
 
 	useEffect(() => {
 		async function fetchDashboardData() {
+			setLoading(true)
 			try {
 				const dashboardData = await fetchData<DashboardData>(BACKEND_URLS.DASHBOARD)
 				setDashboardData(dashboardData)
 			} catch (err) {
 				console.error('Failed to load dashboard data:', err)
+			} finally {
+				setLoading(false)
 			}
 		}
 		fetchDashboardData()
@@ -90,7 +94,7 @@ const DashboardPage = () => {
 		return () => clearInterval(interval)
 	}, [])
 
-	if (!dashboardData) {
+	if (loading) {
 		return (
 			<Box
 				sx={{

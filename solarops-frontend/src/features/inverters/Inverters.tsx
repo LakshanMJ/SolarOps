@@ -1,5 +1,5 @@
 import SolarDataGrid from "@/utils/SolarDataGrid";
-import { Box, Button, Typography, IconButton } from "@mui/material";
+import { Box, Button, Typography, IconButton, CircularProgress } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { type GridColDef } from '@mui/x-data-grid';
 import InverterDrawer from "@/components/kpi/InverterDrawer";
@@ -55,6 +55,7 @@ const Inverters = () => {
       ids: new Set(),
    });
    const [inverterData, setInverterData] = useState<Inverter[]>([]);
+   const [loading, setLoading] = useState(true);
    const [activeInverterId, setActiveInverterId] = useState<string | null>(null);
    const [inverterDeleteModal, setInverterDeleteModal] = useState({
       show: false,
@@ -171,14 +172,17 @@ const Inverters = () => {
    ], []);
 
    const fetchInverters = async () => {
-      try {
-         const inverterData = await fetchData<Inverter[]>(BACKEND_URLS.INVERTERS);
-         setInverterData(inverterData);
-      } catch (err) {
-         console.error('Failed to load inverter data:', err);
-      }
-   };
+    setLoading(true);
 
+    try {
+        const inverterData = await fetchData<Inverter[]>(BACKEND_URLS.INVERTERS);
+        setInverterData(inverterData);
+    } catch (err) {
+        console.error('Failed to load inverter data:', err);
+    } finally {
+        setLoading(false);
+    }
+};
    const handleDeleteInverter = async () => {
       if (!inverterDeleteModal.id) return;
 
@@ -219,6 +223,7 @@ const Inverters = () => {
                <SolarDataGrid
                   rows={inverterData}
                   columns={columns}
+                  loading={loading}
                   initialState={{
                      pagination: {
                         paginationModel: { pageSize: 5 },

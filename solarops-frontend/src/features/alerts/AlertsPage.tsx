@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material';
+import { Box, CircularProgress, Typography } from '@mui/material';
 import { type GridColDef } from '@mui/x-data-grid';
 import SolarDataGrid from '@/utils/SolarDataGrid';
 import { useEffect, useState } from 'react';
@@ -45,6 +45,7 @@ const alertStatusConfig = {
 export default function AlertsPage() {
 
    const [alertsData, setAlertsData] = useState<AlertRow[]>([]);
+   const [loading, setLoading] = useState(true);
 
    const columns: GridColDef<AlertRow>[] = [
       {
@@ -146,11 +147,15 @@ export default function AlertsPage() {
 
    useEffect(() => {
       async function fetchAlerts() {
+         setLoading(true);
+
          try {
             const alertsData = await fetchData<AlertRow[]>(BACKEND_URLS.ALERTS);
             setAlertsData(alertsData);
          } catch (err) {
             console.error('Failed to load alerts data:', err);
+         } finally {
+            setLoading(false);
          }
       }
 
@@ -167,11 +172,12 @@ export default function AlertsPage() {
             <SolarDataGrid
                rows={alertsData}
                columns={columns}
+               loading={loading}
                initialState={{
-                    pagination: {
-                        paginationModel: { pageSize: 5 },
-                    },
-                }}
+                  pagination: {
+                     paginationModel: { pageSize: 5 },
+                  },
+               }}
                pageSizeOptions={[5]}
                disableRowSelectionOnClick
                disableColumnSorting
