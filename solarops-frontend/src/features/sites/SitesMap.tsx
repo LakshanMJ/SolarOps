@@ -1,7 +1,6 @@
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Box, CircularProgress } from '@mui/material';
 
 const healthSvg: Record<string, string> = {
     Good: '/site_map_green_pin_good.svg',
@@ -33,7 +32,7 @@ export interface Site {
 }
 
 interface SitesMapProps {
-    sites: Site[] | null;
+    sites: Site[];
 }
 
 export default function SitesMap({ sites }: SitesMapProps) {

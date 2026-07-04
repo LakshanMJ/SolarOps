@@ -1,5 +1,5 @@
 import SolarDataGrid from "@/utils/SolarDataGrid";
-import { Box, Button, Typography, IconButton, CircularProgress } from "@mui/material";
+import { Box, Button, Typography, IconButton } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { type GridColDef } from '@mui/x-data-grid';
 import InverterDrawer from "@/components/kpi/InverterDrawer";

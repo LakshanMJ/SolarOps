@@ -1,4 +1,4 @@
-import { Box, CircularProgress, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { type GridColDef } from '@mui/x-data-grid';
 import SolarDataGrid from '@/utils/SolarDataGrid';
 import { useEffect, useState } from 'react';
