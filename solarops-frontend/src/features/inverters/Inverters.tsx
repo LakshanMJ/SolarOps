@@ -41,11 +41,11 @@ const inverterStatusConfig = {
    offline: { sx: { backgroundColor: 'rgba(107,114,128,0.2)', color: '#9ca3af', border: '1px solid rgba(107,114,128,0.3)' } },
 };
 
-const statusMap = {
-   HEALTHY: 'online',
-   WARNING: 'degraded',
-   CRITICAL: 'critical',
-} as const;
+// const statusMap = {
+//    HEALTHY: 'online',
+//    WARNING: 'degraded',
+//    CRITICAL: 'critical',
+// } as const;
 
 const Inverters = () => {
 
@@ -75,7 +75,7 @@ const Inverters = () => {
          headerAlign: 'center',
          flex: 0.8,
          renderCell: (params) => (
-            <StatusChip status={statusMap[params.value as keyof typeof statusMap]} config={inverterStatusConfig} />
+            <StatusChip status={params.value} config={inverterStatusConfig} />
          )
       },
 

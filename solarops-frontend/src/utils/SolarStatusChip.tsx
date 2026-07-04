@@ -54,7 +54,7 @@ export default function StatusChip({
         config[key] ||
         DEFAULT_STATUS_STYLES[key] ||
         DEFAULT_STATUS_STYLES['neutral'];
-
+console.log(status,'status')
     return (
         <Chip
             label={style?.label || status || 'Unknown'}
