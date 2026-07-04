@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Box, Typography, List, ListItem, ListItemText, ListItemIcon } from '@mui/material';
+import { Box, Typography, List, ListItem, ListItemText, ListItemIcon, CircularProgress } from '@mui/material';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import { fetchData } from '@/utils/Fetch';
 import { BACKEND_URLS } from '@/backendUrls';
@@ -34,9 +34,12 @@ const severityColor = {
 
 export default function LiveAlertsFeed() {
     const [alerts, setAlerts] = useState<Alert[]>([]);
+    const [loading, setLoading] = useState(false);
+
 
     useEffect(() => {
         async function fetchAlerts() {
+            setLoading(true)
             try {
                 const alertData = await fetchData(BACKEND_URLS.ALERTS) as AlertResponse[];
                 const mappedAlerts: Alert[] = alertData.map((a: any) => ({
@@ -46,6 +49,8 @@ export default function LiveAlertsFeed() {
                 setAlerts(mappedAlerts)
             } catch (err) {
                 console.error('Failed to load alert data:', err)
+            } finally {
+                setLoading(false)
             }
         }
         fetchAlerts()
@@ -75,35 +80,39 @@ export default function LiveAlertsFeed() {
                     border: '1px solid var(--border-default)',
                 }}
             >
-                <List disablePadding>
-                    {alerts.map(alert => (
-                        <ListItem key={alert.id} sx={{ py: 1 }}>
-                            <ListItemIcon sx={{ minWidth: 28 }}>
-                                <FiberManualRecordIcon
-                                    sx={{ color: severityColor[alert.severity], fontSize: 12 }}
+                {loading ? (
+                    <CircularProgress />
+                ) : (
+                    <List disablePadding>
+                        {alerts.map(alert => (
+                            <ListItem key={alert.id} sx={{ py: 1 }}>
+                                <ListItemIcon sx={{ minWidth: 28 }}>
+                                    <FiberManualRecordIcon
+                                        sx={{ color: severityColor[alert.severity], fontSize: 12 }}
+                                    />
+                                </ListItemIcon>
+
+                                <ListItemText
+                                    primary={
+                                        <Typography
+                                            variant="body2"
+                                            sx={{ color: 'var(--text-primary)', fontWeight: 500 }}
+                                        >
+                                            {alert.message}
+                                        </Typography>
+                                    }
+                                    secondary={
+                                        <Typography variant="caption" sx={{ color: '#94a3b8' }}>
+                                            {alert.createdAt.split('T')[1].split('.')[0]} | {alert?.inverter?.name}
+                                        </Typography>
+                                    }
                                 />
-                            </ListItemIcon>
+                            </ListItem>
+                        ))}
+                    </List>
+                )}
 
-                            <ListItemText
-                                primary={
-                                    <Typography
-                                        variant="body2"
-                                        sx={{ color: 'var(--text-primary)', fontWeight: 500 }}
-                                    >
-                                        {alert.message}
-                                    </Typography>
-                                }
-                                secondary={
-                                    <Typography variant="caption" sx={{ color: '#94a3b8' }}>
-                                        {alert.createdAt.split('T')[1].split('.')[0]} | {alert?.inverter?.name}
-                                    </Typography>
-                                }
-                            />
-                        </ListItem>
-                    ))}
-                </List>
-
-                {alerts.length === 0 && (
+                {!loading && alerts.length === 0 && (
                     <Typography variant="body2" sx={{ color: 'var(--text-muted)' }} align="center">
                         No active alerts
                     </Typography>

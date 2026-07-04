@@ -72,6 +72,7 @@ export default function InverterHealthTable() {
         ids: new Set(),
     });
     const [inverterData, setInverterData] = useState<Inverter[]>([]);
+    const [loading, setLoading] = useState(true);
 
     const columns: GridColDef<Inverter>[] = [
         { field: 'name', headerName: 'Inverter ID', flex: 1.2 },
@@ -123,11 +124,14 @@ export default function InverterHealthTable() {
 
     useEffect(() => {
         async function fetchInverters() {
+            setLoading(true)
             try {
                 const inverterData = await fetchData<Inverter[]>(BACKEND_URLS.INVERTERS)
                 setInverterData(inverterData)
             } catch (err) {
                 console.error('Failed to load inverter data:', err)
+            } finally {
+                setLoading(false)
             }
         }
         fetchInverters()
@@ -150,6 +154,7 @@ export default function InverterHealthTable() {
             <SolarDataGrid
                 rows={inverterData}
                 columns={columns}
+                loading={loading}
                 initialState={{
                     pagination: {
                         paginationModel: { pageSize: 5 },
