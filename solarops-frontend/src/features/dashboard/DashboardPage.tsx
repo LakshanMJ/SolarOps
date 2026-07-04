@@ -1,4 +1,4 @@
-import { Box, Stack, Typography } from '@mui/material'
+import { Box, CircularProgress, Stack, Typography } from '@mui/material'
 import KpiCard from '@/components/kpi/KpiCard'
 import ThemedCard from '@/components/ThemedCard';
 import {
@@ -90,7 +90,20 @@ const DashboardPage = () => {
 		return () => clearInterval(interval)
 	}, [])
 
-	if (!dashboardData) return <div>Loading...</div>
+	if (!dashboardData) {
+		return (
+			<Box
+				sx={{
+					display: 'flex',
+					justifyContent: 'center',
+					alignItems: 'center',
+					height: '100vh',
+				}}
+			>
+				<CircularProgress aria-label="Loading…" />
+			</Box>
+		);
+	}
 
 	return (
 		<Stack spacing={3}>
