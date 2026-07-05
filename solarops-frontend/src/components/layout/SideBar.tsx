@@ -93,7 +93,10 @@ const SideBar = () => {
                         xs: 1,
                         md: 2,
                     },
-                    py: 2,
+                    py: {
+                        xs: 1,
+                        md: 3,
+                    },
                     display: "flex",
                     flexDirection: "column",
                     gap: 0.5,
