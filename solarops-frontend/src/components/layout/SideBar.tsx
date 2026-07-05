@@ -1,33 +1,68 @@
-import { BACKEND_URLS } from '@/backendUrls';
-import { Box, Typography, Button, IconButton } from '@mui/material';
-import { useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { AlertTriangle, FileText, LayoutDashboard, MapPin, Power, Users, Zap } from 'lucide-react';
+import { BACKEND_URLS } from "@/backendUrls";
+import { Box, Typography, Button, IconButton } from "@mui/material";
+import { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import {
+    AlertTriangle,
+    FileText,
+    LayoutDashboard,
+    MapPin,
+    Power,
+    Users,
+    Zap,
+} from "lucide-react";
 
 const SideBar = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
     const menuItems = [
-        { label: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard size={20} /> },
-        { label: 'Sites', path: '/sites', icon: <MapPin size={20} /> },
-        { label: 'Inverters', path: '/inverters', icon: <Zap size={20} /> },
-        { label: 'Alerts', path: '/alerts', icon: <AlertTriangle size={20} /> },
-        { label: 'Reports', path: '/reports', icon: <FileText size={20} /> },
-        { label: 'Users and Roles', path: '/users', icon: <Users size={20} /> },
+        {
+            label: "Dashboard",
+            path: "/dashboard",
+            icon: <LayoutDashboard size={20} />,
+        },
+        {
+            label: "Sites",
+            path: "/sites",
+            icon: <MapPin size={20} />,
+        },
+        {
+            label: "Inverters",
+            path: "/inverters",
+            icon: <Zap size={20} />,
+        },
+        {
+            label: "Alerts",
+            path: "/alerts",
+            icon: <AlertTriangle size={20} />,
+        },
+        {
+            label: "Reports",
+            path: "/reports",
+            icon: <FileText size={20} />,
+        },
+        {
+            label: "Users and Roles",
+            path: "/users",
+            icon: <Users size={20} />,
+        },
     ];
 
     const [user, setUser] = useState<any>(null);
 
     useEffect(() => {
         const token = localStorage.getItem("token");
+
         if (token) {
             fetch(BACKEND_URLS.CURRENT_USER, {
-                headers: { Authorization: `Bearer ${token}` },
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
             })
-                .then(res => res.json())
-                .then(data => setUser(data))
-                .catch(err => console.error(err));
+                .then((res) => res.json())
+                .then((data) => setUser(data))
+                .catch(console.error);
         }
     }, []);
 
@@ -35,24 +70,31 @@ const SideBar = () => {
         <Box
             component="aside"
             sx={{
-                width: 260,
-                height: '100%',
-                backgroundColor: '#1E293B',
-                color: '#e5e7eb',
-                display: 'flex',
-                flexDirection: 'column',
+                width: {
+                    xs: 72,
+                    md: 260,
+                },
+                height: "100%",
+                backgroundColor: "#1E293B",
+                color: "#e5e7eb",
+                display: "flex",
+                flexDirection: "column",
                 flexShrink: 0,
-                borderRight: '1px solid #1e293b',
+                borderRight: "1px solid #1e293b",
+                transition: "width .2s ease",
             }}
         >
             <Box
                 component="nav"
                 sx={{
                     flex: 1,
-                    px: 2,
+                    px: {
+                        xs: 1,
+                        md: 2,
+                    },
                     py: 3,
-                    display: 'flex',
-                    flexDirection: 'column',
+                    display: "flex",
+                    flexDirection: "column",
                     gap: 0.5,
                 }}
             >
@@ -66,37 +108,66 @@ const SideBar = () => {
                             startIcon={item.icon}
                             onClick={() => navigate(item.path)}
                             sx={{
-                                justifyContent: 'flex-start',
-                                textTransform: 'none',
-                                px: 2,
-                                py: 1,
-                                borderRadius: 1.5,
-
-                                color: isSelected ? '#f59e0b' : '#e5e7eb',
-
-                                border: isSelected
-                                    ? '1px solid #f59e0b'
-                                    : '1px solid transparent',
-
-                                backgroundColor: isSelected
-                                    ? 'rgba(245, 158, 11, 0.08)'
-                                    : 'transparent',
-
-                                '&:hover': {
-                                    backgroundColor: isSelected
-                                        ? 'rgba(245, 158, 11, 0.12)'
-                                        : '#1e293b',
-                                    border: isSelected
-                                        ? '1px solid #f59e0b'
-                                        : '1px solid transparent',
+                                justifyContent: {
+                                    xs: "center",
+                                    md: "flex-start",
                                 },
 
-                                transition: 'all 0.15s ease',
+                                minWidth: 0,
+
+                                px: {
+                                    xs: 1,
+                                    md: 2,
+                                },
+
+                                py: 1.2,
+
+                                borderRadius: 1.5,
+
+                                textTransform: "none",
+
+                                color: isSelected
+                                    ? "#f59e0b"
+                                    : "#e5e7eb",
+
+                                border: isSelected
+                                    ? "1px solid #f59e0b"
+                                    : "1px solid transparent",
+
+                                backgroundColor: isSelected
+                                    ? "rgba(245, 158, 11, 0.08)"
+                                    : "transparent",
+
+                                "&:hover": {
+                                    backgroundColor: isSelected
+                                        ? "rgba(245,158,11,.12)"
+                                        : "#334155",
+
+                                    border: isSelected
+                                        ? "1px solid #f59e0b"
+                                        : "1px solid transparent",
+                                },
+
+                                transition: "all .15s ease",
+
+                                "& .MuiButton-startIcon": {
+                                    margin: 0,
+                                },
                             }}
                         >
-                            {item.label}
+                            <Box
+                                component="span"
+                                sx={{
+                                    display: {
+                                        xs: "none",
+                                        md: "block",
+                                    },
+                                    ml: 2,
+                                }}
+                            >
+                                {item.label}
+                            </Box>
                         </Button>
-
                     );
                 })}
             </Box>
@@ -104,20 +175,39 @@ const SideBar = () => {
             <Box
                 component="footer"
                 sx={{
-                    px: 3,
+                    px: {
+                        xs: 1,
+                        md: 3,
+                    },
                     py: 2,
-                    borderTop: "1px solid #1e293b",
+                    borderTop: "1px solid #334155",
                     display: "flex",
                     alignItems: "center",
-                    justifyContent: "space-between",
+                    justifyContent: {
+                        xs: "center",
+                        md: "space-between",
+                    },
                 }}
             >
-                <Box>
+                <Box
+                    sx={{
+                        display: {
+                            xs: "none",
+                            md: "block",
+                        },
+                    }}
+                >
                     <Typography variant="body2">
                         {user?.firstName} {user?.lastName}
                     </Typography>
-                    <Typography variant="caption" sx={{ color: "#9ca3af" }}>
-                        {user?.designation || 'N/A'}
+
+                    <Typography
+                        variant="caption"
+                        sx={{
+                            color: "#9ca3af",
+                        }}
+                    >
+                        {user?.designation || "N/A"}
                     </Typography>
                 </Box>
 
@@ -126,7 +216,9 @@ const SideBar = () => {
                         localStorage.removeItem("token");
                         window.location.reload();
                     }}
-                    sx={{ color: "#f59e0b" }}
+                    sx={{
+                        color: "#f59e0b",
+                    }}
                 >
                     <Power />
                 </IconButton>
