@@ -54,7 +54,10 @@ function App() {
                     sx={{
                         flex: 1,
                         overflowY: 'auto',
-                        p: 2,
+                        p: {
+                            xs: 5,
+                            sm: 2,
+                        },
                         minWidth: 0,
                     }}
                 >

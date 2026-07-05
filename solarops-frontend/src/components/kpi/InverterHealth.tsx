@@ -141,7 +141,8 @@ export default function InverterHealthTable() {
     }, [])
 
     return (
-        <Box sx={{ height: 400, width: '100%' }}>
+        // <Box sx={{ height: 400, width: '100%' }}>
+        <Box sx={{ width: "100%" }}>
             <Typography
                 variant="subtitle1"
                 mb={1}

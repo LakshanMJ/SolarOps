@@ -74,7 +74,7 @@ export default function LiveAlertsFeed() {
                     backgroundColor: '#334155',
                     borderRadius: 2,
                     p: 2,
-                    overflowY: 'auto',
+                    overflowY: 'hidden',
                     maxHeight: 475,
                     boxShadow: 'var(--shadow-sm)',
                     border: '1px solid var(--border-default)',
