@@ -57,7 +57,7 @@ export async function createOrUpdateSiteService(payload: {
 
         return prisma.site.update({
             where: { id },
-            data: {
+            data: { 
                 name: name ?? existingSite.name,
                 latitude:
                     latitude !== undefined
