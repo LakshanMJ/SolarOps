@@ -31,7 +31,7 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
 
     const addToast = (toast: Omit<ToastItem, "id">) => {
         const id = crypto.randomUUID();
-        const duration = toast.duration || 2000;
+        const duration = toast.duration || 1000;
         const newToast: ToastItem = { id, ...toast, duration };
 
         setToasts((prev) => [...prev, newToast]);
