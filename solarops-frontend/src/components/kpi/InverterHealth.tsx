@@ -137,7 +137,7 @@ export default function InverterHealthTable() {
     ];
 
     const mobileColumns: GridColDef<Inverter>[] = baseColumns.filter((col) =>
-        ["name", "siteName", "status", "actions"].includes(col.field)
+        ["name", "siteName", "status"].includes(col.field)
     );
 
     // const columns: GridColDef<Inverter>[] = [
