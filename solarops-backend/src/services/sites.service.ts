@@ -1,9 +1,30 @@
+import type { Prisma } from '@prisma/client'
 import { prisma } from '../db/prisma.js'
 import activeInverterCount from '../utils/activeInverterCount.js'
 import calculateAvgInverterPowerKw from '../utils/calculateAvgInverterPowerKwPerSite.js'
 import calculateAveragePRPerSite from '../utils/calculateAvgInverterPowerKwPerSite.js'
 import calculateSiteHealth from '../utils/calculateSiteHealth.js'
 import unresolvedAlertsCount from '../utils/unresolvedAlertsCount.js'
+
+type SiteWithInverters = Prisma.SiteGetPayload<{
+    select: {
+        id: true;
+        name: true;
+        latitude: true;
+        longitude: true;
+        region: true;
+        peakCapacityMw: true;
+        image: true;
+        inverters: {
+            select: {
+                id: true;
+                status: true;
+                telemetry: { select: { acOutputKw: true } };
+                alerts: { select: { id: true; status: true } };
+            }
+        };
+    }
+}>;
 
 export async function createOrUpdateSiteService(payload: {
     id?: string
@@ -75,7 +96,7 @@ export async function createOrUpdateSiteService(payload: {
 }
 
 export async function getSitesService() {
-    const sites = await prisma.site.findMany({
+    const sites: SiteWithInverters[] = await prisma.site.findMany({
         where: {
             deletedAt: null,
         },
