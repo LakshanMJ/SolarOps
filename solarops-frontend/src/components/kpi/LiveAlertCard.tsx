@@ -70,12 +70,14 @@ export default function LiveAlertsFeed() {
 
             <Box
                 sx={{
-                    width: 320,
+                    width: {
+                        xs: "100%",
+                        sm: 320,
+                    },
                     backgroundColor: '#334155',
                     borderRadius: 2,
                     p: 2,
                     overflowY: 'hidden',
-                    overflowX:'wrap',
                     maxHeight: 475,
                     boxShadow: 'var(--shadow-sm)',
                     border: '1px solid var(--border-default)',
@@ -94,10 +96,19 @@ export default function LiveAlertsFeed() {
                                 </ListItemIcon>
 
                                 <ListItemText
+                                    sx={{
+                                        minWidth: 0,
+                                    }}
                                     primary={
                                         <Typography
                                             variant="body2"
-                                            sx={{ color: 'var(--text-primary)', fontWeight: 500 }}
+                                            sx={{
+                                                color: 'var(--text-primary)',
+                                                fontWeight: 500,
+                                                wordBreak: "break-word",
+                                                whiteSpace: "normal",
+                                                overflowWrap: "anywhere",
+                                            }}
                                         >
                                             {alert.message}
                                         </Typography>
