@@ -176,6 +176,7 @@ const SideBar = () => {
             <Box
                 component="footer"
                 sx={{
+                    mt: "auto",
                     px: {
                         xs: 1,
                         md: 3,
