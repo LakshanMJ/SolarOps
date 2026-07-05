@@ -108,26 +108,37 @@ const SiteDetailsDrawer = ({ open, site, onClose }: SiteDetailsDrawerProps) => {
                                 </Box>
                             )}
 
-                            <Box
-                                component="img"
-                                src={
-                                    site.image
-                                        ? `${BACKEND_URLS.IMAGE_PATH}/${site.image}`
-                                        : "/img_placeholder.png"
-                                }
-                                alt={site.name}
+                            {site.image ? (
+                                <Box
+                                    component="img"
+                                    src={`${BACKEND_URLS.IMAGE_PATH}/${site.image}`}
+                                    alt={site.name}
+                                    onLoad={() => setImageLoading(false)}
+                                    onError={() => setImageLoading(false)}
+                                    sx={{
+                                        width: "100%",
+                                        maxHeight: 500,
+                                        objectFit: "contain",
+                                        borderRadius: 1,
+                                        p: 1,
+                                        backgroundColor: "transparent",
+                                        display: imageLoading ? "none" : "block",
+                                    }}
+                                />
+                            ) : (
+                                <Box
                                 onLoad={() => setImageLoading(false)}
-                                onError={() => setImageLoading(false)}
-                                sx={{
-                                    width: "100%",
-                                    maxHeight: 500,
-                                    objectFit: "contain",
-                                    borderRadius: 1,
-                                    p: 1,
-                                    backgroundColor: "transparent",
-                                    display: imageLoading ? "none" : "block",
-                                }}
-                            />
+                                    onError={() => setImageLoading(false)}
+                                    component="img"
+                                    src="/img_placeholder.png"
+                                    sx={{
+                                        width: "90%",
+                                        maxHeight: 200,
+                                        objectFit: "contain",
+                                    }}
+                                />
+                            )}
+
                         </Box>
 
                         <Divider sx={{ mb: 2 }} />
