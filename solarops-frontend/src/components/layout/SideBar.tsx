@@ -121,7 +121,10 @@ const SideBar = () => {
                                     md: 2,
                                 },
 
-                                py: 1.2,
+                                py: {
+                                    xs: 0.75,
+                                    md: 1.2,
+                                },
 
                                 borderRadius: 1.5,
 
