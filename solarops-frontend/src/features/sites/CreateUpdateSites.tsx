@@ -4,6 +4,7 @@ import { fetchData } from "@/utils/Fetch";
 import {
     Box,
     Button,
+    CircularProgress,
     Dialog,
     DialogActions,
     DialogContent,
@@ -58,6 +59,7 @@ const CreateUpdateSites = ({
     const token = localStorage.getItem("token");
     const { addToast } = useToast();
     const isEditMode = siteId !== "new";
+    const [isSaving, setIsSaving] = useState(false);
     const [openMap, setOpenMap] = useState(false);
     const [form, setForm] = useState<{
         id: string | null;
@@ -109,61 +111,11 @@ const CreateUpdateSites = ({
             .catch(console.error);
     }, [siteId]);
 
-    // const saveSite = async () => {
-    //     try {
-    //         const payload = {
-    //             name: form.name,
-    //             region: form.region,
-    //             peakCapacityMw: parseFloat(form.peakCapacityMw) || 0,
-    //             latitude: form.latitude || undefined,
-    //             longitude: form.longitude || undefined,
-    //             image:form.image
-    //         };
-
-    //         const payloadToSend = isEditMode
-    //             ? { ...payload, id: siteId }
-    //             : payload;
-
-    //         const res = await fetch(
-    //             isEditMode
-    //                 ? `${BACKEND_URLS.SITES}/${siteId}`
-    //                 : BACKEND_URLS.SITES,
-    //             {
-    //                 method: isEditMode ? "PUT" : "POST",
-    //                 headers: {
-    //                     "Content-Type": "application/json",
-    //                     "Authorization": `Bearer ${token}`
-    //                 },
-    //                 body: JSON.stringify(payloadToSend),
-    //             }
-    //         );
-
-    //         if (!res.ok) throw new Error("Failed to save site");
-
-    //         await res.json();
-
-    //         addToast({
-    //             type: "success",
-    //             title: "Success",
-    //             message: "Site saved successfully!"
-    //         });
-    //         onClose(false);
-    //         fetchSites();
-    //     } catch (err: any) {
-    //         console.error(err);
-    //         addToast({
-    //             type: "error",
-    //             title: "Error",
-    //             message: err.message || "Error saving site"
-    //         });
-    //     }
-    // };
-
     const saveSite = async () => {
         try {
+            setIsSaving(true);
             let imageFilename: string | null = null;
 
-            // Upload image if a new file was selected
             if (form.image instanceof File) {
                 const formData = new FormData();
                 formData.append("image", form.image);
@@ -231,6 +183,8 @@ const CreateUpdateSites = ({
                 title: "Error",
                 message,
             });
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -314,7 +268,7 @@ const CreateUpdateSites = ({
                     </Box>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => onClose(false)}>Cancel</Button>
+                    <Button onClick={() => onClose(false)} disabled={isSaving}>Cancel</Button>
                     <Button variant="contained" onClick={saveSite}>
                         Save Site
                     </Button>
@@ -347,8 +301,16 @@ const CreateUpdateSites = ({
                 </DialogContent>
 
                 <DialogActions>
-                    <Button onClick={() => setOpenMap(false)}>
-                        Done
+                    <Button
+                        variant="contained"
+                        onClick={() => setOpenMap(false)}
+                        disabled={isSaving}
+                        startIcon={
+                        isSaving ? (
+                            <CircularProgress size={18} color="inherit" />
+                        ) : null
+                    }>
+                        {isSaving ? "Saving..." : "Save Site"}
                     </Button>
                 </DialogActions>
             </Dialog>
