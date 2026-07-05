@@ -44,6 +44,31 @@ interface DashboardData {
 	outputDeviationStatus: Status;
 }
 
+const CustomXAxisTick = ({ x, y, payload }: any) => {
+	const [day, date] = String(payload.value).split("(");
+
+	return (
+		<g transform={`translate(${x},${y})`}>
+			<text
+				x={0}
+				y={0}
+				textAnchor="middle"
+				fill="#94a3b8"
+				fontSize={12}
+				fontFamily="Inter"
+			>
+				<tspan x="10" dy="10">
+					{day}
+				</tspan>
+
+				<tspan x="10" dy="14">
+					({date}
+				</tspan>
+			</text>
+		</g>
+	);
+};
+
 const DashboardPage = () => {
 
 	const theme = useTheme();
@@ -208,13 +233,14 @@ const DashboardPage = () => {
 
 								<XAxis
 									dataKey="name"
-									tick={{
+									tick={isMobile ? <CustomXAxisTick /> : {
 										fontFamily: "Inter",
 										fontSize: 12,
 										fill: "#94a3b8",
 									}}
 									tickLine={false}
 									axisLine={false}
+									height={isMobile ? 45 : 30}
 									label={{
 										value: "Date",
 										position: "insideBottom",
