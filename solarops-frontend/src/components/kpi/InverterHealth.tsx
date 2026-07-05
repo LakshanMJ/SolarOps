@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Box, Typography, } from '@mui/material';
-import { type GridColDef, type GridRenderCellParams } from '@mui/x-data-grid';
+import { type GridColDef } from '@mui/x-data-grid';
 import InverterDrawer from './InverterDrawer';
 import SolarDataGrid from '@/utils/SolarDataGrid';
 import { fetchData } from '@/utils/Fetch';
