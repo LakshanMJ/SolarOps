@@ -1,6 +1,7 @@
 import { BACKEND_URLS } from '@/backendUrls';
 import StatusChip from '@/utils/SolarStatusChip';
-import { Drawer, Box, Typography, Divider } from '@mui/material';
+import { Drawer, Box, Typography, Divider, CircularProgress } from '@mui/material';
+import { useEffect, useState } from 'react';
 
 export type SiteDetails = {
     id: string;
@@ -64,36 +65,70 @@ const sectionTitleSx = {
 };
 
 const SiteDetailsDrawer = ({ open, site, onClose }: SiteDetailsDrawerProps) => {
+
+    const [imageLoading, setImageLoading] = useState(true);
+
     console.log(site, 'site')
+
+    useEffect(() => {
+        setImageLoading(true);
+    }, [site?.image, open]);
+
     return (
         <Drawer anchor="right" open={open} onClose={onClose}>
-            <Box sx={{ width: 340, p: 2, backgroundColor: '#273443' }}>
+            <Box sx={{
+                width: 340,
+                p: 2,
+                backgroundColor: "#273443",
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
+            }}>
                 {site && (
                     <>
                         <Typography variant="h6" sx={{ color: '#ffffff', mb: 0.5 }}>
                             {site.name}
                         </Typography>
+                        <Box sx={{}}>
+                            <StatusChip status={site.health} config={siteHealthConfig} />
+                        </Box>
 
-                        <StatusChip status={site.health} config={siteHealthConfig} />
+                        <Box sx={{ position: "relative", mt: 2, mb: 2 }}>
+                            {imageLoading && (
+                                <Box
+                                    sx={{
+                                        width: "100%",
+                                        height: 250,
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                    }}
+                                >
+                                    <CircularProgress />
+                                </Box>
+                            )}
 
-                        <Box
-                            component="img"
-                            // src="/img_placeholder.png"
-                            src={site.image
-                                ? `${BACKEND_URLS.IMAGE_PATH}/${site.image}`
-                                : '/img_placeholder.png'}
-                            alt={site.name}
-                            sx={{
-                                width: '100%',
-                                maxHeight: 250,
-                                objectFit: 'contain',
-                                borderRadius: 1,
-                                mb: 2,
-                                mt: 2,
-                                p: 1,
-                                backgroundColor: 'transparent',
-                            }}
-                        />
+                            <Box
+                                component="img"
+                                src={
+                                    site.image
+                                        ? `${BACKEND_URLS.IMAGE_PATH}/${site.image}`
+                                        : "/img_placeholder.png"
+                                }
+                                alt={site.name}
+                                onLoad={() => setImageLoading(false)}
+                                onError={() => setImageLoading(false)}
+                                sx={{
+                                    width: "100%",
+                                    maxHeight: 500,
+                                    objectFit: "contain",
+                                    borderRadius: 1,
+                                    p: 1,
+                                    backgroundColor: "transparent",
+                                    display: imageLoading ? "none" : "block",
+                                }}
+                            />
+                        </Box>
 
                         <Divider sx={{ mb: 2 }} />
 
