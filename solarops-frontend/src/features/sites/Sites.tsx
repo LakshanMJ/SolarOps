@@ -34,6 +34,7 @@ const Sites = () => {
 
     const [loading, setLoading] = useState(true);
     const [sites, setSites] = useState<Site[]>([]);
+    console.log(sites,'all sites')
     const [siteDeleteModal, setSiteDeleteModal] = useState({
         show: false,
         id: null as string | null,

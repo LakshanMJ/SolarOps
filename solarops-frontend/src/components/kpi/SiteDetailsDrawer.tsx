@@ -1,3 +1,4 @@
+import { BACKEND_URLS } from '@/backendUrls';
 import StatusChip from '@/utils/SolarStatusChip';
 import { Drawer, Box, Typography, Divider } from '@mui/material';
 
@@ -12,6 +13,7 @@ export type SiteDetails = {
     alerts: number;
     avgInverterPowerMW: number;
     health: string;
+    image?: string | null;
 };
 
 interface SiteDetailsDrawerProps {
@@ -62,7 +64,7 @@ const sectionTitleSx = {
 };
 
 const SiteDetailsDrawer = ({ open, site, onClose }: SiteDetailsDrawerProps) => {
-    console.log(site,'site')
+    console.log(site, 'site')
     return (
         <Drawer anchor="right" open={open} onClose={onClose}>
             <Box sx={{ width: 340, p: 2, backgroundColor: '#273443' }}>
@@ -76,7 +78,10 @@ const SiteDetailsDrawer = ({ open, site, onClose }: SiteDetailsDrawerProps) => {
 
                         <Box
                             component="img"
-                            src="/img_placeholder.png"
+                            // src="/img_placeholder.png"
+                            src={site.image
+                                ? `${BACKEND_URLS.IMAGE_PATH}/${site.image}`
+                                : '/img_placeholder.png'}
                             alt={site.name}
                             sx={{
                                 width: '100%',
