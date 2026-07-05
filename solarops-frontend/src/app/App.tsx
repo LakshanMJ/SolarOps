@@ -55,7 +55,7 @@ function App() {
                         flex: 1,
                         overflowY: 'auto',
                         p: {
-                            xs: 1,
+                            xs: 2,
                             sm: 2,
                         },
                         minWidth: 0,
