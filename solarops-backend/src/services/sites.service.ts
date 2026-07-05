@@ -89,6 +89,7 @@ export async function getSitesService() {
             longitude: true,
             region: true,
             peakCapacityMw: true,
+            image:true,
             inverters: {
                 select: {
                     id: true,
@@ -101,7 +102,6 @@ export async function getSitesService() {
                     }
                 }
             },
-            image:true
         }
     })
 
