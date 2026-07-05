@@ -37,10 +37,6 @@ interface SitesMapProps {
 
 export default function SitesMap({ sites }: SitesMapProps) {
 
-    // if (sites === null) {
-    //     return <CircularProgress />;
-    // }
-
     return (
         <MapContainer
             center={[6.9271, 79.8612]}
