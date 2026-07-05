@@ -269,8 +269,17 @@ const CreateUpdateSites = ({
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => onClose(false)} disabled={isSaving}>Cancel</Button>
-                    <Button variant="contained" onClick={saveSite}>
-                        Save Site
+                    <Button
+                        variant="contained"
+                        onClick={saveSite}
+                        disabled={isSaving}
+                        startIcon={
+                            isSaving ? (
+                                <CircularProgress size={18} color="inherit" />
+                            ) : null
+                        }
+                    >
+                        {isSaving ? "Saving..." : "Save Site"}
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -301,16 +310,8 @@ const CreateUpdateSites = ({
                 </DialogContent>
 
                 <DialogActions>
-                    <Button
-                        variant="contained"
-                        onClick={() => setOpenMap(false)}
-                        disabled={isSaving}
-                        startIcon={
-                        isSaving ? (
-                            <CircularProgress size={18} color="inherit" />
-                        ) : null
-                    }>
-                        {isSaving ? "Saving..." : "Save Site"}
+                    <Button variant="contained" onClick={() => setOpenMap(false)} disabled={isSaving} >
+                        Done
                     </Button>
                 </DialogActions>
             </Dialog>
