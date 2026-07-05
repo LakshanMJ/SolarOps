@@ -88,11 +88,12 @@ const SideBar = () => {
                 component="nav"
                 sx={{
                     flex: 1,
+                    overflowY: "auto",
                     px: {
                         xs: 1,
                         md: 2,
                     },
-                    py: 3,
+                    py: 2,
                     display: "flex",
                     flexDirection: "column",
                     gap: 0.5,
