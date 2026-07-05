@@ -12,9 +12,9 @@ export async function createOrUpdateSiteService(payload: {
     longitude?: number | string
     region?: string
     peakCapacityMw?: number | string
+    image?: string
 }) {
-    const { id, name, latitude, longitude, region, peakCapacityMw } = payload
-
+    const { id, name, latitude, longitude, region, peakCapacityMw,image} = payload
     // UPDATE
 
     if (id) {
@@ -51,6 +51,7 @@ export async function createOrUpdateSiteService(payload: {
                     peakCapacityMw !== undefined
                         ? parseFloat(peakCapacityMw as string)
                         : existingSite.peakCapacityMw,
+                image: image ?? existingSite.image 
             },
         })
     }
@@ -68,6 +69,7 @@ export async function createOrUpdateSiteService(payload: {
             longitude: parseFloat(longitude as string),
             region,
             peakCapacityMw: parseFloat(peakCapacityMw as string),
+            image: image ?? null 
         },
     })
 }
@@ -98,7 +100,8 @@ export async function getSitesService() {
                         select: { id: true, status: true }
                     }
                 }
-            }
+            },
+            image:true
         }
     })
 
@@ -122,7 +125,8 @@ export async function getSitesService() {
             activeInverters,
             alerts: alertsCount,
             avgInverterPowerKw: +avgInverterPowerKw.toFixed(1),
-            health
+            health,
+            image:site.image
         }
     })
 
