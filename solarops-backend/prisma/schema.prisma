@@ -67,7 +67,7 @@ model Site {
   deletedAt      DateTime? 
   inverters      Inverter[]
   users          User[]
-  image           String?
+  image          String?
 }
 
 model Inverter {
