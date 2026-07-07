@@ -111,7 +111,8 @@ const SiteDetailsDrawer = ({ open, site, onClose }: SiteDetailsDrawerProps) => {
                             {site.image ? (
                                 <Box
                                     component="img"
-                                    src={`${BACKEND_URLS.IMAGE_PATH}/${site.image}`}
+                                    // src={`${BACKEND_URLS.IMAGE_PATH}/${site.image}`}
+                                    src={site.image || "/img_placeholder.png"}
                                     alt={site.name}
                                     onLoad={() => setImageLoading(false)}
                                     onError={() => setImageLoading(false)}

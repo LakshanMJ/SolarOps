@@ -114,7 +114,7 @@ const CreateUpdateSites = ({
     const saveSite = async () => {
         try {
             setIsSaving(true);
-            let imageFilename: string | null = null;
+            let imageUrl: string | null = null;
 
             if (form.image instanceof File) {
                 const formData = new FormData();
@@ -127,8 +127,9 @@ const CreateUpdateSites = ({
 
                 if (!uploadRes.ok) throw new Error("Image upload failed");
 
-                const uploadData: { filename: string } = await uploadRes.json();
-                imageFilename = uploadData.filename;
+                const uploadData: { url: string } = await uploadRes.json();
+
+                imageUrl = uploadData.url;
             }
 
             const payload = {
@@ -138,7 +139,7 @@ const CreateUpdateSites = ({
                 latitude: form.latitude || undefined,
                 longitude: form.longitude || undefined,
                 image:
-                    imageFilename ||
+                    imageUrl ||
                     (typeof form.image === "string" ? form.image : null),
             };
 
