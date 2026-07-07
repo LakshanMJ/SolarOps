@@ -333,7 +333,7 @@ const users = () => {
 									loading={loading}
 									initialState={{
 										pagination: {
-											paginationModel: { pageSize: 5 },
+											paginationModel: { pageSize: 10 },
 										},
 									}}
 									pageSizeOptions={[5]}
@@ -378,7 +378,7 @@ const users = () => {
 									loading={loading}
 									initialState={{
 										pagination: {
-											paginationModel: { pageSize: 5 },
+											paginationModel: { pageSize: 10 },
 										},
 									}}
 									pageSizeOptions={[5]}

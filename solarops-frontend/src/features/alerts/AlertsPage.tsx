@@ -175,7 +175,7 @@ export default function AlertsPage() {
                loading={loading}
                initialState={{
                   pagination: {
-                     paginationModel: { pageSize: 5 },
+                     paginationModel: { pageSize: 50 },
                   },
                }}
                pageSizeOptions={[5]}

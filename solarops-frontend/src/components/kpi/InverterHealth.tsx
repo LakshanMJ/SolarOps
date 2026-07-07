@@ -140,54 +140,6 @@ export default function InverterHealthTable() {
         ["name", "status"].includes(col.field)
     );
 
-    // const columns: GridColDef<Inverter>[] = [
-    //     { field: 'name', headerName: 'Inverter ID', flex: 1.2 },
-    //     { field: 'siteName', headerName: 'Site', align: 'center', headerAlign: 'center', flex: 1.2 },
-    //     {
-    //         field: 'status',
-    //         headerName: 'Status',
-    //         align: 'center',
-    //         headerAlign: 'center',
-    //         flex: 0.9,
-    //         renderCell: (params: GridRenderCellParams<Inverter, Status>) => (
-    //             <StatusChip status={params.value} config={inverterStatusConfig} />
-    //         )
-    //     },
-    //     { field: 'capacityKw', headerName: 'Capacity (kW)', align: 'center', flex: 1.2 },
-    //     { field: 'tempC', headerName: 'Temp (°C)', type: 'number', align: 'center', headerAlign: 'center', flex: 0.8 },
-    //     { field: 'capacityUtilization', headerName: 'Capacity Utilization (%)', type: 'number', sortable: true, align: 'center', headerAlign: 'center', flex: 0.8 },
-    //     {
-    //         field: 'actions',
-    //         headerName: 'Actions',
-    //         flex: 0.9,
-    //         renderCell: (params: GridRenderCellParams<Inverter>) => (
-    //             <Box
-    //                 sx={{
-    //                     width: '100%',
-    //                     height: '100%',
-    //                     display: 'flex',
-    //                     alignItems: 'center',
-    //                     justifyContent: 'center',
-    //                     cursor: 'pointer',
-    //                 }}
-    //                 onClick={() => {
-    //                     setSelectedInverter(params.row);
-    //                     setSelectedRowIds({
-    //                         type: "include",
-    //                         ids: new Set([params.id as number]),
-    //                     });
-    //                 }}
-    //             >
-    //                 <Typography variant="body2" color="primary">
-    //                     View
-    //                 </Typography>
-    //             </Box>
-    //         ),
-    //         sortable: false,
-    //         filterable: false,
-    //     },
-    // ];
-
     useEffect(() => {
         async function fetchInverters() {
             setLoading(true)
@@ -218,24 +170,6 @@ export default function InverterHealthTable() {
                 Inverter Health
             </Typography>
 
-            {/* <SolarDataGrid
-                rows={inverterData}
-                columns={columns}
-                loading={loading}
-                initialState={{
-                    pagination: {
-                        paginationModel: { pageSize: 5 },
-                    },
-                }}
-                pageSizeOptions={[5]}
-                disableRowSelectionOnClick
-                disableColumnSorting
-                rowSelectionModel={selectedRowIds}
-                onRowSelectionModelChange={(newSelection) => {
-                    setSelectedRowIds(newSelection);
-                }}
-            /> */}
-
             <SolarDataGrid
                 rows={inverterData}
                 columns={isMobile ? mobileColumns : baseColumns}
@@ -243,7 +177,7 @@ export default function InverterHealthTable() {
                 autoHeight
                 initialState={{
                     pagination: {
-                        paginationModel: { pageSize: 5 },
+                        paginationModel: { pageSize: 7 },
                     },
                 }}
                 pageSizeOptions={[5]}

@@ -161,7 +161,7 @@ const Sites = () => {
                     columns={columns}
                     initialState={{
                         pagination: {
-                            paginationModel: { pageSize: 5 },
+                            paginationModel: { pageSize: 10 },
                         },
                     }}
                     pageSizeOptions={[5]}
