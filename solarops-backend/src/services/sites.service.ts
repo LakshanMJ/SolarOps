@@ -101,7 +101,7 @@ export async function getSitesService() {
             deletedAt: null,
         },
         orderBy: {
-            createdAt: 'desc',
+            createdAt: 'asc',
         },
         select: {
             id: true,
