@@ -1,4 +1,4 @@
-import { BACKEND_URLS } from '@/backendUrls';
+// import { BACKEND_URLS } from '@/backendUrls';
 import StatusChip from '@/utils/SolarStatusChip';
 import { Drawer, Box, Typography, Divider, CircularProgress } from '@mui/material';
 import { useEffect, useState } from 'react';
