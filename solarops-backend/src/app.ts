@@ -30,7 +30,7 @@ app.use(cors())
 app.use(express.json())
 
 app.use("/auth", authRoutes);
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use("/api/upload-image", uploadRoutes);
 
 app.use('/api/dashboard', dashboardRoutes)
