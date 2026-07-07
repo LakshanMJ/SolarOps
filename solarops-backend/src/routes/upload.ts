@@ -8,6 +8,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const uploadsFolder = path.resolve(__dirname, '../uploads');
+console.log("Uploads folder:", uploadsFolder);
+console.log(fs.readdirSync(uploadsFolder));
 
 if (!fs.existsSync(uploadsFolder)) {
   fs.mkdirSync(uploadsFolder, { recursive: true });
@@ -19,7 +21,7 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage });
-
+ 
 const router = express.Router();
 
 router.post('/', upload.single('image'), (req, res) => {
