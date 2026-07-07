@@ -15,6 +15,7 @@ import usersRoutes from './routes/users.routes.js'
 import rolesRoutes from './routes/roles.routes.js'
 import exportRoutes from './routes/reports.routes.js'
 import metaDataRoutes from './routes/metadata.routes.js'
+import fs from "fs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -42,6 +43,11 @@ app.use('/api/users', usersRoutes);
 app.use('/api/roles', rolesRoutes);
 app.use("/api/reports/", exportRoutes);
 app.use("/api", metaDataRoutes);
+
+console.log("__dirname =", __dirname);
+console.log("uploadsFolder =", uploadsFolder);
+console.log("exists =", fs.existsSync(uploadsFolder));
+console.log(fs.readdirSync(uploadsFolder));
 app.use('/uploads', express.static(uploadsFolder));
 
 export default app
