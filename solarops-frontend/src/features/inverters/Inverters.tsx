@@ -117,16 +117,22 @@ const Inverters = () => {
       },
 
       {
-         field: 'actions',
-         headerName: 'Actions',
-         headerAlign: 'center',
+         field: "actions",
+         headerName: "Actions",
+         headerAlign: "center",
+         align: "center",
          flex: 1,
+         sortable: false,
+         filterable: false,
+
          renderCell: (params) => (
             <Box
                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
+                  width: "100%",
+                  height: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                   gap: 1,
                }}
             >
@@ -140,7 +146,7 @@ const Inverters = () => {
                      });
                   }}
                >
-                  <VisibilityIcon sx={{ color: 'white' }} fontSize="small" />
+                  <VisibilityIcon sx={{ color: "white" }} fontSize="small" />
                </IconButton>
 
                <IconButton
@@ -150,7 +156,7 @@ const Inverters = () => {
                      setActiveInverterId(params.row.id);
                   }}
                >
-                  <EditIcon sx={{ color: 'white' }} fontSize="small" />
+                  <EditIcon sx={{ color: "white" }} fontSize="small" />
                </IconButton>
 
                <IconButton
@@ -162,27 +168,25 @@ const Inverters = () => {
                      })
                   }
                >
-                  <DeleteIcon sx={{ color: 'white' }} fontSize="small" />
+                  <DeleteIcon sx={{ color: "white" }} fontSize="small" />
                </IconButton>
             </Box>
          ),
-         sortable: false,
-         filterable: false,
       }
    ], []);
 
    const fetchInverters = async () => {
-    setLoading(true);
+      setLoading(true);
 
-    try {
-        const inverterData = await fetchData<Inverter[]>(BACKEND_URLS.INVERTERS);
-        setInverterData(inverterData);
-    } catch (err) {
-        console.error('Failed to load inverter data:', err);
-    } finally {
-        setLoading(false);
-    }
-};
+      try {
+         const inverterData = await fetchData<Inverter[]>(BACKEND_URLS.INVERTERS);
+         setInverterData(inverterData);
+      } catch (err) {
+         console.error('Failed to load inverter data:', err);
+      } finally {
+         setLoading(false);
+      }
+   };
    const handleDeleteInverter = async () => {
       if (!inverterDeleteModal.id) return;
 

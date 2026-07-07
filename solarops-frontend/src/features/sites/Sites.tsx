@@ -50,41 +50,56 @@ const Sites = () => {
         { field: 'alerts', headerName: 'Alerts Count', type: 'number', flex: 1, minWidth: 120, align: 'center', headerAlign: 'center' },
         { field: 'avgInverterPowerMW', headerName: 'Avg Inverter Power (MW)', type: 'number', sortable: true, flex: 1, minWidth: 120, align: 'center', headerAlign: 'center' },
         {
-            field: 'actions',
-            headerName: 'Actions',
-            sortable: false,
-            filterable: false,
-            flex: 1,
-            minWidth: 140,
-            align: 'center',
-            headerAlign: 'center',
-            renderCell: (params: GridRenderCellParams<any>) => (
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5 }}>
-                    <IconButton
-                        onClick={() => setSelectedSite(params.row)}
-                        size="small"
-                        aria-label="View site details"
-                    >
-                        <VisibilityIcon sx={{ color: 'white' }} fontSize="small" />
-                    </IconButton>
-                    <IconButton
-                        onClick={() => setActiveSiteId(params.row.id)}
-                        size="small"
-                        aria-label="Edit site"
-                    >
-                        <EditIcon sx={{ color: 'white' }} fontSize="small" />
-                    </IconButton>
+    field: "actions",
+    headerName: "Actions",
+    sortable: false,
+    filterable: false,
+    flex: 1,
+    minWidth: 140,
+    align: "center",
+    headerAlign: "center",
+    renderCell: (params: GridRenderCellParams<any>) => (
+        <Box
+            sx={{
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 0.5,
+            }}
+        >
+            <IconButton
+                onClick={() => setSelectedSite(params.row)}
+                size="small"
+                aria-label="View site details"
+            >
+                <VisibilityIcon sx={{ color: "white" }} fontSize="small" />
+            </IconButton>
 
-                    <IconButton
-                        onClick={() => setSiteDeleteModal({ show: true, id: params.row.id })}
-                        size="small"
-                        aria-label="Delete site"
-                    >
-                        <DeleteIcon sx={{ color: 'white' }} fontSize="small" />
-                    </IconButton>
-                </Box>
-            ),
-        },
+            <IconButton
+                onClick={() => setActiveSiteId(params.row.id)}
+                size="small"
+                aria-label="Edit site"
+            >
+                <EditIcon sx={{ color: "white" }} fontSize="small" />
+            </IconButton>
+
+            <IconButton
+                onClick={() =>
+                    setSiteDeleteModal({
+                        show: true,
+                        id: params.row.id,
+                    })
+                }
+                size="small"
+                aria-label="Delete site"
+            >
+                <DeleteIcon sx={{ color: "white" }} fontSize="small" />
+            </IconButton>
+        </Box>
+    ),
+},
     ];
 
     const fetchSites = async (): Promise<void> => {
