@@ -82,42 +82,73 @@ export default function InverterHealthTable() {
     const [loading, setLoading] = useState(true);
 
     const baseColumns: GridColDef<Inverter>[] = [
-        { field: "name", headerName: "Inverter ID", flex: 1.2 },
+        {
+            field: "name",
+            headerName: "Inverter ID",
+            flex: 1,
+            align: "center",
+            headerAlign: "center",
+        },
 
-        { field: "siteName", headerName: "Site", align: "center", headerAlign: "center", flex: 1.2 },
+        {
+            field: "siteName",
+            headerName: "Site",
+            flex: 1.2,
+            align: "center",
+            headerAlign: "center",
+        },
 
         {
             field: "status",
             headerName: "Status",
+            flex: 0.8,
             align: "center",
             headerAlign: "center",
-            flex: 0.9,
             renderCell: (params) => (
-                <StatusChip status={params.value} config={inverterStatusConfig} />
+                <StatusChip
+                    status={params.value}
+                    config={inverterStatusConfig}
+                />
             ),
         },
 
-        { field: "capacityKw", headerName: "Capacity (kW)", flex: 1.2 },
+        {
+            field: "capacityKw",
+            headerName: "Capacity (kW)",
+            flex: 1,
+            align: "center",
+            headerAlign: "center",
+        },
 
-        { field: "tempC", headerName: "Temp (°C)", type: "number", flex: 0.8 },
+        {
+            field: "tempC",
+            headerName: "Temp (°C)",
+            flex: 0.8,
+            align: "center",
+            headerAlign: "center",
+        },
 
         {
             field: "capacityUtilization",
             headerName: "Capacity Utilization (%)",
-            type: "number",
-            flex: 0.8,
+            flex: 1,
+            align: "center",
+            headerAlign: "center",
         },
-
         {
             field: "actions",
             headerName: "Actions",
-            flex: 0.9,
+            flex: 0.8,
+            align: "center",
+            headerAlign: "center",
             renderCell: (params) => (
                 <Box
                     sx={{
                         width: "100%",
+                        height: "100%",
                         display: "flex",
                         justifyContent: "center",
+                        alignItems: "center",
                         cursor: "pointer",
                     }}
                     onClick={() => {

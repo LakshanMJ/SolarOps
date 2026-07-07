@@ -3,9 +3,11 @@ import { useToast } from "@/components/toast/ToastContext";
 import { fetchData } from "@/utils/Fetch";
 import ImageUploadDropzone from "@/utils/ImageUploadDropzone";
 import CloseIcon from "@mui/icons-material/Close";
+
 import {
    Box,
    Button,
+   CircularProgress,
    Dialog,
    DialogActions,
    DialogContent,
@@ -14,12 +16,13 @@ import {
    MenuItem,
    TextField,
 } from "@mui/material";
+
 import { useEffect, useState } from "react";
 
 type Status = "Offline" | "Online" | "Maintenance";
 
 interface Form {
-   id?: string | null;
+   id: string | null;
    name: string;
    status: Status;
    siteId: string;
@@ -60,7 +63,7 @@ interface Props {
    open: boolean;
    inverterId: string;
    onClose: (open: boolean) => void;
-   fetchInverters: () => void;
+   fetchInverters: () => Promise<void> | void;
 }
 
 const CreateUpdateInverter = ({
@@ -69,11 +72,11 @@ const CreateUpdateInverter = ({
    onClose,
    fetchInverters,
 }: Props) => {
+
    const token = localStorage.getItem("token");
    const { addToast } = useToast();
-
    const isEditMode = inverterId !== "new";
-
+   const [isSaving, setIsSaving] = useState(false);
    const [manufacturers, setManufacturers] = useState<Manufacturer[]>([]);
    const [sites, setSites] = useState<Site[]>([]);
 
@@ -95,17 +98,18 @@ const CreateUpdateInverter = ({
       fetchData<Manufacturer[]>(BACKEND_URLS.MANUFACTURERS)
          .then(setManufacturers)
          .catch(console.error);
-
       fetchData<Site[]>(BACKEND_URLS.SITES)
          .then(setSites)
          .catch(console.error);
    }, []);
 
    useEffect(() => {
+
       if (!isEditMode) return;
 
       fetchData<any>(`${BACKEND_URLS.INVERTERS}/${inverterId}`)
          .then((data) => {
+
             setForm({
                id: data.id,
                name: data.name ?? "",
@@ -125,84 +129,118 @@ const CreateUpdateInverter = ({
 
    const saveInverter = async () => {
       try {
-         let imageFilename: string | null = null;
+         setIsSaving(true);
+         let uploadedImageUrl: string | null = null;
 
          if (form.image instanceof File) {
             const formData = new FormData();
             formData.append("image", form.image);
-
-            const uploadRes = await fetch(BACKEND_URLS.UPLOAD_IMAGE, {
-               method: "POST",
-               body: formData,
-            });
-
-            if (!uploadRes.ok) throw new Error("Image upload failed");
-
-            const uploadData: { filename: string } = await uploadRes.json();
-            imageFilename = uploadData.filename;
+            const uploadRes = await fetch(
+               BACKEND_URLS.UPLOAD_IMAGE,
+               {
+                  method: "POST",
+                  body: formData,
+               }
+            );
+            if (!uploadRes.ok) {
+               throw new Error("Image upload failed");
+            }
+            const uploadData: {
+               url: string;
+            } = await uploadRes.json();
+            uploadedImageUrl = uploadData.url;
          }
 
          const payload: InverterPayload = {
             name: form.name,
             status: form.status,
             siteId: form.siteId,
-            manufacturerId: form.manufacturerId || undefined,
-            serialNumber: form.serialNumber || undefined,
-            model: form.model || undefined,
-            firmwareVersion: form.firmwareVersion || undefined,
-            capacityKw: form.capacityKw ?? 0,
-            installedAt: new Date(),
+            manufacturerId:
+               form.manufacturerId || undefined,
+            serialNumber:
+               form.serialNumber || undefined,
+            model:
+               form.model || undefined,
+            firmwareVersion:
+               form.firmwareVersion || undefined,
+            capacityKw:
+               form.capacityKw ?? 0,
+            installedAt:
+               form.installedAt
+                  ? new Date(form.installedAt)
+                  : new Date(),
             image:
-               imageFilename ||
-               (typeof form.image === "string" ? form.image : null),
+               uploadedImageUrl ||
+               (
+                  typeof form.image === "string"
+                     ? form.image
+                     : null
+               ),
          };
 
          const payloadToSend = isEditMode
-            ? { ...payload, id: inverterId }
+            ? {
+                 ...payload,
+                 id: inverterId,
+              }
             : payload;
 
          const res = await fetch(
             isEditMode
                ? `${BACKEND_URLS.INVERTERS}/${inverterId}`
                : BACKEND_URLS.INVERTERS,
+
             {
-               method: isEditMode ? "PUT" : "POST",
+               method: isEditMode
+                  ? "PUT"
+                  : "POST",
+
                headers: {
                   "Content-Type": "application/json",
                   Authorization: `Bearer ${token}`,
                },
+
                body: JSON.stringify(payloadToSend),
             }
          );
 
-         if (!res.ok) throw new Error("Failed to save inverter");
-
+         if (!res.ok) {
+            throw new Error("Failed to save inverter");
+         }
          await res.json();
-
          addToast({
             type: "success",
             title: "Success",
             message: "Inverter saved successfully!",
          });
-
          onClose(false);
-         fetchInverters();
+         await fetchInverters();
       } catch (err) {
          const message =
-            err instanceof Error ? err.message : "Error saving inverter";
-
+            err instanceof Error
+               ? err.message
+               : "Error saving inverter";
          console.error(err);
-
          addToast({
             type: "error",
             title: "Error",
             message,
          });
+
+      } finally {
+         setIsSaving(false);
       }
    };
 
+
+
    return (
-      <Dialog open={open} onClose={() => onClose(false)} fullWidth maxWidth="sm">
+      <Dialog
+         open={open}
+         onClose={() => onClose(false)}
+         fullWidth
+         maxWidth="sm"
+      >
          <DialogTitle>
             {isEditMode ? "Edit Inverter" : "Add New Inverter"}
 
@@ -219,21 +257,36 @@ const CreateUpdateInverter = ({
          </DialogTitle>
 
          <DialogContent>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
+            <Box
+               sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 2,
+                  mt: 1,
+               }}
+            >
                <TextField
+                  fullWidth
                   label="Inverter Name"
                   value={form.name}
                   onChange={(e) =>
-                     setForm({ ...form, name: e.target.value })
+                     setForm({
+                        ...form,
+                        name: e.target.value,
+                     })
                   }
                />
 
                <TextField
+                  fullWidth
                   select
                   label="Manufacturer"
                   value={form.manufacturerId}
                   onChange={(e) =>
-                     setForm({ ...form, manufacturerId: e.target.value })
+                     setForm({
+                        ...form,
+                        manufacturerId: e.target.value,
+                     })
                   }
                >
                   {manufacturers.map((m) => (
@@ -244,23 +297,32 @@ const CreateUpdateInverter = ({
                </TextField>
 
                <TextField
+                  fullWidth
                   label="Serial Number"
                   value={form.serialNumber}
                   onChange={(e) =>
-                     setForm({ ...form, serialNumber: e.target.value })
+                     setForm({
+                        ...form,
+                        serialNumber: e.target.value,
+                     })
                   }
                />
 
                <TextField
+                  fullWidth
                   label="Model"
                   value={form.model}
                   onChange={(e) =>
-                     setForm({ ...form, model: e.target.value })
+                     setForm({
+                        ...form,
+                        model: e.target.value,
+                     })
                   }
                />
 
                <TextField
-                  label="Firmware version"
+                  fullWidth
+                  label="Firmware Version"
                   value={form.firmwareVersion}
                   onChange={(e) =>
                      setForm({
@@ -271,6 +333,7 @@ const CreateUpdateInverter = ({
                />
 
                <TextField
+                  fullWidth
                   label="Capacity (kW)"
                   type="number"
                   value={form.capacityKw ?? ""}
@@ -285,11 +348,15 @@ const CreateUpdateInverter = ({
                />
 
                <TextField
+                  fullWidth
                   select
                   label="Site"
                   value={form.siteId}
                   onChange={(e) =>
-                     setForm({ ...form, siteId: e.target.value })
+                     setForm({
+                        ...form,
+                        siteId: e.target.value,
+                     })
                   }
                >
                   {sites.map((s) => (
@@ -302,16 +369,37 @@ const CreateUpdateInverter = ({
                <ImageUploadDropzone
                   value={form.image}
                   onChange={(file) =>
-                     setForm({ ...form, image: file })
+                     setForm({
+                        ...form,
+                        image: file,
+                     })
                   }
                />
             </Box>
          </DialogContent>
 
          <DialogActions>
-            <Button onClick={() => onClose(false)}>Cancel</Button>
-            <Button variant="contained" onClick={saveInverter}>
-               Save Inverter
+            <Button
+               disabled={isSaving}
+               onClick={() => onClose(false)}
+            >
+               Cancel
+            </Button>
+
+            <Button
+               variant="contained"
+               onClick={saveInverter}
+               disabled={isSaving}
+               startIcon={
+                  isSaving ? (
+                     <CircularProgress
+                        size={18}
+                        color="inherit"
+                     />
+                  ) : null
+               }
+            >
+               {isSaving ? "Saving..." : "Save Inverter"}
             </Button>
          </DialogActions>
       </Dialog>
