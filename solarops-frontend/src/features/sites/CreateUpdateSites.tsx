@@ -114,8 +114,10 @@ const CreateUpdateSites = ({
     const saveSite = async () => {
         try {
             setIsSaving(true);
-            let imageUrl: string | null = null;
 
+            let uploadedImageUrl: string | null = null;
+
+            // Upload new image to Cloudinary
             if (form.image instanceof File) {
                 const formData = new FormData();
                 formData.append("image", form.image);
@@ -125,11 +127,13 @@ const CreateUpdateSites = ({
                     body: formData,
                 });
 
-                if (!uploadRes.ok) throw new Error("Image upload failed");
+                if (!uploadRes.ok) {
+                    throw new Error("Image upload failed");
+                }
 
                 const uploadData: { url: string } = await uploadRes.json();
 
-                imageUrl = uploadData.url;
+                uploadedImageUrl = uploadData.url;
             }
 
             const payload = {
@@ -138,14 +142,20 @@ const CreateUpdateSites = ({
                 peakCapacityMw: parseFloat(form.peakCapacityMw) || 0,
                 latitude: form.latitude || undefined,
                 longitude: form.longitude || undefined,
+
+                // Save Cloudinary URL
                 image:
-                    imageUrl ||
+                    uploadedImageUrl ||
                     (typeof form.image === "string" ? form.image : null),
             };
 
             const payloadToSend = isEditMode
-                ? { ...payload, id: siteId }
+                ? {
+                    ...payload,
+                    id: siteId,
+                }
                 : payload;
+
 
             const res = await fetch(
                 isEditMode
@@ -161,7 +171,11 @@ const CreateUpdateSites = ({
                 }
             );
 
-            if (!res.ok) throw new Error("Failed to save site");
+
+            if (!res.ok) {
+                throw new Error("Failed to save site");
+            }
+
 
             await res.json();
 
@@ -173,9 +187,13 @@ const CreateUpdateSites = ({
 
             onClose(false);
             fetchSites();
+
         } catch (err) {
+
             const message =
-                err instanceof Error ? err.message : "Error saving site";
+                err instanceof Error
+                    ? err.message
+                    : "Error saving site";
 
             console.error(err);
 
@@ -184,11 +202,12 @@ const CreateUpdateSites = ({
                 title: "Error",
                 message,
             });
+
         } finally {
             setIsSaving(false);
         }
     };
-
+    
     return (
         <>
             <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
