@@ -13,7 +13,7 @@ This project focuses on building a scalable, performant, and user-friendly inter
 
 # 🚀 Live Demo
 
-🔗 **[Launch SolarOps](https://solar-ops-rouge.vercel.app/)**
+🔗 **[Launch SolarOps](https://solar-ops-nu.vercel.app/login)**
 Click **"Continue as Demo Admin"** on the login page to explore the platform.
 > **Note:** The live demo uses simulated solar plant data for demonstration purposes only.
 
