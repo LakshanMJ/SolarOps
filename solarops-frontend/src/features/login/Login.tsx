@@ -99,7 +99,7 @@ const LoginPage = () => {
 					height: { xs: 200, md: '100%' },
 					ml: { xs: 0, md: '10%' },
 					position: 'relative',
-					backgroundImage: 'url(login_img2.png)',
+					backgroundImage: 'url(login_img2.webp)',
 					backgroundSize: 'cover',
 					backgroundPosition: 'center',
 					overflow: 'hidden',
