@@ -11,6 +11,12 @@ The system enables operators and engineers to make data-driven decisions through
 
 This project focuses on building a scalable, performant, and user-friendly interface for managing solar infrastructure.
 
+# 🚀 Live Demo
+
+🔗 **[Launch SolarOps](https://solar-ops-rouge.vercel.app/)**
+Click **"Continue as Demo Admin"** on the login page to explore the platform.
+> **Note:** The live demo uses simulated solar plant data for demonstration purposes only.
+
 # 💡 Core Value
 📊 Operational Visibility – Real-time insight into plant performance </br>
 ⚡ Performance Optimization – Identify inefficiencies instantly </br>
