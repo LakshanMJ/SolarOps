@@ -5,7 +5,7 @@
 
 # 📌 Project Description
 
-Solar Ops is a full-stack solar plant monitoring and operations platform designed to provide real-time visibility into energy generation, system performance, and operational health.
+Solar Ops is a full-stack solar power plant monitoring and operations platform designed to provide real-time visibility into energy generation, system performance, and operational health.
 
 The system enables operators and engineers to make data-driven decisions through intuitive dashboards, analytics, and alerting mechanisms.
 
