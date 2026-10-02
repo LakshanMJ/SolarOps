@@ -13,7 +13,7 @@ This project focuses on building a scalable, performant, and user-friendly inter
 
 # 🚀 Live Demo
 
-🔗 **[Launch SolarOps](http://ec2-56-228-24-227.eu-north-1.compute.amazonaws.com/)**
+🔗 **[Launch SolarOps](http://ec2-13-60-205-30.eu-north-1.compute.amazonaws.com/)**
 Click **"Continue as Demo Admin"** on the login page to explore the platform.
 > **Note:** The live demo uses simulated solar plant data for demonstration purposes only.
 
